@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragmentNovel">
+
+    <fragment
+        android:id="@+id/fragmentLibrary"
+        android:name="com.graytsar.wlnupdates.ui.library.FragmentLibrary"
+        android:label="fragment_library"
+        tools:layout="@layout/fragment_library" />
+    <fragment
+        android:id="@+id/fragmentTranslated"
+        android:name="com.graytsar.wlnupdates.ui.recent.FragmentTranslated"
+        android:label="fragment_translated"
+        tools:layout="@layout/fragment_translated" />
+    <fragment
+        android:id="@+id/fragmentOriginals"
+        android:name="com.graytsar.wlnupdates.ui.recent.FragmentOriginals"
+        android:label="fragment_originals"
+        tools:layout="@layout/fragment_originals" />
+    <fragment
+        android:id="@+id/fragmentNovel"
+        android:name="com.graytsar.wlnupdates.ui.novel.FragmentNovel"
+        android:label="fragment_novel"
+        tools:layout="@layout/fragment_novel" />
+    <fragment
+        android:id="@+id/fragmentSearch"
+        android:name="com.graytsar.wlnupdates.ui.search.FragmentSearch"
+        android:label="fragment_search"
+        tools:layout="@layout/fragment_search" />
+    <fragment
+        android:id="@+id/fragmentAdvancedSearch"
+        android:name="com.graytsar.wlnupdates.ui.search.FragmentAdvancedSearch"
+        android:label="fragment_advanced_search"
+        tools:layout="@layout/fragment_advanced_search" />
+    <fragment
+        android:id="@+id/fragmentRecent"
+        android:name="com.graytsar.wlnupdates.ui.recent.FragmentRecent"
+        android:label="fragment_recent"
+        tools:layout="@layout/fragment_recent" />
+    <fragment
+        android:id="@+id/fragmentAuthor"
+        android:name="com.graytsar.wlnupdates.ui.FragmentAuthor"
+        android:label="fragment_author"
+        tools:layout="@layout/fragment_author" />
+    <fragment
+        android:id="@+id/fragmentPublisher"
+        android:name="com.graytsar.wlnupdates.ui.FragmentPublisher"
+        android:label="fragment_publisher"
+        tools:layout="@layout/fragment_publisher" />
+</navigation>
