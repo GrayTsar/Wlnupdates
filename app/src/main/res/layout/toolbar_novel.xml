@@ -36,7 +36,7 @@
 
 
                     <ImageView
-                        android:id="@+id/app_bar_image"
+                        android:id="@+id/image_novel_cover"
                         android:layout_width="120dp"
                         android:layout_height="150dp"
                         android:layout_marginStart="8dp"
@@ -48,7 +48,7 @@
                         app:layout_collapseMode="parallax"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
+                        app:layout_constraintTop_toTopOf="parent"/>
 
                     <TextView
                         android:id="@+id/textNovelTitle"
@@ -61,8 +61,8 @@
                         android:textStyle="bold"
                         android:textColor="@color/colorTextToolbarPrimary"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/app_bar_image"
-                        app:layout_constraintTop_toTopOf="@+id/app_bar_image" />
+                        app:layout_constraintStart_toEndOf="@+id/image_novel_cover"
+                        app:layout_constraintTop_toTopOf="@+id/image_novel_cover" />
 
                     <TextView
                         android:id="@+id/textNovelAuthors"
@@ -74,7 +74,7 @@
                         android:textSize="18sp"
                         android:textColor="@color/colorTextToolbarPrimary"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/app_bar_image"
+                        app:layout_constraintStart_toEndOf="@+id/image_novel_cover"
                         app:layout_constraintTop_toBottomOf="@+id/textNovelTitle" />
 
                     <TextView
@@ -84,13 +84,14 @@
                         android:layout_marginStart="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
-                        android:text="@{viewModelNovel.rating}"
-                        android:textSize="18sp"
+                        android:text="@{@string/novel_rating(viewModelNovel.rating)}"
                         android:textColor="@color/colorTextToolbarPrimary"
+                        android:textSize="18sp"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toEndOf="@+id/app_bar_image"
-                        app:layout_constraintTop_toBottomOf="@+id/textNovelAuthors" />
+                        app:layout_constraintStart_toEndOf="@+id/image_novel_cover"
+                        app:layout_constraintTop_toBottomOf="@+id/textNovelAuthors"
+                        app:layout_constraintVertical_bias="0.0" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -149,57 +150,30 @@
                     layout="@layout/item_chapters"
                     android:id="@+id/layoutNovelChapters"/>
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+
+                <TextView
+                    android:id="@+id/textStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="18sp"
+                    android:text="@{@string/novel_status(viewModelNovel.statusReleases)}"
+                    tools:text="Status: "/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:text="@string/novel_status" />
-
-                    <TextView
-                        android:id="@+id/textStatus"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextSecondary"
-                        android:textSize="18sp"
-                        android:text="@{viewModelNovel.statusReleases}" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="36dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:text="@string/novel_first_release_date" />
-
-                    <TextView
-                        android:id="@+id/textInitialPublishDate"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextSecondary"
-                        android:textSize="18sp"
-                        android:text="@{viewModelNovel.firstRelease}" />
-                </LinearLayout>
+                <TextView
+                    android:id="@+id/textInitialPublishDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp"
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="18sp"
+                    android:text="@{@string/novel_first_release_date(viewModelNovel.firstRelease)}"
+                    tools:text="First Release:"/>
 
                 <View
                     android:id="@+id/divider2"
@@ -221,33 +195,17 @@
                     android:layout_height="1dp"
                     android:background="?android:attr/listDivider" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/textTlType"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:text="@string/novel_tl_type"
-                        android:textColor="@color/colorTextPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/textTlType"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextSecondary"
-                        android:textSize="18sp"
-                        android:text="@{viewModelNovel.tlType}" />
-                </LinearLayout>
-
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="18sp"
+                    android:text="@{@string/novel_tl_type(viewModelNovel.tlType)}"
+                    tools:text="Tl Type"/>
 
                 <View
                     android:id="@+id/divider5"
@@ -255,32 +213,17 @@
                     android:layout_height="1dp"
                     android:background="?android:attr/listDivider" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/textDemographics"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:text="@string/novel_demographic" />
-
-                    <TextView
-                        android:id="@+id/textDemographics"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextSecondary"
-                        android:textSize="18sp"
-                        android:text="@{viewModelNovel.demographic}" />
-                </LinearLayout>
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="18sp"
+                    android:text="@{@string/novel_demographic(viewModelNovel.demographic)}"
+                    tools:text="Demographics: "/>
 
                 <View
                     android:id="@+id/divider6"
@@ -288,86 +231,41 @@
                     android:layout_height="1dp"
                     android:background="?android:attr/listDivider" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/textCOO"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="18sp"
+                    android:text="@{@string/novel_country_of_origin(viewModelNovel.countryOfOrigin)}"
+                    tools:text="Country of Origin: "/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:text="@string/novel_country_of_origin" />
-
-                    <TextView
-                        android:id="@+id/textCOO"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextSecondary"
-                        android:textSize="18sp"
-                        android:text="@{viewModelNovel.countryOfOrigin}" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/textLanguage"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="18sp"
+                    android:text="@{@string/novel_language(viewModelNovel.language)}"
+                    tools:text="Language: "/>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:text="@string/novel_language" />
-
-                    <TextView
-                        android:id="@+id/textLanguage"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextSecondary"
-                        android:textSize="18sp"
-                        android:text="@{viewModelNovel.language}" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                <TextView
+                    android:id="@+id/textLicensed"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="8dp"
                     android:layout_marginBottom="8dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextPrimary"
-                        android:textSize="18sp"
-                        android:textStyle="bold"
-                        android:text="@string/novel_licensed" />
-
-                    <TextView
-                        android:id="@+id/textLicensed"
-                        android:layout_width="wrap_content"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="8dp"
-                        android:gravity="center_vertical"
-                        android:textColor="@color/colorTextSecondary"
-                        android:textSize="18sp"
-                        android:text="@{viewModelNovel.licensed}" />
-                </LinearLayout>
+                    android:gravity="center_vertical"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="18sp"
+                    android:text="@{@string/novel_licensed(viewModelNovel.licensed)}"
+                    tools:text="Licensed: "/>
 
                 <View
                     android:id="@+id/divider10"
@@ -384,12 +282,6 @@
                     android:id="@+id/layoutNovelPublisher"/>
 
                 <View
-                    android:id="@+id/divider11"
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="?android:attr/listDivider" />
-
-                <View
                     android:id="@+id/divider13"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
@@ -400,20 +292,21 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:layout_marginBottom="8dp"
                     android:gravity="center_vertical"
                     android:textColor="@color/colorTextPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold"
                     android:text="@string/novel_alternative_names" />
 
-                <LinearLayout
+                <TextView
                     android:id="@+id/listAlternativeNames"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_marginBottom="8dp"
+                    android:textColor="@color/colorTextPrimary"
+                    android:text="@{viewModelNovel.alternativeNames}">
 
-                </LinearLayout>
+                </TextView>
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

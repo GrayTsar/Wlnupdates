@@ -10,9 +10,13 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import coil.ImageLoader
+import coil.load
+import coil.request.ImageRequest
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.databinding.FragmentNovelBinding
-import kotlinx.android.synthetic.main.item_chapters.view.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 
 class FragmentNovel : Fragment() {
     private lateinit var binding:FragmentNovelBinding
@@ -44,6 +48,26 @@ class FragmentNovel : Fragment() {
 
         viewModelNovel.latestChapter.observe(viewLifecycleOwner, Observer {
             binding.includeToolbarNovel.layoutNovelChapters.textChapterLastDate.text = it
+        })
+
+        viewModelNovel.genre.observe(viewLifecycleOwner, Observer {
+            binding.includeToolbarNovel.layoutNovelGenre.textGenreItems.text = it
+        })
+
+        viewModelNovel.tags.observe(viewLifecycleOwner, Observer {
+            binding.includeToolbarNovel.layoutNovelTag.textTagItems.text = it
+        })
+
+        viewModelNovel.illustrator.observe(viewLifecycleOwner, Observer {
+            binding.includeToolbarNovel.layoutNovelIllustrator.textIllustratorItem.text = it
+        })
+
+        viewModelNovel.publisher.observe(viewLifecycleOwner, Observer {
+            binding.includeToolbarNovel.layoutNovelPublisher.textPublisherItem.text = it
+        })
+
+        viewModelNovel.cover.observe(viewLifecycleOwner, Observer {
+            binding.includeToolbarNovel.imageNovelCover.load(it)
         })
 
         return binding.root

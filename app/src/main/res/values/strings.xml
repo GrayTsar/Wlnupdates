@@ -7,16 +7,17 @@
     <string name="novel_description">Description</string>
     <string name="novel_chapters">Chapters</string>
     <string name="novel_genre">Genre</string>
+    <string name="novel_rating">Rating: %s</string>
     <string name="novel_tags">Tags</string>
-    <string name="novel_tl_type">TL Type:</string>
-    <string name="novel_demographic">Demographic:</string>
-    <string name="novel_country_of_origin">Country of Origin:</string>
-    <string name="novel_status">Status: </string>
-    <string name="novel_language">Language:</string>
-    <string name="novel_licensed">Licensed:</string>
+    <string name="novel_tl_type"><![CDATA[<b>TL Type:</b>]]> %s</string>
+    <string name="novel_demographic"><![CDATA[<b>Demographic:</b>]]> %s</string>
+    <string name="novel_country_of_origin"><![CDATA[<b>Country of Origin:</b>]]> %s</string>
+    <string name="novel_status"><![CDATA[<b>Status:</b>]]> %s</string>
+    <string name="novel_language"><![CDATA[<b>Language:</b>]]> %s</string>
+    <string name="novel_licensed"><![CDATA[<b>Licensed:</b>]]> %s</string>
     <string name="novel_illustrator">Illustrator:</string>
     <string name="novel_publisher">Publisher:</string>
-    <string name="novel_first_release_date">First Release:</string>
+    <string name="novel_first_release_date"><![CDATA[<b>First Release:</b>]]> %s</string>
     <string name="novel_alternative_names">Alternative Names</string>
 
 </resources>
