@@ -24,11 +24,13 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.fragmentNovel
+                R.id.fragmentLibrary
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)
         navController.addOnDestinationChangedListener(this)
+
+        navController.navigate(R.id.fragmentNovel)
     }
 
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {

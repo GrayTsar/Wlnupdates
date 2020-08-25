@@ -1,20 +1,18 @@
 package com.graytsar.wlnupdates.ui.novel
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.Observer
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
+import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.databinding.FragmentNovelBinding
-import com.graytsar.wlnupdates.rest.RetrofitInterface
-import com.graytsar.wlnupdates.rest.request.RequestNovel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import kotlinx.android.synthetic.main.item_chapters.view.*
 
 class FragmentNovel : Fragment() {
     private lateinit var binding:FragmentNovelBinding
@@ -32,19 +30,21 @@ class FragmentNovel : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentNovelBinding.inflate(inflater, container, false)
+        binding.includeToolbarNovel.viewModelNovel = viewModelNovel
+        binding.lifecycleOwner = this
 
-        val retrofit = Retrofit.Builder()
-            .baseUrl( "https://www.wlnupdates.com/")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
 
-        val service = retrofit.create(RetrofitInterface::class.java)
+        val toolbar: Toolbar = binding.includeToolbarNovel.toolbarNovel
+        (requireActivity() as MainActivity).setSupportActionBar(toolbar)
 
-        GlobalScope.launch {
-            val n = service.getNovel(RequestNovel(3, "get-series-id")).execute().body()
-            Log.d("DBG", "end")
-        }
+        val navController = NavHostFragment.findNavController(this)
+        NavigationUI.setupActionBarWithNavController(this.context as MainActivity, navController)
 
+        viewModelNovel.getRestData()
+
+        viewModelNovel.latestChapter.observe(viewLifecycleOwner, Observer {
+            binding.includeToolbarNovel.layoutNovelChapters.textChapterLastDate.text = it
+        })
 
         return binding.root
     }

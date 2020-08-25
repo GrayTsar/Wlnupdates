@@ -2,4 +2,21 @@
     <string name="app_name">Wlnupdates</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+
+    <string name="novel_description">Description</string>
+    <string name="novel_chapters">Chapters</string>
+    <string name="novel_genre">Genre</string>
+    <string name="novel_tags">Tags</string>
+    <string name="novel_tl_type">TL Type:</string>
+    <string name="novel_demographic">Demographic:</string>
+    <string name="novel_country_of_origin">Country of Origin:</string>
+    <string name="novel_status">Status: </string>
+    <string name="novel_language">Language:</string>
+    <string name="novel_licensed">Licensed:</string>
+    <string name="novel_illustrator">Illustrator:</string>
+    <string name="novel_publisher">Publisher:</string>
+    <string name="novel_first_release_date">First Release:</string>
+    <string name="novel_alternative_names">Alternative Names</string>
+
 </resources>

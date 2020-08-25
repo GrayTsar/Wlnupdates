@@ -70,7 +70,7 @@ class DataNovel {
 
     @SerializedName("orig_lang")
     @Expose
-    var origLang: Any? = null
+    var origLang: String? = null
 
     @SerializedName("orig_status")
     @Expose
@@ -78,7 +78,7 @@ class DataNovel {
 
     @SerializedName("origin_loc")
     @Expose
-    var originLoc: Any? = null
+    var originLoc: String? = null
 
     @SerializedName("progress")
     @Expose
@@ -142,5 +142,5 @@ class DataNovel {
 
     @SerializedName("website")
     @Expose
-    var website: Any? = null
+    var website: String? = null
 }
