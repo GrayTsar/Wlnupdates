@@ -1,7 +1,8 @@
-package com.graytsar.wlnupdates.rest
+package com.graytsar.wlnupdates.rest.data
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
+import com.graytsar.wlnupdates.rest.*
 
 class DataNovel {
     @SerializedName("alternatenames")

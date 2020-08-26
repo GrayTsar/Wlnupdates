@@ -2,12 +2,12 @@ package com.graytsar.wlnupdates.rest.response
 
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.graytsar.wlnupdates.rest.data.DataNovel
+import com.graytsar.wlnupdates.rest.data.DataOriginal
 
-class ResponseNovel {
+class ResponseOriginal {
     @SerializedName("data")
     @Expose
-    var dataNovel: DataNovel? = null
+    var data: DataOriginal? = null
 
     @SerializedName("error")
     @Expose
@@ -15,5 +15,5 @@ class ResponseNovel {
 
     @SerializedName("message")
     @Expose
-    var message: String? = null
+    var message: Any? = null
 }
