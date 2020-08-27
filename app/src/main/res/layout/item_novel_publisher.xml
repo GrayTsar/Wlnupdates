@@ -5,16 +5,17 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/publisherBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
         <TextView
-            android:id="@+id/textIllustrator"
+            android:id="@+id/textPublisher"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
-            android:text="@string/novel_illustrator"
+            android:text="@string/novel_publisher"
             android:textColor="@color/colorTextPrimary"
             android:textSize="18sp"
             android:textStyle="bold"
@@ -23,22 +24,24 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/textIllustratorItem"
+            android:id="@+id/textPublisherItem"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
             android:textColor="@color/colorTextPrimary"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toStartOf="@+id/imageIllustratorExpand"
-            app:layout_constraintStart_toEndOf="@+id/textIllustrator"
+            app:layout_constraintEnd_toStartOf="@+id/imagePublisherExpand"
+            app:layout_constraintStart_toEndOf="@+id/textPublisher"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/imageIllustratorExpand"
+            android:id="@+id/imagePublisherExpand"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"

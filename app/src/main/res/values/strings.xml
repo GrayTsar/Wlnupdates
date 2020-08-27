@@ -27,5 +27,10 @@
     <string name="title_latest">Latest</string>
     <string name="item_latest_volume">Volume:</string>
     <string name="item_latest_chapter">Chapter:</string>
+    <string name="title_genre">Genres</string>
+    <string name="title_tags">Tags</string>
+    <string name="title_publisher">Publisher</string>
+    <string name="title_illustrator">Illustrator</string>
+    <string name="title_chapters">Chapters</string>
 
 </resources>

@@ -5,9 +5,14 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.graytsar.wlnupdates.R
+import androidx.appcompat.widget.Toolbar
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.NavigationUI
+import com.graytsar.wlnupdates.MainActivity
+import com.graytsar.wlnupdates.databinding.FragmentSearchBinding
 
 class FragmentSearch : Fragment() {
+    private lateinit var binding:FragmentSearchBinding
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -21,8 +26,16 @@ class FragmentSearch : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_search, container, false)
+        binding = FragmentSearchBinding.inflate(inflater, container, false)
+
+        val toolbar: Toolbar = binding.includeToolbarSearch.toolbarSearch
+        (requireActivity() as MainActivity).setSupportActionBar(toolbar)
+
+        val navController = NavHostFragment.findNavController(this)
+        NavigationUI.setupActionBarWithNavController(this.context as MainActivity, navController)
+
+
+        return binding.root
     }
 
 

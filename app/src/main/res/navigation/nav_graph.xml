@@ -46,13 +46,33 @@
         android:label="fragment_author"
         tools:layout="@layout/fragment_author" />
     <fragment
-        android:id="@+id/fragmentPublisher"
-        android:name="com.graytsar.wlnupdates.ui.FragmentPublisher"
-        android:label="fragment_publisher"
-        tools:layout="@layout/fragment_publisher" />
-    <fragment
         android:id="@+id/fragmentCollectionRecent"
         android:name="com.graytsar.wlnupdates.ui.recent.FragmentCollectionRecent"
-        android:label="fragment_collection_recent2"
+        android:label="@string/title_latest"
         tools:layout="@layout/fragment_collection_recent" />
+    <fragment
+        android:id="@+id/fragmentNovelGenre"
+        android:name="com.graytsar.wlnupdates.ui.novel.FragmentNovelGenre"
+        android:label="@string/title_genre"
+        tools:layout="@layout/fragment_novel_genre" />
+    <fragment
+        android:id="@+id/fragmentNovelTag"
+        android:name="com.graytsar.wlnupdates.ui.novel.FragmentNovelTag"
+        android:label="@string/title_tags"
+        tools:layout="@layout/fragment_novel_tag" />
+    <fragment
+        android:id="@+id/fragmentNovelPublisher"
+        android:name="com.graytsar.wlnupdates.ui.novel.FragmentNovelPublisher"
+        android:label="@string/title_publisher"
+        tools:layout="@layout/fragment_novel_publisher" />
+    <fragment
+        android:id="@+id/fragmentNovelIllustrator"
+        android:name="com.graytsar.wlnupdates.ui.novel.FragmentNovelIllustrator"
+        android:label="@string/title_illustrator"
+        tools:layout="@layout/fragment_novel_illustrator" />
+    <fragment
+        android:id="@+id/fragmentNovelChapter"
+        android:name="com.graytsar.wlnupdates.ui.novel.FragmentNovelChapter"
+        android:label="@string/title_chapters"
+        tools:layout="@layout/fragment_novel_chapter" />
 </navigation>

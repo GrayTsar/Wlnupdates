@@ -1,5 +1,6 @@
 package com.graytsar.wlnupdates.ui.novel
 
+import android.text.TextUtils
 import android.text.format.DateUtils
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
@@ -9,11 +10,10 @@ import androidx.lifecycle.ViewModel
 import com.graytsar.wlnupdates.rest.*
 import com.graytsar.wlnupdates.rest.interfaces.RestService.restService
 import com.graytsar.wlnupdates.rest.request.RequestNovel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 
 @BindingAdapter("android:text")
@@ -26,6 +26,8 @@ fun setText(view: TextView, text: String?) {
 }
 
 class ViewModelNovel: ViewModel() {
+    val isLoading = MutableLiveData<Boolean>(false)
+
     val title = MutableLiveData<String>("")
     val author = MutableLiveData<String>("")
     val rating = MutableLiveData<String>("") //from 0 - 10
@@ -41,7 +43,7 @@ class ViewModelNovel: ViewModel() {
     val lastRelease = MutableLiveData<String>("") //date of latest release
     val latestChapter = MutableLiveData<String>("") //name of latest chapter
 
-
+    // REST data list
     val listAuthor = ArrayList<Author>()
     val listChapter = ArrayList<Release>()
     val listGenre = ArrayList<Genre>()
@@ -51,6 +53,7 @@ class ViewModelNovel: ViewModel() {
     val listAlternativeNames = ArrayList<String>()
     val listCovers = ArrayList<Cover>()
 
+    // UI data
     val genre = MutableLiveData<String>()
     val tags = MutableLiveData<String>()
     val illustrator = MutableLiveData<String>()
@@ -58,85 +61,91 @@ class ViewModelNovel: ViewModel() {
     val alternativeNames = MutableLiveData<String>()
     val cover = MutableLiveData<String>()
 
-    fun getRestData(){
-        GlobalScope.launch {
-            val novel = restService.getNovel(RequestNovel(1196, "get-series-id")).execute().body()
-            novel?.dataNovel?.let { novel ->
-                title.postValue(novel.title)
-                rating.postValue("${novel.rating?.avg.toString()} (${novel.ratingCount})")
+    fun getRestData(id:Int){
+        isLoading.postValue(true)
+        clearLists()
 
-                novel.authors?.forEach {
-                    listAuthor.add(it)
-                }
-                var tAuthor:String = ""
-                listAuthor.forEach {
-                    tAuthor += "${it.author}, "
-                }
-                author.postValue(tAuthor)
+        val novel = restService.getNovel(RequestNovel(id)).execute().body()
+        novel?.dataNovel?.let { novel ->
+            title.postValue(novel.title)
 
-                novel.releases?.forEach {
-                    listChapter.add(it)
-                }
+            if(novel.rating?.avg != null && novel.ratingCount != null){
+                rating.postValue("${String.format("%.2f", novel.rating?.avg)} (${novel.ratingCount})")
+            }
 
-                novel.genres?.forEach {
-                    listGenre.add(it)
-                }
+            novel.authors?.forEach {
+                listAuthor.add(it)
+            }
 
-                novel.tags?.forEach {
-                    listTag.add(it)
-                }
+            novel.releases?.forEach {
+                listChapter.add(it)
+            }
 
-                novel.illustrators?.forEach {
-                    listIllustrator.add(it)
-                }
+            novel.genres?.forEach {
+                listGenre.add(it)
+            }
 
-                novel.publishers?.forEach {
-                    listPublisher.add(it)
-                }
+            novel.tags?.forEach {
+                listTag.add(it)
+            }
 
-                novel.alternatenames?.forEach {
-                    listAlternativeNames.add(it)
-                }
+            novel.illustrators?.forEach {
+                listIllustrator.add(it)
+            }
 
-                novel.covers?.forEach {
-                    listCovers.add(it)
-                }
+            novel.publishers?.forEach {
+                listPublisher.add(it)
+            }
 
-                novel.title?.let {
-                    description.postValue(it)
-                }
+            novel.alternatenames?.forEach {
+                listAlternativeNames.add(it)
+            }
 
-                novel.tlType?.let {
-                    tlType.postValue(it)
+            novel.covers?.let { list ->
+                if(list.isNotEmpty()){
+                    cover.postValue(list[0].url)
                 }
-
-                novel.demographic?.let {
-                    demographic.postValue(it)
+                list.forEach { cover ->
+                    listCovers.add(cover)
                 }
+            }
 
-                novel.originLoc?.let {
-                    countryOfOrigin.postValue(it)
+            novel.title?.let {
+                description.postValue(it)
+            }
+
+            novel.tlType?.let {
+                tlType.postValue(it)
+            }
+
+            novel.demographic?.let {
+                demographic.postValue(it)
+            }
+
+            novel.originLoc?.let {
+                countryOfOrigin.postValue(it)
+            }
+
+            novel.origStatus?.let {
+                statusReleases.postValue(it)
+            }
+
+            novel.origLang?.let {
+                language.postValue(it)
+            }
+
+            novel.licenseEn?.let {
+                if(it){
+                    licensed.postValue("Yes")
+                } else {
+                    licensed.postValue("No")
                 }
+            }
 
-                novel.origStatus?.let {
-                    statusReleases.postValue(it)
-                }
-
-                novel.origLang?.let {
-                    language.postValue(it)
-                }
-
-                novel.licenseEn?.let {
-                    if(it){
-                        licensed.postValue("Yes")
-                    } else {
-                        licensed.postValue("No")
-                    }
-                }
-
+            novel.pubDate?.let { pubDate ->
                 try {
                     val formatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z")
-                    val date = formatter.parse(novel.pubDate)?.time
+                    val date = formatter.parse(pubDate)?.time
                     date?.let {
                         val ago = DateUtils.getRelativeTimeSpanString(it, Calendar.getInstance().timeInMillis, DateUtils.MINUTE_IN_MILLIS)
                         firstRelease.postValue(ago.toString())
@@ -144,68 +153,44 @@ class ViewModelNovel: ViewModel() {
                 } catch (e:Exception) {
                     firstRelease.postValue(novel.pubDate)
                 }
-
-                lastRelease.postValue(novel.latestPublished)
-                latestChapter.postValue("${novel.latestStr} [${listChapter.count()}]")
-
-                novel.covers?.let {
-                    if(it.isNotEmpty()){
-                        cover.postValue(it[0].url)
-                    }
-                }
-
-                populateLists()
             }
+
+            lastRelease.postValue(novel.latestPublished)
+            latestChapter.postValue("${novel.latestStr} [${listChapter.count()}]")
+
+            populateUiLists()
         }
+
+        isLoading.postValue(false)
     }
 
-    fun populateLists() {
-        val maxIterations = 3
+    private fun populateUiLists() {
+        author.postValue(TextUtils.join(", ", listAuthor.stream().map { Author -> Author.author }.collect(Collectors.toList())))
 
-        var genreString = ""
-        listGenre.forEachIndexed { index, genre ->
-            if(index < maxIterations) {
-                genreString += "${genre.genre}, "
-            } else {
-                return@forEachIndexed
-            }
-        }
-        genre.postValue(genreString)
+        genre.postValue(TextUtils.join(", ", listGenre.stream().map { Genre -> Genre.genre }.collect(Collectors.toList())))
 
-        var tagString = ""
-        listTag.forEachIndexed { index, tag ->
-            if(index < 3) {
-                tagString += "${tag.tag}, "
-            } else {
-                return@forEachIndexed
-            }
-        }
-        tags.postValue(tagString)
+        tags.postValue(TextUtils.join(", ", listTag.stream().map { Tag -> Tag.tag }.collect(Collectors.toList())))
 
-        var illustratorString = ""
-        listIllustrator.forEachIndexed { index, illustrator ->
-            if(index < maxIterations) {
-                illustratorString += "${illustrator.illustrator}, "
-            } else {
-                return@forEachIndexed
-            }
-        }
-        illustrator.postValue(illustratorString)
+        illustrator.postValue(TextUtils.join(", ", listIllustrator.stream().map { Illustrator -> Illustrator.illustrator }.collect(Collectors.toList())))
 
-        var publisherString = ""
-        listPublisher.forEachIndexed { index, publisher ->
-            if(index < maxIterations) {
-                publisherString += "${publisher.publisher}, "
-            } else {
-                return@forEachIndexed
-            }
-        }
-        publisher.postValue(publisherString)
+        publisher.postValue(TextUtils.join(", ", listPublisher.stream().map { Publisher -> Publisher.publisher }.collect(Collectors.toList())))
 
         var altNamesString = ""
         listAlternativeNames.forEach {
             altNamesString += "<br>$it</br>"
         }
         alternativeNames.postValue(altNamesString)
+    }
+
+    private fun clearLists(){
+        listAuthor.clear()
+        listChapter.clear()
+        listGenre.clear()
+        listTag.clear()
+        listIllustrator.clear()
+        listPublisher.clear()
+        listAlternativeNames.clear()
+        listCovers.clear()
+
     }
 }

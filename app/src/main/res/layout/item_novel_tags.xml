@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/tagBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -28,6 +29,8 @@
             android:layout_marginTop="8dp"
             android:layout_marginEnd="8dp"
             android:layout_marginBottom="8dp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
             android:textColor="@color/colorTextPrimary"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"

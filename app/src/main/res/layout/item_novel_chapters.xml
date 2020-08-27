@@ -5,6 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/chapterBackground"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
@@ -22,14 +23,17 @@
 
         <TextView
             android:id="@+id/textChapterLastDate"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
             android:layout_marginBottom="8dp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
             android:textColor="@color/colorTextPrimary"
             android:textSize="18sp"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/iconChapterExpand"
             app:layout_constraintStart_toEndOf="@+id/textChapterTitle"
             app:layout_constraintTop_toTopOf="parent" />
 

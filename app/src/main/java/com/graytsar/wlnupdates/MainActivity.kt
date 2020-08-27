@@ -9,6 +9,14 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 
+const val ARG_ID_NOVEL:String = "argIdNovel"
+
+const val ARG_PARCEL_NOVEL_CHAPTER:String = "argParcelNovelChapter"
+const val ARG_PARCEL_NOVEL_GENRE:String = "argParcelNovelGenre"
+const val ARG_PARCEL_NOVEL_TAG:String = "argParcelNovelTag"
+const val ARG_PARCEL_NOVEL_ILLUSTRATOR:String = "argParcelNovelIllustrator"
+const val ARG_PARCEL_NOVEL_PUBLISHER:String = "argParcelNovelPublisher"
+
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
     private lateinit var appBarConfiguration: AppBarConfiguration
 
@@ -37,4 +45,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {
 
     }
+
+
 }
