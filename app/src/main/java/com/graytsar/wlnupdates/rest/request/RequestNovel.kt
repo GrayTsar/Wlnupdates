@@ -9,6 +9,4 @@ class RequestNovel(
     var id:Int,
     @SerializedName("mode")
     @Expose
-    var mode:String = "get-series-id"){
-
-}
+    var mode:String = "get-series-id")

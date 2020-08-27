@@ -9,5 +9,4 @@ class RequestOriginal(
     private var offset:Int = 1,
     @SerializedName("mode")
     @Expose
-    private var mode:String = "get-oel-releases") {
-}
+    private var mode:String = "get-oel-releases")

@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.graytsar.wlnupdates.rest.Item
 import com.graytsar.wlnupdates.rest.interfaces.RestService
 import com.graytsar.wlnupdates.rest.request.RequestOriginal
-import com.graytsar.wlnupdates.rest.request.RequestTranslated
 
 class ViewModelOriginal: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)

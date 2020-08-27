@@ -1,11 +1,9 @@
 package com.graytsar.wlnupdates.ui.recent
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
-import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
@@ -19,7 +17,6 @@ import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentRecentBinding
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import java.util.*
 
 class FragmentRecent : Fragment() {
     private lateinit var binding: FragmentRecentBinding

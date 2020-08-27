@@ -19,7 +19,7 @@ import kotlinx.coroutines.launch
 
 class FragmentNovel : Fragment() {
     private lateinit var binding:FragmentNovelBinding
-    val viewModelNovel by viewModels<ViewModelNovel>()
+    private val viewModelNovel by viewModels<ViewModelNovel>()
 
     private var argIdNovel:Int = -1
 

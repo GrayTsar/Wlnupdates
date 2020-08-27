@@ -9,5 +9,4 @@ class RequestRecent(
     private var offset:Int = 1,
     @SerializedName("mode")
     @Expose
-    private var mode:String = "get-releases"){
-}
+    private var mode:String = "get-releases")

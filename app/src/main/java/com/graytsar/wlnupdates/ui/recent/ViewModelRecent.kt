@@ -6,8 +6,6 @@ import androidx.lifecycle.ViewModel
 import com.graytsar.wlnupdates.rest.Item
 import com.graytsar.wlnupdates.rest.interfaces.RestService
 import com.graytsar.wlnupdates.rest.request.RequestRecent
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class ViewModelRecent: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)

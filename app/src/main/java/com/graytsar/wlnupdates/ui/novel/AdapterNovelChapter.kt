@@ -2,18 +2,13 @@ package com.graytsar.wlnupdates.ui.novel
 
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.navigation.NavController
-import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.graytsar.wlnupdates.ARG_ID_NOVEL
-import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemLatestBinding
 import com.graytsar.wlnupdates.rest.Release

@@ -9,5 +9,4 @@ class RequestTranslated(
     private var offset:Int = 1,
     @SerializedName("mode")
     @Expose
-    private var mode:String = "get-translated-releases") {
-}
+    private var mode:String = "get-translated-releases")

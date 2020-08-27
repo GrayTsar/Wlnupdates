@@ -33,4 +33,6 @@
     <string name="title_illustrator">Illustrator</string>
     <string name="title_chapters">Chapters</string>
 
+    <string name="menu_item_search">Search</string>
+
 </resources>

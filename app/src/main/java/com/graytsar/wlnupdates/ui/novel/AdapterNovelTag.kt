@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemNovelSimpleExpandedBinding
-import com.graytsar.wlnupdates.rest.Genre
 import com.graytsar.wlnupdates.rest.Tag
 
 class AdapterNovelTag(private val activity: Fragment): ListAdapter<Tag, ViewHolderNovelSimpleExpanded>(DiffCallbackNovelTag()) {

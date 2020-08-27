@@ -3,19 +3,15 @@ package com.graytsar.wlnupdates.ui.novel
 import android.os.Bundle
 import android.view.*
 import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.graytsar.wlnupdates.ARG_PARCEL_NOVEL_CHAPTER
-import com.graytsar.wlnupdates.ARG_PARCEL_NOVEL_GENRE
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentNovelChapterBinding
-import com.graytsar.wlnupdates.databinding.FragmentNovelGenreBinding
-import com.graytsar.wlnupdates.rest.Genre
 import com.graytsar.wlnupdates.rest.Release
-import com.graytsar.wlnupdates.ui.recent.AdapterItem
 import java.util.*
 import kotlin.collections.ArrayList
 
