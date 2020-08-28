@@ -48,6 +48,5 @@ class ViewModelRecent: ViewModel() {
         currentPage = offset
         isLoading.postValue(false)
 
-        Log.d("DBG", "Resume ${items.size}")
     }
 }

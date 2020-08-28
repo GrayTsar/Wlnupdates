@@ -49,6 +49,5 @@ class ViewModelOriginal: ViewModel() {
         currentPage = offset
         isLoading.postValue(false)
 
-        Log.d("DBG", "Original ${items.size}")
     }
 }

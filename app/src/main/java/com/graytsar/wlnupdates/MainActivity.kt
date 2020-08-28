@@ -11,6 +11,11 @@ import androidx.navigation.ui.setupActionBarWithNavController
 
 const val ARG_ID_NOVEL:String = "argIdNovel"
 
+const val ARG_ID_AUTHOR:String = "argIdAuthor"
+const val ARG_ID_GROUP:String = "argIdAuthor"
+const val ARG_ID_PUBLISHER:String = "argIdPublisher"
+const val ARG_ID_ILLUSTRATOR:String = "argIdPublisher"
+
 const val ARG_PARCEL_NOVEL_CHAPTER:String = "argParcelNovelChapter"
 const val ARG_PARCEL_NOVEL_GENRE:String = "argParcelNovelGenre"
 const val ARG_PARCEL_NOVEL_TAG:String = "argParcelNovelTag"
@@ -32,7 +37,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
-                R.id.fragmentSearch
+                R.id.fragmentCollectionRecent
             )
         )
         setupActionBarWithNavController(navController, appBarConfiguration)

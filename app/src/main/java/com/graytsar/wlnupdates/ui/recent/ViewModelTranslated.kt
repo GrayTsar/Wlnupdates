@@ -49,6 +49,5 @@ class ViewModelTranslated: ViewModel() {
         currentPage = offset
         isLoading.postValue(false)
 
-        Log.d("DBG", "Translated ${items.size}")
     }
 }

@@ -3,24 +3,26 @@ package com.graytsar.wlnupdates.rest.response
 import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.Expose
-import com.google.gson.annotations.SerializedName
-import com.graytsar.wlnupdates.rest.data.DataNovel
 
-class ResponseNovel(
+import com.google.gson.annotations.SerializedName
+import com.graytsar.wlnupdates.rest.data.DataGroup
+
+
+class ResponseGroup(
     @SerializedName("data")
     @Expose
-    var dataNovel: DataNovel? = null,
+    val data: DataGroup? = null,
 
     @SerializedName("error")
     @Expose
-    var error: Boolean? = null,
+    val error: Boolean? = null,
 
     @SerializedName("message")
     @Expose
-    var message: String? = null
+    val message: String? = null
 ) : Parcelable {
     constructor(source: Parcel) : this(
-        source.readParcelable<DataNovel>(DataNovel::class.java.classLoader),
+        source.readParcelable<DataGroup>(DataGroup::class.java.classLoader),
         source.readValue(Boolean::class.java.classLoader) as Boolean?,
         source.readString()
     )
@@ -28,17 +30,17 @@ class ResponseNovel(
     override fun describeContents() = 0
 
     override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {
-        writeParcelable(dataNovel, 0)
+        writeParcelable(data, 0)
         writeValue(error)
         writeString(message)
     }
 
     companion object {
         @JvmField
-        val CREATOR: Parcelable.Creator<ResponseNovel> =
-            object : Parcelable.Creator<ResponseNovel> {
-                override fun createFromParcel(source: Parcel): ResponseNovel = ResponseNovel(source)
-                override fun newArray(size: Int): Array<ResponseNovel?> = arrayOfNulls(size)
+        val CREATOR: Parcelable.Creator<ResponseGroup> =
+            object : Parcelable.Creator<ResponseGroup> {
+                override fun createFromParcel(source: Parcel): ResponseGroup = ResponseGroup(source)
+                override fun newArray(size: Int): Array<ResponseGroup?> = arrayOfNulls(size)
             }
     }
 }

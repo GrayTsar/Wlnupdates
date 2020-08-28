@@ -22,4 +22,16 @@ interface WlnupdatesInterface {
 
     @POST("api")
     fun getSearch(@Body request:RequestSearch): Call<ResponseSearch>
+
+    @POST("api")
+    fun getAuthor(@Body request:RequestAuthor): Call<ResponseAuthor>
+
+    @POST("api")
+    fun getIllustrator(@Body request:RequestIllustrator): Call<ResponseIllustrator>
+
+    @POST("api")
+    fun getPublisher(@Body request:RequestPublisher): Call<ResponsePublisher>
+
+    @POST("api")
+    fun getGroup(@Body request:RequestGroup): Call<ResponseGroup>
 }

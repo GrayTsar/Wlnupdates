@@ -3,6 +3,7 @@ package com.graytsar.wlnupdates.ui.search
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,9 +54,9 @@ class FragmentSearch : Fragment() {
         adapterSearch.submitList(viewModelSearch.list.toMutableList())
 
 
-        val searchTo = binding.includeToolbarSearch.editTextSearchNovel
-        searchTo.setText(viewModelSearch.query)
-        searchTo.addTextChangedListener(object : TextWatcher {
+        val searchBar = binding.includeToolbarSearch.editTextSearchNovel
+        searchBar.setText(viewModelSearch.query)
+        searchBar.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
 
             }
@@ -65,22 +66,33 @@ class FragmentSearch : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if(s.length > 1){
+                //if(s.length > 1){
                     viewModelSearch.query = s.toString()
 
                     requestCall?.cancel()
                     requestCall = RestService.restService.getSearch(RequestSearch(viewModelSearch.query))
                     requestCall?.enqueue(object:Callback<ResponseSearch> {
                         override fun onResponse(call: Call<ResponseSearch>, response: Response<ResponseSearch>) {
-                            onReceivedResult(response.body())
+                            if(response.isSuccessful){
+                                response.body()?.error?.let { isError ->
+                                    if(isError){
+                                        Log.d("DBG-Error:", "${response.body()?.message}")
+                                    } else {
+                                        onReceivedResult(response.body())
+                                    }
+
+                                }
+                            } else {
+                                Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                            }
                         }
 
                         override fun onFailure(call: Call<ResponseSearch>, t: Throwable) {
-
+                            Log.d("DBG-Failure:", "restService.getSearch() onFailure")
                         }
                     })
                 }
-            }
+            //}
         })
 
         return binding.root
@@ -98,5 +110,6 @@ class FragmentSearch : Fragment() {
 
             adapterSearch.submitList(viewModelSearch.list.toMutableList())
         }
+        Log.d("DBG-Failure:", "End")
     }
 }

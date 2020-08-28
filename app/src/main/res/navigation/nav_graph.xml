@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/fragmentSearch">
+    app:startDestination="@id/fragmentGroup">
 
     <fragment
         android:id="@+id/fragmentLibrary"
@@ -42,7 +42,7 @@
         tools:layout="@layout/fragment_recent" />
     <fragment
         android:id="@+id/fragmentAuthor"
-        android:name="com.graytsar.wlnupdates.ui.FragmentAuthor"
+        android:name="com.graytsar.wlnupdates.ui.author.FragmentAuthor"
         android:label="fragment_author"
         tools:layout="@layout/fragment_author" />
     <fragment
@@ -75,4 +75,19 @@
         android:name="com.graytsar.wlnupdates.ui.novel.FragmentNovelChapter"
         android:label="@string/title_chapters"
         tools:layout="@layout/fragment_novel_chapter" />
+    <fragment
+        android:id="@+id/fragmentPublisher"
+        android:name="com.graytsar.wlnupdates.ui.publisher.FragmentPublisher"
+        android:label="fragment_publisher"
+        tools:layout="@layout/fragment_publisher" />
+    <fragment
+        android:id="@+id/fragmentIllustrator"
+        android:name="com.graytsar.wlnupdates.ui.illustrator.FragmentIllustrator"
+        android:label="fragment_illustrator"
+        tools:layout="@layout/fragment_illustrator" />
+    <fragment
+        android:id="@+id/fragmentGroup"
+        android:name="com.graytsar.wlnupdates.ui.group.FragmentGroup"
+        android:label="fragment_group"
+        tools:layout="@layout/fragment_group" />
 </navigation>
