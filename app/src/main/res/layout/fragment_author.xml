@@ -5,14 +5,60 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
 
+    <data>
+        <variable
+            name="viewModelAuthor"
+            type="com.graytsar.wlnupdates.ui.author.ViewModelAuthor" />
+    </data>
 
-    <FrameLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
         <include
             android:id="@+id/includeToolbarAuthor"
-            layout="@layout/toolbar_author"/>
-    </FrameLayout>
+            layout="@layout/toolbar_author"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textAuthorName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:textColor="@color/colorTextPrimary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:text="@{@string/name_author(viewModelAuthor.name)}"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/includeToolbarAuthor"
+            tools:text="Name: Mars Gravity" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerAuthor"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layoutManager="LinearLayoutManager"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textAuthorName">
+
+        </androidx.recyclerview.widget.RecyclerView>
+
+        <ProgressBar
+            android:id="@+id/progressBarAuthor"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="64dp"
+            app:layout_constraintEnd_toStartOf="@+id/recyclerAuthor"
+            app:layout_constraintStart_toEndOf="@+id/recyclerAuthor"
+            app:layout_constraintTop_toBottomOf="@+id/includeToolbarAuthor" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -39,6 +39,8 @@ class FragmentGroup : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentGroupBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+        binding.viewModelGroup = viewModelGroup
 
         val toolbar: Toolbar = binding.includeToolbarGroup.toolbarGroup
         (requireActivity() as MainActivity).setSupportActionBar(toolbar)
@@ -47,26 +49,36 @@ class FragmentGroup : Fragment() {
         NavigationUI.setupActionBarWithNavController(this.context as MainActivity, navController)
 
         binding.recyclerGroupSeries.adapter = adapterGroupSeries
-        binding.recyclerGroupFeed.adapter = adapterGroupSeries
+        binding.recyclerGroupFeed.adapter = adapterGroupFeed
 
-        GlobalScope.launch {
-            if(idGroup > 0) {
-                viewModelGroup.getDataGroup(id)
+        viewModelGroup.isLoading.observe(viewLifecycleOwner, {
+            binding.progressBarGroup.visibility = if(it){
+                View.VISIBLE
+            } else {
+                View.GONE
             }
-        }.invokeOnCompletion {
-            viewModelGroup.activeSeries?.let { map ->
-                val mapList = ArrayList<Map.Entry<String, String>>()
-                map.forEach {
-                    mapList.add(it)
-                }
-                adapterGroupSeries.submitList(mapList)
+        })
+
+        viewModelGroup.activeSeries.observe(viewLifecycleOwner, {
+            val mapList = ArrayList<Map.Entry<String, String>>()
+            it.forEach { entry ->
+                mapList.add(entry)
             }
-            viewModelGroup.feedPaginated?.let {
-                adapterGroupFeed.submitList(it.toMutableList())
-            }
-        }
+            adapterGroupSeries.submitList(mapList)
+        })
+
+        viewModelGroup.feedPaginated.observe(viewLifecycleOwner, {
+            adapterGroupFeed.submitList(it)
+        })
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        //if(idGroup > 0) {
+            viewModelGroup.getDataGroup(19)
+        //}
     }
 
 }

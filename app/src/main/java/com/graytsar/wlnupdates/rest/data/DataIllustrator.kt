@@ -5,6 +5,7 @@ import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.graytsar.wlnupdates.rest.Series
+import com.graytsar.wlnupdates.rest.SeriesTitle
 
 
 class DataIllustrator(
@@ -13,11 +14,11 @@ class DataIllustrator(
     var name: String? = null,
     @SerializedName("series")
     @Expose
-    var series: List<Series?>? = null
+    var series: List<SeriesTitle?>? = null
 ) : Parcelable {
     constructor(source: Parcel) : this(
         source.readString(),
-        source.createTypedArrayList(Series.CREATOR)
+        source.createTypedArrayList(SeriesTitle.CREATOR)
     )
 
     override fun describeContents() = 0

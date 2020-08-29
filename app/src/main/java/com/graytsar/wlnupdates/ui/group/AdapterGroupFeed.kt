@@ -24,27 +24,34 @@ class AdapterGroupFeed(private val activity: Fragment): ListAdapter<FeedPaginate
     override fun onBindViewHolder(holder: ViewHolderGroupFeed, position: Int) {
         holder.binding.lifecycleOwner = activity
         val item = getItem(position)
+        holder.model = item
 
         holder.binding.textGroupFeedPublished.text = item.published
         holder.binding.textGroupFeedTitle.text = item.title
         holder.binding.textGroupFeedName.text = item.srcname
 
         holder.binding.groupFeedBackground.setOnClickListener {
-            try {
-                val intent = Intent(Intent.ACTION_VIEW).apply {
-                    data = Uri.parse(item.linkurl)
-                }
-                activity.startActivity(intent)
-            } catch (e:Exception) {
-
-            }
+            holder.onClick(it)
         }
     }
 
 }
 
 class ViewHolderGroupFeed(view: View, val binding: ItemGroupFeedBinding): RecyclerView.ViewHolder(view){
+    var model:FeedPaginated? = null
 
+    fun onClick(view: View) {
+        model?.let { model ->
+            try {
+                val intent = Intent(Intent.ACTION_VIEW).apply {
+                    data = Uri.parse(model.linkurl)
+                }
+                view.context.startActivity(intent)
+            } catch (e:Exception) {
+
+            }
+        }
+    }
 }
 
 class DiffCallbackGroupFeed: DiffUtil.ItemCallback<FeedPaginated>(){

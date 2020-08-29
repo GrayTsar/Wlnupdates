@@ -40,6 +40,8 @@ class FragmentPublisher : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentPublisherBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+        binding.viewModelPublisher = viewModelPublisher
 
         val toolbar: Toolbar = binding.includeToolbarPublisher.toolbarPublisher
         (requireActivity() as MainActivity).setSupportActionBar(toolbar)
@@ -49,23 +51,27 @@ class FragmentPublisher : Fragment() {
 
         binding.recyclerPublisher.adapter = adapterPublisher
 
-        GlobalScope.launch {
-            if(idPublisher > 0) {
-                val result = RestService.restService.getPublisher(RequestPublisher(idPublisher)).execute().body()
-                result?.let {responsePublisher ->
-                    responsePublisher.data?.series?.let { list ->
-                        viewModelPublisher.list = list
-                    }
-                }
+        viewModelPublisher.isLoading.observe(viewLifecycleOwner, {
+            binding.progressBarPublisher.visibility = if(it){
+                View.VISIBLE
+            } else {
+                View.GONE
             }
-        }.invokeOnCompletion {
-            lifecycleScope.launch {
-                adapterPublisher.submitList(viewModelPublisher.list?.toMutableList())
-            }
-        }
+        })
+
+        viewModelPublisher.list.observe(viewLifecycleOwner, {
+            adapterPublisher.submitList(it)
+        })
 
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if(idPublisher > 0) {
+            viewModelPublisher.getDataPublisher(idPublisher)
+        }
+    }
 
 }

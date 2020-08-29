@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/fragmentGroup">
+    app:startDestination="@id/fragmentAdvancedSearch">
 
     <fragment
         android:id="@+id/fragmentLibrary"
@@ -28,12 +28,12 @@
     <fragment
         android:id="@+id/fragmentSearch"
         android:name="com.graytsar.wlnupdates.ui.search.FragmentSearch"
-        android:label="fragment_search"
+        android:label="Search"
         tools:layout="@layout/fragment_search" />
     <fragment
         android:id="@+id/fragmentAdvancedSearch"
         android:name="com.graytsar.wlnupdates.ui.search.FragmentAdvancedSearch"
-        android:label="fragment_advanced_search"
+        android:label="Advanced Search"
         tools:layout="@layout/fragment_advanced_search" />
     <fragment
         android:id="@+id/fragmentRecent"
@@ -43,7 +43,7 @@
     <fragment
         android:id="@+id/fragmentAuthor"
         android:name="com.graytsar.wlnupdates.ui.author.FragmentAuthor"
-        android:label="fragment_author"
+        android:label="Author"
         tools:layout="@layout/fragment_author" />
     <fragment
         android:id="@+id/fragmentCollectionRecent"
@@ -78,16 +78,21 @@
     <fragment
         android:id="@+id/fragmentPublisher"
         android:name="com.graytsar.wlnupdates.ui.publisher.FragmentPublisher"
-        android:label="fragment_publisher"
+        android:label="Publisher"
         tools:layout="@layout/fragment_publisher" />
     <fragment
         android:id="@+id/fragmentIllustrator"
         android:name="com.graytsar.wlnupdates.ui.illustrator.FragmentIllustrator"
-        android:label="fragment_illustrator"
+        android:label="Illustrator"
         tools:layout="@layout/fragment_illustrator" />
     <fragment
         android:id="@+id/fragmentGroup"
         android:name="com.graytsar.wlnupdates.ui.group.FragmentGroup"
-        android:label="fragment_group"
+        android:label="Group"
         tools:layout="@layout/fragment_group" />
+    <fragment
+        android:id="@+id/fragmentAdvancedSearchResult"
+        android:name="com.graytsar.wlnupdates.ui.search.FragmentAdvancedSearchResult"
+        android:label="fragment_advanced_search_result"
+        tools:layout="@layout/fragment_advanced_search_result" />
 </navigation>

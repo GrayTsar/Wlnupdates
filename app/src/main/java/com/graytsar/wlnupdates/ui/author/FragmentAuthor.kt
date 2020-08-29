@@ -28,7 +28,7 @@ class FragmentAuthor : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            it.getInt(ARG_ID_AUTHOR, -1)
+            idAuthor = it.getInt(ARG_ID_AUTHOR, -1)
         }
     }
 
@@ -37,6 +37,8 @@ class FragmentAuthor : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         binding = FragmentAuthorBinding.inflate(inflater, container, false)
+        binding.lifecycleOwner = this
+        binding.viewModelAuthor = viewModelAuthor
 
         val toolbar: Toolbar = binding.includeToolbarAuthor.toolbarAuthor
         (requireActivity() as MainActivity).setSupportActionBar(toolbar)
@@ -44,19 +46,28 @@ class FragmentAuthor : Fragment() {
         val navController = NavHostFragment.findNavController(this)
         NavigationUI.setupActionBarWithNavController(this.context as MainActivity, navController)
 
+        binding.recyclerAuthor.adapter = adapterAuthor
 
-        binding.includeToolbarAuthor.recyclerAuthor.adapter = adapterAuthor
+        viewModelAuthor.isLoading.observe(viewLifecycleOwner, {
+            binding.progressBarAuthor.visibility = if(it){
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+        })
 
-        GlobalScope.launch {
-            if(idAuthor > 0) {
-                viewModelAuthor.getDataAuthor(idAuthor)
-            }
-        }.invokeOnCompletion {
-            lifecycleScope.launch {
-                adapterAuthor.submitList(viewModelAuthor.list.toMutableList())
-            }
-        }
+        viewModelAuthor.list.observe(viewLifecycleOwner, {
+            adapterAuthor.submitList(it)
+        })
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if(idAuthor > 0) {
+            viewModelAuthor.getDataAuthor(idAuthor)
+        }
     }
 }

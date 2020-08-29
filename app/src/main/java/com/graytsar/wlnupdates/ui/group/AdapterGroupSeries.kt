@@ -27,13 +27,27 @@ class AdapterGroupSeries(private val activity: Fragment): ListAdapter<Map.Entry<
     override fun onBindViewHolder(holder: ViewHolderGroupSeries, position: Int) {
         holder.binding.lifecycleOwner = activity
         val item = getItem(position)
+        holder.model = item
 
-        holder.binding.backgroundGroupSeries.setOnClickListener { view ->
+        holder.binding.textGroupSeries.text = item.value
+        holder.binding.backgroundGroupSeries.setOnClickListener {
+            holder.onClick(it)
+        }
+
+    }
+
+}
+
+class ViewHolderGroupSeries(view: View, val binding: ItemGroupSeriesBinding): RecyclerView.ViewHolder(view){
+    var model:Map.Entry<String, String>? = null
+
+    fun onClick(view: View) {
+        model?.let { model ->
             try {
                 val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
                 val navController: NavController = navHostFragment.navController
 
-                item.key.toIntOrNull()?.let { id ->
+                model.key.toIntOrNull()?.let { id ->
                     val bundle = Bundle()
                     bundle.putInt(ARG_ID_NOVEL, id)
 
@@ -43,13 +57,7 @@ class AdapterGroupSeries(private val activity: Fragment): ListAdapter<Map.Entry<
 
             }
         }
-        holder.binding.textGroupSeries.text = item.value
     }
-
-}
-
-class ViewHolderGroupSeries(view: View, val binding: ItemGroupSeriesBinding): RecyclerView.ViewHolder(view){
-
 }
 
 class DiffCallbackGroupSeries: DiffUtil.ItemCallback<Map.Entry<String, String>>(){

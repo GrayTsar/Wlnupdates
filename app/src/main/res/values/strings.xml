@@ -35,4 +35,9 @@
 
     <string name="menu_item_search">Search</string>
 
+
+    <string name="name_illustrator">Name: %s</string>
+    <string name="name_author">Name: %s</string>
+    <string name="name_publisher">Name: %s</string>
+    <string name="name_group">Name: %s</string>
 </resources>

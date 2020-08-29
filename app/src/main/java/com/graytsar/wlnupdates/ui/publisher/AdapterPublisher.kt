@@ -20,8 +20,9 @@ import com.graytsar.wlnupdates.databinding.ItemGroupFeedBinding
 import com.graytsar.wlnupdates.databinding.ItemPublisherBinding
 import com.graytsar.wlnupdates.rest.FeedPaginated
 import com.graytsar.wlnupdates.rest.Series
+import com.graytsar.wlnupdates.rest.SeriesTitle
 
-class AdapterPublisher(private val activity: Fragment): ListAdapter<Series, ViewHolderPublisher>(DiffCallbackPublisher()) {
+class AdapterPublisher(private val activity: Fragment): ListAdapter<SeriesTitle, ViewHolderPublisher>(DiffCallbackPublisher()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderPublisher {
         val binding = DataBindingUtil.inflate<ItemPublisherBinding>(
             LayoutInflater.from(activity.context), R.layout.item_publisher, parent, false)
@@ -30,35 +31,38 @@ class AdapterPublisher(private val activity: Fragment): ListAdapter<Series, View
 
     override fun onBindViewHolder(holder: ViewHolderPublisher, position: Int) {
         holder.binding.lifecycleOwner = activity
-        val item = getItem(position)
+        holder.model = getItem(position)
 
-        holder.binding.textPublisherSeriesName.text = item.name
-
-        holder.binding.backgroundPublisher.setOnClickListener { view ->
-            val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-            val navController: NavController = navHostFragment.navController
-
-            item.id?.let { id ->
-                val bundle = Bundle()
-                bundle.putInt(ARG_ID_NOVEL, id)
-
-                navController.navigate(R.id.fragmentNovel, bundle)
-            }
+        holder.binding.textPublisherSeriesName.text = holder.model!!.title
+        holder.binding.backgroundPublisher.setOnClickListener {
+            holder.onClick(it)
         }
     }
 
 }
 
 class ViewHolderPublisher(view: View, val binding: ItemPublisherBinding): RecyclerView.ViewHolder(view){
+    var model:SeriesTitle? = null
 
+    fun onClick(view: View) {
+        val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController: NavController = navHostFragment.navController
+
+        model?.id?.let { id ->
+            val bundle = Bundle()
+            bundle.putInt(ARG_ID_NOVEL, id)
+
+            navController.navigate(R.id.fragmentNovel, bundle)
+        }
+    }
 }
 
-class DiffCallbackPublisher: DiffUtil.ItemCallback<Series>(){
-    override fun areItemsTheSame(old: Series, aNew: Series): Boolean {
+class DiffCallbackPublisher: DiffUtil.ItemCallback<SeriesTitle>(){
+    override fun areItemsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
         return old == aNew
     }
 
-    override fun areContentsTheSame(old: Series, aNew: Series): Boolean {
-        return (old.id == aNew.id && old.name == aNew.name)
+    override fun areContentsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
+        return (old.id == aNew.id && old.title == aNew.title)
     }
 }

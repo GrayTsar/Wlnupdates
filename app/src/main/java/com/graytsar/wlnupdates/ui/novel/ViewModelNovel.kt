@@ -2,15 +2,24 @@ package com.graytsar.wlnupdates.ui.novel
 
 import android.text.TextUtils
 import android.text.format.DateUtils
+import android.util.Log
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.graytsar.wlnupdates.rest.*
+import com.graytsar.wlnupdates.rest.interfaces.RestService
 import com.graytsar.wlnupdates.rest.interfaces.RestService.restService
+import com.graytsar.wlnupdates.rest.request.RequestAuthor
 import com.graytsar.wlnupdates.rest.request.RequestNovel
+import com.graytsar.wlnupdates.rest.response.ResponseAuthor
+import com.graytsar.wlnupdates.rest.response.ResponseNovel
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.lang.Exception
+import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Collectors
@@ -28,6 +37,10 @@ fun setText(view: TextView, text: String?) {
 class ViewModelNovel: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
 
+    private var requestCall: Call<ResponseNovel>? = null
+
+    var idAuthor:Int = -1
+
     val title = MutableLiveData<String>("")
     val author = MutableLiveData<String>("")
     val rating = MutableLiveData<String>("") //from 0 - 10
@@ -44,14 +57,14 @@ class ViewModelNovel: ViewModel() {
     val latestChapter = MutableLiveData<String>("") //name of latest chapter
 
     // REST data list
-    val listAuthor = ArrayList<Author>()
-    val listChapter = ArrayList<Release>()
-    val listGenre = ArrayList<Genre>()
-    val listTag = ArrayList<Tag>()
-    val listIllustrator = ArrayList<Illustrator>()
-    val listPublisher = ArrayList<Publisher>()
-    val listAlternativeNames = ArrayList<String>()
-    val listCovers = ArrayList<Cover>()
+    val listAuthor = MutableLiveData<List<Author>>()
+    val listChapter = MutableLiveData<List<Release>>()
+    val listGenre = MutableLiveData<List<Genre>>()
+    val listTag = MutableLiveData<List<Tag>>()
+    val listIllustrator = MutableLiveData<List<Illustrator>>()
+    val listPublisher = MutableLiveData<List<Publisher>>()
+    val listAlternativeNames = MutableLiveData<List<String>>()
+    val listCovers = MutableLiveData<List<Cover>>()
 
     // UI data
     val genre = MutableLiveData<String>()
@@ -61,53 +74,91 @@ class ViewModelNovel: ViewModel() {
     val alternativeNames = MutableLiveData<String>()
     val cover = MutableLiveData<String>()
 
-    fun getRestData(id:Int){
+    fun getDataNovel(id:Int) {
+        requestCall?.cancel()
+        requestCall = RestService.restService.getNovel(RequestNovel(id))
         isLoading.postValue(true)
-        clearLists()
+        requestCall?.enqueue(object: Callback<ResponseNovel> {
+            override fun onResponse(call: Call<ResponseNovel>, response: Response<ResponseNovel>) {
+                if(response.isSuccessful){
+                    response.body()?.let { responseAuthor ->
+                        if(!responseAuthor.error!!) {
+                            onReceivedResult(responseAuthor)
+                        } else {
+                            Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                        }
+                    }
+                } else {
+                    Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                }
 
-        val novel = restService.getNovel(RequestNovel(id)).execute().body()
-        novel?.dataNovel?.let { novel ->
+                isLoading.postValue(false)
+            }
+
+            override fun onFailure(call: Call<ResponseNovel>, t: Throwable) {
+                isLoading.postValue(false)
+                Log.d("DBG-Failure:", "restService.getNovel() onFailure")
+            }
+        })
+    }
+
+    private fun onReceivedResult(result: ResponseNovel){
+        result.dataNovel?.let { novel ->
             title.postValue(novel.title)
 
             if(novel.rating?.avg != null && novel.ratingCount != null){
                 rating.postValue("${String.format("%.2f", novel.rating?.avg)} (${novel.ratingCount})")
             }
 
-            novel.authors?.forEach {
-                listAuthor.add(it)
+            novel.authors?.let {
+                if(it.isNotEmpty()){
+                    idAuthor = it[0].id!!
+                }
+
+                listAuthor.postValue(it)
+                author.postValue(TextUtils.join(", ", it.stream().map { Author -> Author.author }.collect(Collectors.toList())))
             }
 
-            novel.releases?.forEach {
-                listChapter.add(it)
+            novel.releases?.let {
+                listChapter.postValue(it)
             }
 
-            novel.genres?.forEach {
-                listGenre.add(it)
+            novel.genres?.let {
+                listGenre.postValue(it)
+                genre.postValue(TextUtils.join(", ", it.stream().map { Genre -> Genre.genre }.collect(Collectors.toList())))
             }
 
-            novel.tags?.forEach {
-                listTag.add(it)
+            novel.tags?.let {
+                listTag.postValue(it)
+                tags.postValue(TextUtils.join(", ", it.stream().map { Tag -> Tag.tag }.collect(Collectors.toList())))
             }
 
-            novel.illustrators?.forEach {
-                listIllustrator.add(it)
+            novel.illustrators?.let {
+                listIllustrator.postValue(it)
+                illustrator.postValue(TextUtils.join(", ", it.stream().map { Illustrator -> Illustrator.illustrator }.collect(Collectors.toList())))
             }
 
-            novel.publishers?.forEach {
-                listPublisher.add(it)
+            novel.publishers?.let {
+                listPublisher.postValue(it)
+                publisher.postValue(TextUtils.join(", ", it.stream().map { Publisher -> Publisher.publisher }.collect(Collectors.toList())))
             }
 
-            novel.alternatenames?.forEach {
-                listAlternativeNames.add(it)
+            novel.alternatenames?.let {
+                listAlternativeNames.postValue(it)
+
+                val altNamesString = StringBuilder()
+                it.forEach { name ->
+                    altNamesString.append("<br>$name</br>")
+                }
+                alternativeNames.postValue(altNamesString.toString())
             }
 
             novel.covers?.let { list ->
                 if(list.isNotEmpty()){
                     cover.postValue(list[0].url)
                 }
-                list.forEach { cover ->
-                    listCovers.add(cover)
-                }
+                listCovers.postValue(list)
+
             }
 
             novel.title?.let {
@@ -156,41 +207,9 @@ class ViewModelNovel: ViewModel() {
             }
 
             lastRelease.postValue(novel.latestPublished)
-            latestChapter.postValue("${novel.latestStr} [${listChapter.count()}]")
+            latestChapter.postValue("${novel.latestStr} [${listChapter.value?.count()}]")
 
-            populateUiLists()
         }
-
-        isLoading.postValue(false)
     }
 
-    private fun populateUiLists() {
-        author.postValue(TextUtils.join(", ", listAuthor.stream().map { Author -> Author.author }.collect(Collectors.toList())))
-
-        genre.postValue(TextUtils.join(", ", listGenre.stream().map { Genre -> Genre.genre }.collect(Collectors.toList())))
-
-        tags.postValue(TextUtils.join(", ", listTag.stream().map { Tag -> Tag.tag }.collect(Collectors.toList())))
-
-        illustrator.postValue(TextUtils.join(", ", listIllustrator.stream().map { Illustrator -> Illustrator.illustrator }.collect(Collectors.toList())))
-
-        publisher.postValue(TextUtils.join(", ", listPublisher.stream().map { Publisher -> Publisher.publisher }.collect(Collectors.toList())))
-
-        var altNamesString = ""
-        listAlternativeNames.forEach {
-            altNamesString += "<br>$it</br>"
-        }
-        alternativeNames.postValue(altNamesString)
-    }
-
-    private fun clearLists(){
-        listAuthor.clear()
-        listChapter.clear()
-        listGenre.clear()
-        listTag.clear()
-        listIllustrator.clear()
-        listPublisher.clear()
-        listAlternativeNames.clear()
-        listCovers.clear()
-
-    }
 }

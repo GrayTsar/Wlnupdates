@@ -17,8 +17,9 @@ import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemIllustratorBinding
 import com.graytsar.wlnupdates.databinding.ItemPublisherBinding
 import com.graytsar.wlnupdates.rest.Series
+import com.graytsar.wlnupdates.rest.SeriesTitle
 
-class AdapterIllustrator(private val activity: Fragment): ListAdapter<Series, ViewHolderIllustrator>(DiffCallbackIllustrator()) {
+class AdapterIllustrator(private val activity: Fragment): ListAdapter<SeriesTitle, ViewHolderIllustrator>(DiffCallbackIllustrator()) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderIllustrator {
         val binding = DataBindingUtil.inflate<ItemIllustratorBinding>(
             LayoutInflater.from(activity.context), R.layout.item_illustrator, parent, false)
@@ -27,36 +28,39 @@ class AdapterIllustrator(private val activity: Fragment): ListAdapter<Series, Vi
 
     override fun onBindViewHolder(holder: ViewHolderIllustrator, position: Int) {
         holder.binding.lifecycleOwner = activity
-        val item = getItem(position)
+        holder.model = getItem(position)
 
-        holder.binding.textIllustratorSeriesTitle.text = item.name
-
+        holder.binding.textIllustratorSeriesTitle.text = holder.model!!.title
         holder.binding.backgroundIllustrator.setOnClickListener { view ->
-            val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(
-                R.id.nav_host_fragment) as NavHostFragment
-            val navController: NavController = navHostFragment.navController
-
-            item.id?.let { id ->
-                val bundle = Bundle()
-                bundle.putInt(ARG_ID_NOVEL, id)
-
-                navController.navigate(R.id.fragmentNovel, bundle)
-            }
+            holder.onClick(view)
         }
     }
 
 }
 
 class ViewHolderIllustrator(view: View, val binding: ItemIllustratorBinding): RecyclerView.ViewHolder(view){
+    var model:SeriesTitle? = null
 
+    fun onClick(view: View) {
+        val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(
+            R.id.nav_host_fragment) as NavHostFragment
+        val navController: NavController = navHostFragment.navController
+
+        model?.id?.let { id ->
+            val bundle = Bundle()
+            bundle.putInt(ARG_ID_NOVEL, id)
+
+            navController.navigate(R.id.fragmentNovel, bundle)
+        }
+    }
 }
 
-class DiffCallbackIllustrator: DiffUtil.ItemCallback<Series>(){
-    override fun areItemsTheSame(old: Series, aNew: Series): Boolean {
+class DiffCallbackIllustrator: DiffUtil.ItemCallback<SeriesTitle>(){
+    override fun areItemsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
         return old == aNew
     }
 
-    override fun areContentsTheSame(old: Series, aNew: Series): Boolean {
-        return (old.id == aNew.id && old.name == aNew.name)
+    override fun areContentsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
+        return (old.id == aNew.id && old.title == aNew.title)
     }
 }

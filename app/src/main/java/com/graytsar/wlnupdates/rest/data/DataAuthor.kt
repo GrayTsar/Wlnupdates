@@ -5,6 +5,7 @@ import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
 import com.graytsar.wlnupdates.rest.SeriesAuthor
+import com.graytsar.wlnupdates.rest.SeriesTitle
 import com.graytsar.wlnupdates.rest.response.ResponseAuthor
 
 class DataAuthor(
@@ -14,11 +15,11 @@ class DataAuthor(
 
     @SerializedName("series")
     @Expose
-    var series: List<SeriesAuthor>? = null
+    var series: List<SeriesTitle>? = null
 ) : Parcelable {
     constructor(source: Parcel) : this(
         source.readString(),
-        source.createTypedArrayList(SeriesAuthor.CREATOR)
+        source.createTypedArrayList(SeriesTitle.CREATOR)
     )
 
     override fun describeContents() = 0

@@ -34,4 +34,13 @@ interface WlnupdatesInterface {
 
     @POST("api")
     fun getGroup(@Body request:RequestGroup): Call<ResponseGroup>
+
+    @POST("api")
+    fun getGenre(@Body request:RequestGenre): Call<ResponseGenre>
+
+    @POST("api")
+    fun getTag(@Body request:RequestTag): Call<ResponseTag>
+
+    @POST("api")
+    fun getAdvancedSearch(@Body request:RequestAdvancedSearch): Call<ResponseAdvancedSearch>
 }

@@ -38,20 +38,11 @@ class FragmentNovel : Fragment() {
         binding.includeToolbarNovel.viewModelNovel = viewModelNovel
         binding.lifecycleOwner = this
 
-
         val toolbar: Toolbar = binding.includeToolbarNovel.toolbarNovel
         (requireActivity() as MainActivity).setSupportActionBar(toolbar)
 
         val navController = NavHostFragment.findNavController(this)
         NavigationUI.setupActionBarWithNavController(this.context as MainActivity, navController)
-
-
-        if(argIdNovel > 0){
-            GlobalScope.launch {
-                viewModelNovel.getRestData(argIdNovel)
-            }
-        }
-
 
         viewModelNovel.isLoading.observe(viewLifecycleOwner, Observer {
             binding.includeToolbarNovel.progressBarNovel.visibility = if(it){
@@ -86,58 +77,68 @@ class FragmentNovel : Fragment() {
         })
 
 
-        binding.includeToolbarNovel.layoutNovelChapters.chapterBackground.setOnClickListener { view ->
-            val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(
-                R.id.nav_host_fragment) as NavHostFragment
-            val navController: NavController = navHostFragment.navController
+        binding.includeToolbarNovel.layoutNovelChapters.chapterBackground.setOnClickListener {
+            viewModelNovel.listChapter.value?.let {
+                val bundle = Bundle()
+                bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_CHAPTER, ArrayList(it))
 
-            val bundle = Bundle()
-            bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_CHAPTER, viewModelNovel.listChapter)
+                navController.navigate(R.id.fragmentNovelChapter, bundle)
+            }
 
-            navController.navigate(R.id.fragmentNovelChapter, bundle)
         }
 
-        binding.includeToolbarNovel.layoutNovelGenre.genreBackground.setOnClickListener { view ->
-            val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-            val navController: NavController = navHostFragment.navController
+        binding.includeToolbarNovel.layoutNovelGenre.genreBackground.setOnClickListener {
+            viewModelNovel.listGenre.value?.let {
+                val bundle = Bundle()
+                bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_GENRE, ArrayList(it))
 
-            val bundle = Bundle()
-            bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_GENRE, viewModelNovel.listGenre)
-
-            navController.navigate(R.id.fragmentNovelGenre, bundle)
+                navController.navigate(R.id.fragmentNovelGenre, bundle)
+            }
         }
 
-        binding.includeToolbarNovel.layoutNovelTag.tagBackground.setOnClickListener { view ->
-            val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-            val navController: NavController = navHostFragment.navController
+        binding.includeToolbarNovel.layoutNovelTag.tagBackground.setOnClickListener {
+            viewModelNovel.listTag.value?.let {
+                val bundle = Bundle()
+                bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_TAG, ArrayList(it))
 
-            val bundle = Bundle()
-            bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_TAG, viewModelNovel.listTag)
-
-            navController.navigate(R.id.fragmentNovelTag, bundle)
+                navController.navigate(R.id.fragmentNovelTag, bundle)
+            }
         }
 
-        binding.includeToolbarNovel.layoutNovelIllustrator.illustratorBackground.setOnClickListener { view ->
-            val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-            val navController: NavController = navHostFragment.navController
+        binding.includeToolbarNovel.layoutNovelIllustrator.illustratorBackground.setOnClickListener {
+            viewModelNovel.listIllustrator.value?.let {
+                val bundle = Bundle()
+                bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_ILLUSTRATOR, ArrayList(it))
 
-            val bundle = Bundle()
-            bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_ILLUSTRATOR, viewModelNovel.listIllustrator)
-
-            navController.navigate(R.id.fragmentNovelIllustrator, bundle)
+                navController.navigate(R.id.fragmentNovelIllustrator, bundle)
+            }
         }
 
-        binding.includeToolbarNovel.layoutNovelPublisher.publisherBackground.setOnClickListener { view ->
-            val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-            val navController: NavController = navHostFragment.navController
+        binding.includeToolbarNovel.layoutNovelPublisher.publisherBackground.setOnClickListener {
+            viewModelNovel.listPublisher.value?.let {
+                val bundle = Bundle()
+                bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_PUBLISHER, ArrayList(it))
 
+                navController.navigate(R.id.fragmentNovelPublisher, bundle)
+            }
+        }
+
+        binding.includeToolbarNovel.textNovelAuthors.setOnClickListener {
             val bundle = Bundle()
-            bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_PUBLISHER, viewModelNovel.listPublisher)
+            bundle.putInt(ARG_ID_AUTHOR, viewModelNovel.idAuthor)
 
-            navController.navigate(R.id.fragmentNovelPublisher, bundle)
+            navController.navigate(R.id.fragmentAuthor, bundle)
         }
 
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        if(argIdNovel > 0){
+            viewModelNovel.getDataNovel(argIdNovel)
+        }
     }
 
 }

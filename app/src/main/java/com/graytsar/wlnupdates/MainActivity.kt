@@ -7,6 +7,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavDestination
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 
 const val ARG_ID_NOVEL:String = "argIdNovel"
@@ -45,6 +46,13 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         //navController.navigate(R.id.fragmentNovel)
         //navController.navigate(R.id.fragmentSearch)
+    }
+
+    //when navigation back button is pressed
+    override fun onSupportNavigateUp(): Boolean {
+        val f = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        val navController:NavController = f.navController //for fragment switch
+        return navController.navigateUp(appBarConfiguration) || super.onSupportNavigateUp()
     }
 
     override fun onDestinationChanged(controller: NavController, destination: NavDestination, arguments: Bundle?) {

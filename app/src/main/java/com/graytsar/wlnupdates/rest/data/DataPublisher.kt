@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.graytsar.wlnupdates.rest.Series
+import com.graytsar.wlnupdates.rest.SeriesTitle
 
 
 class DataPublisher(
@@ -13,14 +13,14 @@ class DataPublisher(
     var name: String? = null,
     @SerializedName("series")
     @Expose
-    var series: List<Series?>? = null,
+    var series: List<SeriesTitle?>? = null,
     @SerializedName("site")
     @Expose
     var site: String? = null
 ) : Parcelable {
     constructor(source: Parcel) : this(
         source.readString(),
-        source.createTypedArrayList(Series.CREATOR),
+        source.createTypedArrayList(SeriesTitle.CREATOR),
         source.readString()
     )
 

@@ -8,4 +8,11 @@
     <color name="colorTextToolbarPrimary">#fafafa</color>
     <color name="colorTextPrimary">#212121</color>
     <color name="colorTextSecondary">#424242</color>
+
+
+    <color name="colorGenreBackground">#9e9e9e</color>
+    <color name="colorGenreSelected">#4caf50</color>
+
+    <color name="colorButtonActive">#1b5e20</color>
+    <color name="colorButtonBackground">#37474f</color>
 </resources>
