@@ -20,10 +20,14 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.lang.Exception
 import java.lang.StringBuilder
+import java.security.acl.Group
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
+import kotlin.collections.HashMap
+import kotlin.collections.HashSet
+
 
 @BindingAdapter("android:text")
 fun setText(view: TextView, text: String?) {
@@ -33,6 +37,8 @@ fun setText(view: TextView, text: String?) {
         HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 }
+
+
 
 class ViewModelNovel: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
@@ -66,6 +72,8 @@ class ViewModelNovel: ViewModel() {
     val listAlternativeNames = MutableLiveData<List<String>>()
     val listCovers = MutableLiveData<List<Cover>>()
 
+    val listGroup = MutableLiveData<List<Tlgroup?>>()
+
     // UI data
     val genre = MutableLiveData<String>()
     val tags = MutableLiveData<String>()
@@ -73,6 +81,7 @@ class ViewModelNovel: ViewModel() {
     val publisher = MutableLiveData<String>()
     val alternativeNames = MutableLiveData<String>()
     val cover = MutableLiveData<String>()
+    val group = MutableLiveData<String>()
 
     fun getDataNovel(id:Int) {
         requestCall?.cancel()
@@ -121,6 +130,21 @@ class ViewModelNovel: ViewModel() {
 
             novel.releases?.let {
                 listChapter.postValue(it)
+
+                val fGroup = ArrayList<Tlgroup>()
+                val lGroup = it.stream().map { Release -> Release.tlgroup!! }.collect(Collectors.toList())
+                val map = HashMap<Int, String>()
+
+                lGroup.forEach { _tlGroup ->
+                    map[_tlGroup.id!!] = _tlGroup.name!!
+                }
+                map.forEach { entry ->
+                    fGroup.add(Tlgroup(entry.key, entry.value))
+                }
+
+                group.postValue(TextUtils.join(", ", fGroup.stream().map { Tlgroup -> Tlgroup.name }.collect(Collectors.toList())))
+                listGroup.postValue(fGroup)
+
             }
 
             novel.genres?.let {
@@ -148,7 +172,7 @@ class ViewModelNovel: ViewModel() {
 
                 val altNamesString = StringBuilder()
                 it.forEach { name ->
-                    altNamesString.append("<br>$name</br>")
+                    altNamesString.append("$name \n")
                 }
                 alternativeNames.postValue(altNamesString.toString())
             }

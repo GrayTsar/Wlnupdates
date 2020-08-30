@@ -30,7 +30,7 @@ class AdapterSearch(private val activity: Fragment): ListAdapter<MatchContent, V
 
         holder.binding.textItemSearch.text = item.name
 
-        holder.binding.itemSearchBackground.setOnClickListener { view ->
+        holder.binding.cardItemSearch.setOnClickListener { view ->
             val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
             val navController: NavController = navHostFragment.navController
 

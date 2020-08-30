@@ -30,7 +30,7 @@ class AdapterGroupFeed(private val activity: Fragment): ListAdapter<FeedPaginate
         holder.binding.textGroupFeedTitle.text = item.title
         holder.binding.textGroupFeedName.text = item.srcname
 
-        holder.binding.groupFeedBackground.setOnClickListener {
+        holder.binding.cardItemGroupFeed.setOnClickListener {
             holder.onClick(it)
         }
     }

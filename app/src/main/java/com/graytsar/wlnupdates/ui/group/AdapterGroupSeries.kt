@@ -30,7 +30,7 @@ class AdapterGroupSeries(private val activity: Fragment): ListAdapter<Map.Entry<
         holder.model = item
 
         holder.binding.textGroupSeries.text = item.value
-        holder.binding.backgroundGroupSeries.setOnClickListener {
+        holder.binding.cardItemGroupSeries.setOnClickListener {
             holder.onClick(it)
         }
 

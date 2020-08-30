@@ -34,7 +34,7 @@ class AdapterPublisher(private val activity: Fragment): ListAdapter<SeriesTitle,
         holder.model = getItem(position)
 
         holder.binding.textPublisherSeriesName.text = holder.model!!.title
-        holder.binding.backgroundPublisher.setOnClickListener {
+        holder.binding.cardItemPublisher.setOnClickListener {
             holder.onClick(it)
         }
     }

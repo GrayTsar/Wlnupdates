@@ -29,7 +29,7 @@ class AdapterAuthor(private val activity: Fragment): ListAdapter<SeriesTitle, Vi
         holder.model = getItem(position)
 
         holder.binding.textAuthor.text = holder.model!!.title
-        holder.binding.authorBackground.setOnClickListener {
+        holder.binding.cardItemAuthor.setOnClickListener {
             holder.onClick(it)
         }
     }

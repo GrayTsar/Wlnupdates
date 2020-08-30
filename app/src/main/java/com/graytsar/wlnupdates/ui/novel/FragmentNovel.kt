@@ -38,6 +38,56 @@ class FragmentNovel : Fragment() {
         binding.includeToolbarNovel.viewModelNovel = viewModelNovel
         binding.lifecycleOwner = this
 
+        binding.includeToolbarNovel.includeDescription.apply {
+            lifecycleOwner = this@FragmentNovel
+            viewModelNovel = this@FragmentNovel.viewModelNovel
+        }
+        binding.includeToolbarNovel.includeChapter.apply {
+            lifecycleOwner = this@FragmentNovel
+            viewModelNovel = this@FragmentNovel.viewModelNovel
+        }
+        binding.includeToolbarNovel.includeGenre.apply {
+            lifecycleOwner = this@FragmentNovel
+            viewModelNovel = this@FragmentNovel.viewModelNovel
+        }
+        binding.includeToolbarNovel.includeTag.apply {
+            lifecycleOwner = this@FragmentNovel
+            viewModelNovel = this@FragmentNovel.viewModelNovel
+        }
+        binding.includeToolbarNovel.includeInfo.apply {
+            lifecycleOwner = this@FragmentNovel
+            viewModelNovel = this@FragmentNovel.viewModelNovel
+        }
+        binding.includeToolbarNovel.includeGroup.apply {
+            lifecycleOwner = this@FragmentNovel
+            viewModelNovel = this@FragmentNovel.viewModelNovel
+        }
+        binding.includeToolbarNovel.includeIllustrator.apply {
+            lifecycleOwner = this@FragmentNovel
+            viewModelNovel = this@FragmentNovel.viewModelNovel
+        }
+        binding.includeToolbarNovel.includePublisher.apply {
+            lifecycleOwner = this@FragmentNovel
+            viewModelNovel = this@FragmentNovel.viewModelNovel
+        }
+        binding.includeToolbarNovel.includeAlternateNames.apply {
+            lifecycleOwner = this@FragmentNovel
+            viewModelNovel = this@FragmentNovel.viewModelNovel
+        }
+
+
+        /*
+        binding.includeToolbarNovel.includeDescription.lifecycleOwner = this
+        binding.includeToolbarNovel.includeChapter
+        binding.includeToolbarNovel.includeGenre
+        binding.includeToolbarNovel.includeTag
+        binding.includeToolbarNovel.includeInfo
+        binding.includeToolbarNovel.includeIllustrator
+        binding.includeToolbarNovel.includePublisher
+        binding.includeToolbarNovel.includeAlternateNames
+
+         */
+
         val toolbar: Toolbar = binding.includeToolbarNovel.toolbarNovel
         (requireActivity() as MainActivity).setSupportActionBar(toolbar)
 
@@ -52,32 +102,15 @@ class FragmentNovel : Fragment() {
             }
         })
 
-        viewModelNovel.latestChapter.observe(viewLifecycleOwner, Observer {
-            binding.includeToolbarNovel.layoutNovelChapters.textChapterLastDate.text = it
-        })
-
-        viewModelNovel.genre.observe(viewLifecycleOwner, Observer {
-            binding.includeToolbarNovel.layoutNovelGenre.textGenreItems.text = it
-        })
-
-        viewModelNovel.tags.observe(viewLifecycleOwner, Observer {
-            binding.includeToolbarNovel.layoutNovelTag.textTagItems.text = it
-        })
-
-        viewModelNovel.illustrator.observe(viewLifecycleOwner, Observer {
-            binding.includeToolbarNovel.layoutNovelIllustrator.textIllustratorItem.text = it
-        })
-
-        viewModelNovel.publisher.observe(viewLifecycleOwner, Observer {
-            binding.includeToolbarNovel.layoutNovelPublisher.textPublisherItem.text = it
+        viewModelNovel.description.observe(viewLifecycleOwner, Observer {
+            binding.includeToolbarNovel.includeDescription.textNovelDescriptionContent.text = it
         })
 
         viewModelNovel.cover.observe(viewLifecycleOwner, Observer {
             binding.includeToolbarNovel.imageNovelCover.load(it)
         })
 
-
-        binding.includeToolbarNovel.layoutNovelChapters.chapterBackground.setOnClickListener {
+        binding.includeToolbarNovel.includeChapter.cardItemNovelChapter.setOnClickListener {
             viewModelNovel.listChapter.value?.let {
                 val bundle = Bundle()
                 bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_CHAPTER, ArrayList(it))
@@ -87,7 +120,7 @@ class FragmentNovel : Fragment() {
 
         }
 
-        binding.includeToolbarNovel.layoutNovelGenre.genreBackground.setOnClickListener {
+        binding.includeToolbarNovel.includeGenre.cardItemNovelGenre.setOnClickListener {
             viewModelNovel.listGenre.value?.let {
                 val bundle = Bundle()
                 bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_GENRE, ArrayList(it))
@@ -96,7 +129,7 @@ class FragmentNovel : Fragment() {
             }
         }
 
-        binding.includeToolbarNovel.layoutNovelTag.tagBackground.setOnClickListener {
+        binding.includeToolbarNovel.includeTag.cardItemNovelTag.setOnClickListener {
             viewModelNovel.listTag.value?.let {
                 val bundle = Bundle()
                 bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_TAG, ArrayList(it))
@@ -105,7 +138,16 @@ class FragmentNovel : Fragment() {
             }
         }
 
-        binding.includeToolbarNovel.layoutNovelIllustrator.illustratorBackground.setOnClickListener {
+        binding.includeToolbarNovel.includeGroup.cardItemNovelGroup.setOnClickListener {
+            viewModelNovel.listGroup.value?.let {
+                val bundle = Bundle()
+                bundle.putParcelableArrayList(ARG_ID_NOVEL_GROUP, ArrayList(it))
+
+                navController.navigate(R.id.fragmentNovelGroup, bundle)
+            }
+        }
+
+        binding.includeToolbarNovel.includeIllustrator.cardItemNovelIllustrator.setOnClickListener {
             viewModelNovel.listIllustrator.value?.let {
                 val bundle = Bundle()
                 bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_ILLUSTRATOR, ArrayList(it))
@@ -114,7 +156,7 @@ class FragmentNovel : Fragment() {
             }
         }
 
-        binding.includeToolbarNovel.layoutNovelPublisher.publisherBackground.setOnClickListener {
+        binding.includeToolbarNovel.includePublisher.cardItemNovelPublisher.setOnClickListener {
             viewModelNovel.listPublisher.value?.let {
                 val bundle = Bundle()
                 bundle.putParcelableArrayList(ARG_PARCEL_NOVEL_PUBLISHER, ArrayList(it))
@@ -140,5 +182,4 @@ class FragmentNovel : Fragment() {
             viewModelNovel.getDataNovel(argIdNovel)
         }
     }
-
 }

@@ -29,7 +29,7 @@ class AdapterNovelPublisher(private val activity: Fragment): ListAdapter<Publish
         val item = getItem(position)
 
         holder.binding.textSimpleExpanded.text = getItem(position).publisher
-        holder.binding.simpleBackground.setOnClickListener { view ->
+        holder.binding.cardSimpleExpanded.setOnClickListener { view ->
             val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(
                 R.id.nav_host_fragment) as NavHostFragment
             val navController: NavController = navHostFragment.navController

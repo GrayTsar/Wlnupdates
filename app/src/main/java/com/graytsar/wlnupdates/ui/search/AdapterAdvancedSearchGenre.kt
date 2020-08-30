@@ -9,13 +9,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.graytsar.wlnupdates.R
-import com.graytsar.wlnupdates.databinding.ItemAdvancedGenreBinding
+import com.graytsar.wlnupdates.databinding.ItemListAdvancedGenreBinding
 import com.graytsar.wlnupdates.rest.ItemGenre
 
-class AdapterAdvancedSearchGenre(private val activity: Fragment): ListAdapter<ItemGenre, ViewHolderItemAdvancedSearchGenre>(DiffCallbackAdvancedSearchGenre()) {
+class AdapterAdvancedSearchGenre(private val activity: Fragment): ListAdapter<ItemGenre, ViewHolderItemAdvancedSearchGenre>(
+    DiffCallbackAdvancedSearchGenre()
+) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderItemAdvancedSearchGenre {
-        val binding = DataBindingUtil.inflate<ItemAdvancedGenreBinding>(
-            LayoutInflater.from(activity.context), R.layout.item_advanced_genre, parent, false)
+        val binding = DataBindingUtil.inflate<ItemListAdvancedGenreBinding>(
+            LayoutInflater.from(activity.context), R.layout.item_list_advanced_genre, parent, false)
         return ViewHolderItemAdvancedSearchGenre(binding.root, binding)
     }
 
@@ -34,7 +36,7 @@ class AdapterAdvancedSearchGenre(private val activity: Fragment): ListAdapter<It
 
 }
 
-class ViewHolderItemAdvancedSearchGenre(view: View, val binding: ItemAdvancedGenreBinding): RecyclerView.ViewHolder(view){
+class ViewHolderItemAdvancedSearchGenre(view: View, val binding: ItemListAdvancedGenreBinding): RecyclerView.ViewHolder(view){
 
 }
 

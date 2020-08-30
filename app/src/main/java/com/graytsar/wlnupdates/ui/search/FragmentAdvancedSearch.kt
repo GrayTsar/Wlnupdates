@@ -1,7 +1,6 @@
 package com.graytsar.wlnupdates.ui.search
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -16,11 +15,11 @@ import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.google.android.material.button.MaterialButton
-import com.google.gson.Gson
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.graytsar.wlnupdates.ARG_PARCEL_ADVANCED_SEARCH_RESULT
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentAdvancedSearchBinding
-import com.graytsar.wlnupdates.rest.Genre
 import com.graytsar.wlnupdates.rest.request.RequestAdvancedSearch
 
 class FragmentAdvancedSearch : Fragment() {
@@ -55,7 +54,7 @@ class FragmentAdvancedSearch : Fragment() {
     ): View? {
         binding = FragmentAdvancedSearchBinding.inflate(inflater, container, false)
 
-        val toolbar: Toolbar = binding.includeToolbarAdvancedSearch.toolbarAdvancedSearch
+        val toolbar: Toolbar = requireActivity().findViewById(R.id.toolbar_collection_search)
         (requireActivity() as MainActivity).setSupportActionBar(toolbar)
 
         val navController = NavHostFragment.findNavController(this)
@@ -161,6 +160,25 @@ class FragmentAdvancedSearch : Fragment() {
             }
         })
 
+        viewModelAdvancedSearch.listResultSearch.observe(viewLifecycleOwner, {
+            it?.let {
+                val bundle = Bundle()
+                bundle.putParcelableArrayList(ARG_PARCEL_ADVANCED_SEARCH_RESULT, ArrayList(it))
+
+                navController.navigate(R.id.fragmentAdvancedSearchResult, bundle)
+
+                viewModelAdvancedSearch.listResultSearch.value = null
+            }
+        })
+
+        viewModelAdvancedSearch.errorResponseAdvancedSearch.observe(viewLifecycleOwner, {
+            MaterialAlertDialogBuilder(requireContext())
+                .setTitle("Error")
+                .setMessage(it.message)
+                .setPositiveButton("OK", null)
+                .show()
+        })
+
         btnTypeAll.setOnClickListener {
             val isActive = viewModelAdvancedSearch.typeAll.value!!
 
@@ -245,7 +263,6 @@ class FragmentAdvancedSearch : Fragment() {
         val gMap = LinkedHashMap<String, String>() //genre
         val tMap = LinkedHashMap<String, String>() //tag
 
-
         if(tAll){
 
         } else if(tOriginal) {
@@ -274,7 +291,7 @@ class FragmentAdvancedSearch : Fragment() {
             }
         }
 
-        val request = RequestAdvancedSearch(titleSearchText, sMap, gMap, tMap, sortMode)
-        val c = Gson().toJson(request)
+        viewModelAdvancedSearch.getDataAdvancedSearch(RequestAdvancedSearch(titleSearchText, sMap, gMap, tMap, sortMode))
+
     }
 }

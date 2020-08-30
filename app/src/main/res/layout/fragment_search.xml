@@ -1,18 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools">
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <FrameLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".ui.search.FragmentSearch">
+        android:orientation="vertical"
+        >
 
-        <include
-            android:id="@+id/includeToolbarSearch"
-            layout="@layout/toolbar_search">
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="4dp"
+            app:cardCornerRadius="@dimen/cardCornerRadius">
 
-        </include>
-    </FrameLayout>
+            <EditText
+                android:id="@+id/editTextSearchNovel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="4dp"
+                android:hint="Type to Search"
+                android:textColor="@color/colorTextPrimary"/>
+        </com.google.android.material.card.MaterialCardView>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recyclerSearch"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layoutManager="LinearLayoutManager">
+
+        </androidx.recyclerview.widget.RecyclerView>
+    </LinearLayout>
 </layout>
 

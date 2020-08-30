@@ -31,7 +31,7 @@ class AdapterIllustrator(private val activity: Fragment): ListAdapter<SeriesTitl
         holder.model = getItem(position)
 
         holder.binding.textIllustratorSeriesTitle.text = holder.model!!.title
-        holder.binding.backgroundIllustrator.setOnClickListener { view ->
+        holder.binding.cardItemIllustrator.setOnClickListener { view ->
             holder.onClick(view)
         }
     }

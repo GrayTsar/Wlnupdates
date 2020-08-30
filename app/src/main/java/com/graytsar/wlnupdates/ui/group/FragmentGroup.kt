@@ -76,9 +76,9 @@ class FragmentGroup : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        //if(idGroup > 0) {
-            viewModelGroup.getDataGroup(19)
-        //}
+        if(idGroup > 0) {
+            viewModelGroup.getDataGroup(idGroup)
+        }
     }
 
 }

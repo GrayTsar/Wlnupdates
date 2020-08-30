@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModelNovel"
+            type="com.graytsar.wlnupdates.ui.novel.ViewModelNovel" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardItemNovelInfo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        app:cardCornerRadius="@dimen/cardCornerRadius">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textItemNovelInfoTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                android:textColor="@color/colorTextPrimary"
+                android:text="Info"
+                />
+
+            <TextView
+                android:id="@+id/textItemNovelInfoTlType"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="4dp"
+                android:gravity="center_vertical"
+                android:text="@{@string/novel_tl_type(viewModelNovel.tlType)}"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                tools:text="Tl Type:" />
+
+            <TextView
+                android:id="@+id/textItemNovelInfoDemographics"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="4dp"
+                android:gravity="center_vertical"
+                android:text="@{@string/novel_demographic(viewModelNovel.demographic)}"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                tools:text="Demographics: " />
+
+            <TextView
+                android:id="@+id/textItemNovelInfoCOO"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="4dp"
+                android:gravity="center_vertical"
+                android:text="@{@string/novel_country_of_origin(viewModelNovel.countryOfOrigin)}"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                tools:text="Country of Origin: " />
+
+            <TextView
+                android:id="@+id/textItemNovelInfoLanguage"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="4dp"
+                android:gravity="center_vertical"
+                android:text="@{@string/novel_language(viewModelNovel.language)}"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                tools:text="Language: " />
+
+            <TextView
+                android:id="@+id/textItemNovelInfoLicensed"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="4dp"
+                android:gravity="center_vertical"
+                android:text="@{@string/novel_licensed(viewModelNovel.licensed)}"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                tools:text="Licensed: " />
+        </LinearLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

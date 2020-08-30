@@ -3,39 +3,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/simpleBackground"
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardSimpleExpanded"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        >
+        android:layout_margin="4dp"
+        app:cardCornerRadius="@dimen/cardCornerRadius">
 
         <TextView
             android:id="@+id/textSimpleExpanded"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
+            android:layout_margin="8dp"
             android:textColor="@color/colorTextPrimary"
             android:textSize="18sp"
-            android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Wuxia" />
-
-        <View
-            android:id="@+id/divider7"
-            android:layout_width="0dp"
-            android:layout_height="1dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="8dp"
-            android:layout_marginEnd="8dp"
-            android:background="?android:attr/listDivider"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textSimpleExpanded" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.graytsar.wlnupdates.MainActivity
+import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentSearchBinding
 import com.graytsar.wlnupdates.rest.MatchContent
 import com.graytsar.wlnupdates.rest.interfaces.RestService
@@ -43,18 +44,18 @@ class FragmentSearch : Fragment() {
     ): View? {
         binding = FragmentSearchBinding.inflate(inflater, container, false)
 
-        val toolbar: Toolbar = binding.includeToolbarSearch.toolbarSearch
+        val toolbar: Toolbar = requireActivity().findViewById<Toolbar>(R.id.toolbar_collection_search)
         (requireActivity() as MainActivity).setSupportActionBar(toolbar)
 
         val navController = NavHostFragment.findNavController(this)
         NavigationUI.setupActionBarWithNavController(this.context as MainActivity, navController)
 
-        binding.includeToolbarSearch.recyclerSearch.adapter = adapterSearch
+        binding.recyclerSearch.adapter = adapterSearch
 
         adapterSearch.submitList(viewModelSearch.list.toMutableList())
 
 
-        val searchBar = binding.includeToolbarSearch.editTextSearchNovel
+        val searchBar = binding.editTextSearchNovel
         searchBar.setText(viewModelSearch.query)
         searchBar.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable) {
@@ -66,7 +67,7 @@ class FragmentSearch : Fragment() {
             }
 
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                //if(s.length > 1){
+                if(s.length > 1){
                     viewModelSearch.query = s.toString()
 
                     requestCall?.cancel()
@@ -92,8 +93,9 @@ class FragmentSearch : Fragment() {
                         }
                     })
                 }
-            //}
+            }
         })
+
 
         return binding.root
     }

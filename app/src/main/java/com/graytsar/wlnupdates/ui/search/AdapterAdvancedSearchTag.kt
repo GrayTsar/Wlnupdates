@@ -9,15 +9,15 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.graytsar.wlnupdates.R
-import com.graytsar.wlnupdates.databinding.ItemAdvancedGenreBinding
-import com.graytsar.wlnupdates.databinding.ItemAdvancedTagBinding
-import com.graytsar.wlnupdates.rest.ItemGenre
+import com.graytsar.wlnupdates.databinding.ItemListAdvancedTagBinding
 import com.graytsar.wlnupdates.rest.ItemTag
 
-class AdapterAdvancedSearchTag(private val activity: Fragment): ListAdapter<ItemTag, ViewHolderItemAdvancedSearchTag>(DiffCallbackAdvancedSearchTag()) {
+class AdapterAdvancedSearchTag(private val activity: Fragment): ListAdapter<ItemTag, ViewHolderItemAdvancedSearchTag>(
+    DiffCallbackAdvancedSearchTag()
+) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderItemAdvancedSearchTag {
-        val binding = DataBindingUtil.inflate<ItemAdvancedTagBinding>(
-            LayoutInflater.from(activity.context), R.layout.item_advanced_tag, parent, false)
+        val binding = DataBindingUtil.inflate<ItemListAdvancedTagBinding>(
+            LayoutInflater.from(activity.context), R.layout.item_list_advanced_tag, parent, false)
         return ViewHolderItemAdvancedSearchTag(binding.root, binding)
     }
 
@@ -36,7 +36,7 @@ class AdapterAdvancedSearchTag(private val activity: Fragment): ListAdapter<Item
 
 }
 
-class ViewHolderItemAdvancedSearchTag(view: View, val binding: ItemAdvancedTagBinding): RecyclerView.ViewHolder(view){
+class ViewHolderItemAdvancedSearchTag(view: View, val binding: ItemListAdvancedTagBinding): RecyclerView.ViewHolder(view){
 
 }
 

@@ -3,20 +3,16 @@ package com.graytsar.wlnupdates.ui.search
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.graytsar.wlnupdates.rest.ItemGenre
 import com.graytsar.wlnupdates.rest.ItemTag
+import com.graytsar.wlnupdates.rest.data.DataAdvancedSearch
 import com.graytsar.wlnupdates.rest.interfaces.RestService
 import com.graytsar.wlnupdates.rest.request.RequestAdvancedSearch
-import com.graytsar.wlnupdates.rest.request.RequestAuthor
 import com.graytsar.wlnupdates.rest.request.RequestGenre
 import com.graytsar.wlnupdates.rest.request.RequestTag
 import com.graytsar.wlnupdates.rest.response.ResponseAdvancedSearch
-import com.graytsar.wlnupdates.rest.response.ResponseAuthor
 import com.graytsar.wlnupdates.rest.response.ResponseGenre
 import com.graytsar.wlnupdates.rest.response.ResponseTag
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -30,6 +26,8 @@ class ViewModelAdvancedSearch: ViewModel() {
     val listTag = MutableLiveData<List<ItemTag>>()
     val containerListTag = ArrayList<ItemTag>()
 
+    val listResultSearch = MutableLiveData<List<DataAdvancedSearch>>()
+
     private var requestCallGenre: Call<ResponseGenre>? = null
     private var requestCallTag: Call<ResponseTag>? = null
     private var requestCallSearch: Call<ResponseAdvancedSearch>? = null
@@ -42,6 +40,8 @@ class ViewModelAdvancedSearch: ViewModel() {
     val sortUpdate = MutableLiveData<Boolean>(false)
     val sortChapter = MutableLiveData<Boolean>(false)
 
+    //errors
+    val errorResponseAdvancedSearch = MutableLiveData<ResponseAdvancedSearch>()
 
     fun getDataGenre() {
         requestCallGenre?.cancel()
@@ -110,6 +110,7 @@ class ViewModelAdvancedSearch: ViewModel() {
                         if(!responseSearch.error!!) {
                             onReceivedResultAdvancedSearch(responseSearch)
                         } else {
+                            onErrorReceivedResultAdvancedSearch(responseSearch)
                             Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
@@ -168,10 +169,14 @@ class ViewModelAdvancedSearch: ViewModel() {
     }
 
     private fun onReceivedResultAdvancedSearch(result: ResponseAdvancedSearch){
-        containerListTag.clear()
-        result.data?.let { dataTag ->
-
+        result.data?.let {
+            listResultSearch.postValue(it)
         }
+
         isLoading.postValue(false)
+    }
+
+    private fun onErrorReceivedResultAdvancedSearch(result: ResponseAdvancedSearch) {
+        errorResponseAdvancedSearch.postValue(result)
     }
 }

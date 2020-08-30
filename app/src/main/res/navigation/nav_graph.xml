@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/fragmentAdvancedSearch">
+    app:startDestination="@id/fragmentLibrary">
 
     <fragment
         android:id="@+id/fragmentLibrary"
@@ -95,4 +95,14 @@
         android:name="com.graytsar.wlnupdates.ui.search.FragmentAdvancedSearchResult"
         android:label="fragment_advanced_search_result"
         tools:layout="@layout/fragment_advanced_search_result" />
+    <fragment
+        android:id="@+id/fragmentNovelGroup"
+        android:name="com.graytsar.wlnupdates.ui.novel.FragmentNovelGroup"
+        android:label="fragment_novel_group"
+        tools:layout="@layout/fragment_novel_group" />
+    <fragment
+        android:id="@+id/fragmentCollectionSearch"
+        android:name="com.graytsar.wlnupdates.ui.search.FragmentCollectionSearch"
+        android:label="Search"
+        tools:layout="@layout/fragment_collection_search" />
 </navigation>

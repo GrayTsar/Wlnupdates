@@ -5,24 +5,28 @@
 
 
     <string name="novel_description">Description</string>
-    <string name="novel_chapters">Chapters</string>
+    <string name="novel_chapters">Chapter</string>
     <string name="novel_genre">Genre</string>
     <string name="novel_rating">Rating: %s</string>
     <string name="novel_tags">Tags</string>
-    <string name="novel_tl_type"><![CDATA[<b>TL Type:</b>]]> %s</string>
-    <string name="novel_demographic"><![CDATA[<b>Demographic:</b>]]> %s</string>
-    <string name="novel_country_of_origin"><![CDATA[<b>Country of Origin:</b>]]> %s</string>
-    <string name="novel_status"><![CDATA[<b>Status:</b>]]> %s</string>
-    <string name="novel_language"><![CDATA[<b>Language:</b>]]> %s</string>
-    <string name="novel_licensed"><![CDATA[<b>Licensed:</b>]]> %s</string>
-    <string name="novel_illustrator">Illustrator:</string>
-    <string name="novel_publisher">Publisher:</string>
-    <string name="novel_first_release_date"><![CDATA[<b>First Release:</b>]]> %s</string>
+    <string name="novel_tl_type">TL Type: %s</string>
+    <string name="novel_demographic">Demographic: %s</string>
+    <string name="novel_country_of_origin">Country of Origin: %s</string>
+    <string name="novel_status">Status: %s</string>
+    <string name="novel_language">Language: %s</string>
+    <string name="novel_licensed">Licensed: %s</string>
+    <string name="novel_illustrator">Illustrator</string>
+    <string name="novel_publisher">Publisher</string>
+    <string name="novel_first_release_date">First Release: %s</string>
     <string name="novel_alternative_names">Alternative Names</string>
+
+    <string name="novel_newest_chapter">Newest Chapter: %s</string>
 
     <string name="tab_recent">Recent</string>
     <string name="tab_translated">Translated</string>
     <string name="tab_original">Original</string>
+    <string name="tab_search">Search</string>
+    <string name="tab_search_advanced">Advanced</string>
 
     <string name="title_latest">Latest</string>
     <string name="item_latest_volume">Volume:</string>
