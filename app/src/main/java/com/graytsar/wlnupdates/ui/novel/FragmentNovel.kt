@@ -1,10 +1,9 @@
 package com.graytsar.wlnupdates.ui.novel
 
 import android.os.Bundle
+import android.view.*
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -12,10 +11,17 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import coil.load
+import com.google.android.material.snackbar.Snackbar
 import com.graytsar.wlnupdates.*
+import com.graytsar.wlnupdates.database.DatabaseService
+import com.graytsar.wlnupdates.database.ModelLibrary
 import com.graytsar.wlnupdates.databinding.FragmentNovelBinding
+import com.graytsar.wlnupdates.rest.Genre
+import com.graytsar.wlnupdates.rest.interfaces.RestService
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import java.util.*
+import kotlin.collections.ArrayList
 
 class FragmentNovel : Fragment() {
     private lateinit var binding:FragmentNovelBinding
@@ -34,6 +40,7 @@ class FragmentNovel : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        setHasOptionsMenu(true)
         binding = FragmentNovelBinding.inflate(inflater, container, false)
         binding.includeToolbarNovel.viewModelNovel = viewModelNovel
         binding.lifecycleOwner = this
@@ -107,7 +114,10 @@ class FragmentNovel : Fragment() {
         })
 
         viewModelNovel.cover.observe(viewLifecycleOwner, Observer {
-            binding.includeToolbarNovel.imageNovelCover.load(it)
+            binding.includeToolbarNovel.imageNovelCover.load(it) {
+                placeholder(R.drawable.ic_app_white)
+                error(R.drawable.ic_app_white)
+            }
         })
 
         binding.includeToolbarNovel.includeChapter.cardItemNovelChapter.setOnClickListener {
@@ -181,5 +191,55 @@ class FragmentNovel : Fragment() {
         if(argIdNovel > 0){
             viewModelNovel.getDataNovel(argIdNovel)
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_novel,menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId) {
+            R.id.menuNovelAdd -> {
+                var volume:Double = 0.0
+                var chapter:Double = 0.0
+                val title = viewModelNovel.title.value!!
+                val cover = if(viewModelNovel.cover.value != null) {
+                    viewModelNovel.cover.value!!
+                } else {
+                    ""
+                }
+
+                val release = viewModelNovel.listChapter.value?.firstOrNull()
+
+                val rVolume = release?.volume
+                val rChapter = release?.chapter
+
+                rVolume?.let {
+                    volume = it
+                }
+                rChapter?.let {
+                    chapter = it
+                }
+
+                val array = DatabaseService.db?.daoLibrary()!!.selectWhereIdWlnupdates(argIdNovel)
+
+                if(array.isNotEmpty()) {
+                    val model = array[0]
+
+                    model.volume = volume
+                    model.chapter = volume
+                    DatabaseService.db?.daoLibrary()!!.update(model)
+                } else {
+                    DatabaseService.db?.daoLibrary()!!.insert(ModelLibrary(0, argIdNovel, title, cover, 0, false, volume, chapter))
+                }
+                Snackbar.make(binding.root, "Added to Library", Snackbar.LENGTH_LONG).show()
+            }
+            else -> {
+
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
     }
 }

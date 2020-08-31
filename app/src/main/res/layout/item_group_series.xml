@@ -19,6 +19,8 @@
             android:layout_margin="8dp"
             android:textColor="@color/colorTextPrimary"
             android:textSize="18sp"
+            android:singleLine="true"
+            android:ellipsize="marquee"
             tools:text="I Shall Seals the Heavens" />
 
     </com.google.android.material.card.MaterialCardView>

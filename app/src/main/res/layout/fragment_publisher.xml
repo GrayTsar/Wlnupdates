@@ -23,20 +23,42 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textPublisherName"
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardTextPublisherName"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="8dp"
-            android:textColor="@color/colorTextPrimary"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:text="@{@string/name_publisher(viewModelPublisher.name)}"
+            android:layout_margin="4dp"
+            app:cardCornerRadius="@dimen/cardCornerRadius"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/includeToolbarPublisher"
-            tools:text="Name: Wuxiaworld" />
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="18sp"
+                    android:textStyle="bold"
+                    android:text="Name" />
+
+                <TextView
+                    android:id="@+id/textPublisherName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textColor="@color/colorTextPrimary"
+                    android:textSize="18sp"
+                    android:text="@{viewModelPublisher.name}"
+                    tools:text="Wuxiaworld" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerPublisher"
@@ -46,7 +68,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textPublisherName">
+            app:layout_constraintTop_toBottomOf="@+id/cardTextPublisherName">
 
         </androidx.recyclerview.widget.RecyclerView>
 
@@ -55,10 +77,10 @@
             style="?android:attr/progressBarStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="32dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/includeToolbarPublisher" />
+            app:layout_constraintTop_toBottomOf="@+id/cardTextPublisherName" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

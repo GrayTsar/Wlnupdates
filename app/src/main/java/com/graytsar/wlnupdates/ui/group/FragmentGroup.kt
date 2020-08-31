@@ -49,6 +49,7 @@ class FragmentGroup : Fragment() {
         NavigationUI.setupActionBarWithNavController(this.context as MainActivity, navController)
 
         binding.recyclerGroupSeries.adapter = adapterGroupSeries
+        //binding.recyclerGroupSeries.setHasFixedSize(true)
         binding.recyclerGroupFeed.adapter = adapterGroupFeed
 
         viewModelGroup.isLoading.observe(viewLifecycleOwner, {

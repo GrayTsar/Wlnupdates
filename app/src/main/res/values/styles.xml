@@ -5,7 +5,23 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textColorPrimary">#ffffff</item>
+        <item name="drawerArrowStyle">@style/ArrowHamburgerStyle</item>
+    </style>
+
+    <style name="ArrowHamburgerStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
+        <item name="color">@color/colorTextToolbarPrimary</item>
+    </style>
+
+    <style name="LibraryImageShape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">5dp</item>
+    </style>
+
+    <style name="PopupMenuStyle" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:colorControlNormal">#ff0000</item>
+        <item name="android:buttonTint">@color/colorAccent</item>
+        <item name="android:textColor">#000000</item>
+        <item name="android:itemBackground">#ffffff</item>
     </style>
 
 </resources>

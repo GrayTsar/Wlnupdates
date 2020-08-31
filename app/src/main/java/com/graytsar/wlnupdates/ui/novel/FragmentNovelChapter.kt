@@ -57,7 +57,7 @@ class FragmentNovelChapter : Fragment() {
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
-        inflater.inflate(R.menu.menu_novel_detail,menu)
+        inflater.inflate(R.menu.menu_novel_search,menu)
 
         searchView = menu.findItem(R.id.menuSearchNovel).actionView as SearchView
 

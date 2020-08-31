@@ -8,17 +8,17 @@
     <fragment
         android:id="@+id/fragmentLibrary"
         android:name="com.graytsar.wlnupdates.ui.library.FragmentLibrary"
-        android:label="fragment_library"
+        android:label="Library"
         tools:layout="@layout/fragment_library" />
     <fragment
         android:id="@+id/fragmentTranslated"
         android:name="com.graytsar.wlnupdates.ui.recent.FragmentTranslated"
-        android:label="fragment_translated"
+        android:label="Translated"
         tools:layout="@layout/fragment_translated" />
     <fragment
         android:id="@+id/fragmentOriginals"
         android:name="com.graytsar.wlnupdates.ui.recent.FragmentOriginals"
-        android:label="fragment_originals"
+        android:label="Originals"
         tools:layout="@layout/fragment_originals" />
     <fragment
         android:id="@+id/fragmentNovel"
@@ -38,7 +38,7 @@
     <fragment
         android:id="@+id/fragmentRecent"
         android:name="com.graytsar.wlnupdates.ui.recent.FragmentRecent"
-        android:label="fragment_recent"
+        android:label="Recent"
         tools:layout="@layout/fragment_recent" />
     <fragment
         android:id="@+id/fragmentAuthor"
@@ -93,12 +93,12 @@
     <fragment
         android:id="@+id/fragmentAdvancedSearchResult"
         android:name="com.graytsar.wlnupdates.ui.search.FragmentAdvancedSearchResult"
-        android:label="fragment_advanced_search_result"
+        android:label="Advanced Search"
         tools:layout="@layout/fragment_advanced_search_result" />
     <fragment
         android:id="@+id/fragmentNovelGroup"
         android:name="com.graytsar.wlnupdates.ui.novel.FragmentNovelGroup"
-        android:label="fragment_novel_group"
+        android:label="Group"
         tools:layout="@layout/fragment_novel_group" />
     <fragment
         android:id="@+id/fragmentCollectionSearch"

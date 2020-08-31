@@ -72,6 +72,10 @@ dependencies {
     //Image loading
     implementation 'io.coil-kt:coil:1.0.0-rc1'
 
+    //Periodic chapter updates notification
+    implementation "androidx.work:work-runtime-ktx:2.4.0"
+
+    //Database
     implementation 'androidx.room:room-runtime:2.2.5'
     kapt 'androidx.room:room-compiler:2.2.5'
 
