@@ -9,9 +9,10 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.graytsar.wlnupdates.*
+import com.graytsar.wlnupdates.ARG_ID_GROUP
+import com.graytsar.wlnupdates.MainActivity
+import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemNovelSimpleExpandedBinding
-import com.graytsar.wlnupdates.rest.Genre
 import com.graytsar.wlnupdates.rest.Tlgroup
 
 class AdapterNovelGroup(private val activity: Fragment): ListAdapter<Tlgroup, ViewHolderNovelSimpleExpanded>(DiffCallbackNovelGroup()) {
@@ -37,7 +38,7 @@ class AdapterNovelGroup(private val activity: Fragment): ListAdapter<Tlgroup, Vi
                 val bundle = Bundle()
                 bundle.putInt(ARG_ID_GROUP, id)
 
-                navController.navigate(R.id.fragmentGroup, bundle)
+                navController.navigate(R.id.fragmentCollectionGroup, bundle)
             }
         }
     }

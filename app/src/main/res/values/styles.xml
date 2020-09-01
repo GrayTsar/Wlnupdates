@@ -6,6 +6,10 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="drawerArrowStyle">@style/ArrowHamburgerStyle</item>
+        <item name="android:textColorPrimary">@color/colorTextToolbarPrimary</item>
+        <item name="android:windowBackground">@color/colorWindowsBackground</item>
+        <item name="android:textColorHint">@color/colorTextHint</item>
+        <item name="colorControlNormal">@color/colorTextPrimary</item>
     </style>
 
     <style name="ArrowHamburgerStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
@@ -15,6 +19,13 @@
     <style name="LibraryImageShape" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">5dp</item>
+    </style>
+
+    <style name="CardViewShape" parent="Widget.MaterialComponents.CardView">
+        <item name="strokeWidth">1dp</item>
+        <item name="cardCornerRadius">5dp</item>
+        <item name="strokeColor">@color/colorCardStoke</item>
+        <item name="cardBackgroundColor">@color/colorCardBackground</item>
     </style>
 
     <style name="PopupMenuStyle" parent="Widget.AppCompat.PopupMenu">

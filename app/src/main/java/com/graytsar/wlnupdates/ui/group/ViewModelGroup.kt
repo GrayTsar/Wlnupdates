@@ -7,9 +7,7 @@ import com.google.gson.internal.LinkedTreeMap
 import com.graytsar.wlnupdates.rest.FeedPaginated
 import com.graytsar.wlnupdates.rest.ReleasesPaginated
 import com.graytsar.wlnupdates.rest.interfaces.RestService
-import com.graytsar.wlnupdates.rest.request.RequestAuthor
 import com.graytsar.wlnupdates.rest.request.RequestGroup
-import com.graytsar.wlnupdates.rest.response.ResponseAuthor
 import com.graytsar.wlnupdates.rest.response.ResponseGroup
 import retrofit2.Call
 import retrofit2.Callback
@@ -20,6 +18,9 @@ class ViewModelGroup: ViewModel() {
     val name = MutableLiveData<String>("")
     val siteLink = MutableLiveData<String>("")
 
+    private val listSize:Int = 50
+
+    var listActiveSeries = LinkedTreeMap<String, String>()
 
     var activeSeries = MutableLiveData<LinkedTreeMap<String, String>>()
     var alternateNames = MutableLiveData<List<String?>>()
@@ -27,6 +28,9 @@ class ViewModelGroup: ViewModel() {
     var releasesPaginated = MutableLiveData<List<ReleasesPaginated?>>()
 
     private var requestCall: Call<ResponseGroup>? = null
+
+    val errorResponseGroup = MutableLiveData<ResponseGroup>()
+    val failureResponse = MutableLiveData<Throwable>()
 
     fun getDataGroup(id:Int) {
         requestCall?.cancel()
@@ -39,10 +43,14 @@ class ViewModelGroup: ViewModel() {
                         if(!responseGroup.error!!) {
                             onReceivedResult(responseGroup)
                         } else {
+                            errorResponseGroup.postValue(responseGroup)
                             Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
                 } else {
+                    response.body()?.let {
+                        errorResponseGroup.postValue(it)
+                    }
                     Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
@@ -50,6 +58,9 @@ class ViewModelGroup: ViewModel() {
             }
 
             override fun onFailure(call: Call<ResponseGroup>, t: Throwable) {
+                if(!call.isCanceled){
+                    failureResponse.postValue(t)
+                }
                 isLoading.postValue(false)
                 Log.d("DBG-Failure:", "restService.getGroup() onFailure")
             }
@@ -57,51 +68,57 @@ class ViewModelGroup: ViewModel() {
     }
 
     private fun onReceivedResult(result: ResponseGroup){
-        result.data?.let {
-            name.postValue(it.group)
-            activeSeries.postValue(it.activeSeries)
-            feedPaginated.postValue(it.feedPaginated)
+        result.data?.let { dataGroup ->
+            name.postValue(dataGroup.group)
 
+            dataGroup.feedPaginated?.let {
+                //listFeedPaginated = ArrayList(it)
+                feedPaginated.postValue(it)
+            }
+
+            dataGroup.activeSeries?.let {
+                listActiveSeries = it
+
+                val c = LinkedTreeMap<String, String>()
+                var i:Int = 0
+
+                for(entry in listActiveSeries) {
+                    i += 1
+                    c[entry.key] = entry.value
+
+                    if(i == listSize) {
+                        break
+                    }
+                }
+
+                activeSeries.postValue(c)
+            }
+
+            //activeSeries.postValue(dataGroup.activeSeries)
+            //feedPaginated.postValue(dataGroup.feedPaginated)
         }
     }
 
-
-
-
-
-
-
-
-
-
-
-    /*
-    fun getDataGroup(id:Int){
-        isLoading.postValue(true)
-
-        val result = RestService.restService.getGroup(RequestGroup(id)).execute().body()
-        result?.data?.let { data ->
-
-            group.postValue(data.group)
-
-            siteLink.postValue(data.site)
-
-            data.activeSeries?.let {
-                activeSeries = it
+    fun getMoreActiveSeries(){
+        activeSeries.value?.let { listSeries ->
+            if(listSeries.size >= listActiveSeries.size){
+                return
             }
-            data.alternateNames?.let {
-                alternateNames = it
+
+            val tempMap = LinkedTreeMap<String, String>()
+            var i:Int = 0
+            val currentSize = listSeries.size
+            val requestedSize = currentSize + listSize
+
+            for(entry in listActiveSeries) {
+                i += 1
+                tempMap[entry.key] = entry.value
+
+                if(i == requestedSize) {
+                    break
+                }
             }
-            data.feedPaginated?.let {
-                feedPaginated = it
-            }
-            data.releasesPaginated?.let {
-                releasesPaginated = it
-            }
+            activeSeries.postValue(tempMap)
         }
-
-        isLoading.postValue(false)
     }
-
-     */
 }

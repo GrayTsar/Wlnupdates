@@ -44,4 +44,10 @@
     <string name="name_author">Name: %s</string>
     <string name="name_publisher">Name: %s</string>
     <string name="name_group">Name: %s</string>
+
+    <string name="type_to_search">Type to Search</string>
+
+    <string name="alert_dialog_title_failure">Failure</string>
+    <string name="alert_dialog_title_error">Error</string>
+    <string name="alert_dialog_ok">OK</string>
 </resources>

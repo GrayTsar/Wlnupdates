@@ -1,24 +1,20 @@
 package com.graytsar.wlnupdates.ui.recent
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentOriginalsBinding
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class FragmentOriginals : Fragment() {
     private lateinit var binding: FragmentOriginalsBinding
@@ -55,7 +51,7 @@ class FragmentOriginals : Fragment() {
         recyclerOriginal = binding.recyclerOriginal
         recyclerOriginal.adapter = adapter
 
-        viewModelOriginal.isLoading.observe(viewLifecycleOwner, Observer {
+        viewModelOriginal.isLoading.observe(viewLifecycleOwner, {
             binding.progressBarOriginal.visibility = if(it){
                 View.VISIBLE
             } else {
@@ -73,27 +69,26 @@ class FragmentOriginals : Fragment() {
 
                     if(firstVisibleItem + visibleItemCount >= totalItemCount) {
                         if(viewModelOriginal.hasNext && !viewModelOriginal.isLoading.value!!){
-                            GlobalScope.launch {
-                                viewModelOriginal.getOriginalsData(viewModelOriginal.nextNum)
-                            }.invokeOnCompletion {
-                                lifecycleScope.launch {
-                                    adapter.submitList(viewModelOriginal.items.toMutableList())
-                                }
-                            }
+                            viewModelOriginal.getOriginalsData(viewModelOriginal.nextNum)
                         }
                     }
                 }
             }
         })
 
+        viewModelOriginal.list.observe(viewLifecycleOwner, {
+            adapter.submitList(it.toMutableList())
+        })
 
-        GlobalScope.launch {
-            viewModelOriginal.getOriginalsData()
-        }.invokeOnCompletion {
-            lifecycleScope.launch {
-                adapter.submitList(viewModelOriginal.items.toMutableList())
-            }
-        }
+        viewModelOriginal.errorResponseOriginal.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+        })
+
+        viewModelOriginal.failureResponse.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
+        })
+
+        viewModelOriginal.getOriginalsData()
 
         return binding.root
     }
@@ -112,11 +107,18 @@ class FragmentOriginals : Fragment() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let {
                     adapter.pattern = it
-                    adapter.submitList(viewModelOriginal.items.toMutableList())
+                    adapter.submitList(viewModelOriginal.list.value!!.toMutableList())
                 }
                 return false
             }
         })
     }
 
+    private fun showErrorDialog(title:String, message:String?){
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.alert_dialog_ok), null)
+            .show()
+    }
 }

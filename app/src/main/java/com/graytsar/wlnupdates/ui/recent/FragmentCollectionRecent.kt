@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentCollectionRecentBinding
@@ -30,8 +29,8 @@ class FragmentCollectionRecent : Fragment() {
     ): View? {
         binding = FragmentCollectionRecentBinding.inflate(inflater, container, false)
 
-        adapter = FragmentStateRecentAdapter(this)
         viewPager = binding.includeToolbarRecent.viewpagerRecent
+        adapter = FragmentStateRecentAdapter(this)
         viewPager.adapter = adapter
         val tabLayout = binding.includeToolbarRecent.tabs
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->

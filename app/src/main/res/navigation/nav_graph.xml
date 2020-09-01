@@ -86,10 +86,10 @@
         android:label="Illustrator"
         tools:layout="@layout/fragment_illustrator" />
     <fragment
-        android:id="@+id/fragmentGroup"
-        android:name="com.graytsar.wlnupdates.ui.group.FragmentGroup"
+        android:id="@+id/fragmentGroupSeries"
+        android:name="com.graytsar.wlnupdates.ui.group.FragmentGroupSeries"
         android:label="Group"
-        tools:layout="@layout/fragment_group" />
+        tools:layout="@layout/fragment_group_series" />
     <fragment
         android:id="@+id/fragmentAdvancedSearchResult"
         android:name="com.graytsar.wlnupdates.ui.search.FragmentAdvancedSearchResult"
@@ -105,4 +105,14 @@
         android:name="com.graytsar.wlnupdates.ui.search.FragmentCollectionSearch"
         android:label="Search"
         tools:layout="@layout/fragment_collection_search" />
+    <fragment
+        android:id="@+id/fragmentCollectionGroup"
+        android:name="com.graytsar.wlnupdates.ui.group.FragmentCollectionGroup"
+        android:label="Group"
+        tools:layout="@layout/fragment_collection_group" />
+    <fragment
+        android:id="@+id/fragmentGroupFeed"
+        android:name="com.graytsar.wlnupdates.ui.group.FragmentGroupFeed"
+        android:label="Group"
+        tools:layout="@layout/fragment_group_feed" />
 </navigation>

@@ -1,16 +1,15 @@
 package com.graytsar.wlnupdates.ui.novel
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.graytsar.wlnupdates.ARG_ID_NOVEL_GROUP
 import com.graytsar.wlnupdates.MainActivity
-import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentNovelGroupBinding
 import com.graytsar.wlnupdates.rest.Tlgroup
 

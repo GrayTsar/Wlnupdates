@@ -10,23 +10,16 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.graytsar.wlnupdates.rest.*
 import com.graytsar.wlnupdates.rest.interfaces.RestService
-import com.graytsar.wlnupdates.rest.interfaces.RestService.restService
-import com.graytsar.wlnupdates.rest.request.RequestAuthor
 import com.graytsar.wlnupdates.rest.request.RequestNovel
-import com.graytsar.wlnupdates.rest.response.ResponseAuthor
 import com.graytsar.wlnupdates.rest.response.ResponseNovel
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.lang.Exception
-import java.lang.StringBuilder
-import java.security.acl.Group
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.stream.Collectors
 import kotlin.collections.ArrayList
 import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 
 
 @BindingAdapter("android:text")
@@ -83,6 +76,9 @@ class ViewModelNovel: ViewModel() {
     val cover = MutableLiveData<String>()
     val group = MutableLiveData<String>()
 
+    val errorResponseNovel = MutableLiveData<ResponseNovel>()
+    val failureResponse = MutableLiveData<Throwable>()
+
     fun getDataNovel(id:Int) {
         requestCall?.cancel()
         requestCall = RestService.restService.getNovel(RequestNovel(id))
@@ -90,14 +86,18 @@ class ViewModelNovel: ViewModel() {
         requestCall?.enqueue(object: Callback<ResponseNovel> {
             override fun onResponse(call: Call<ResponseNovel>, response: Response<ResponseNovel>) {
                 if(response.isSuccessful){
-                    response.body()?.let { responseAuthor ->
-                        if(!responseAuthor.error!!) {
-                            onReceivedResult(responseAuthor)
+                    response.body()?.let { responseNovel ->
+                        if(!responseNovel.error!!) {
+                            onReceivedResult(responseNovel)
                         } else {
+                            errorResponseNovel.postValue(responseNovel)
                             Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
                 } else {
+                    response.body()?.let {
+                        errorResponseNovel.postValue(it)
+                    }
                     Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
@@ -105,6 +105,9 @@ class ViewModelNovel: ViewModel() {
             }
 
             override fun onFailure(call: Call<ResponseNovel>, t: Throwable) {
+                if(!call.isCanceled){
+                    failureResponse.postValue(t)
+                }
                 isLoading.postValue(false)
                 Log.d("DBG-Failure:", "restService.getNovel() onFailure")
             }
@@ -172,7 +175,7 @@ class ViewModelNovel: ViewModel() {
 
                 val altNamesString = StringBuilder()
                 it.forEach { name ->
-                    altNamesString.append("$name \n")
+                    altNamesString.append("<br>$name</br>")
                 }
                 alternativeNames.postValue(altNamesString.toString())
             }
@@ -231,7 +234,7 @@ class ViewModelNovel: ViewModel() {
             }
 
             lastRelease.postValue(novel.latestPublished)
-            latestChapter.postValue("${novel.latestStr} [${listChapter.value?.count()}]")
+            latestChapter.postValue("${novel.latestStr} [${novel.releases?.count()}]")
 
         }
     }

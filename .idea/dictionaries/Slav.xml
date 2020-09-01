@@ -2,14 +2,32 @@
   <dictionary name="Slav">
     <words>
       <w>alternatenames</w>
+      <w>firestore</w>
       <w>graytsar</w>
+      <w>grpc</w>
+      <w>ichigo</w>
+      <w>isekai</w>
+      <w>javalite</w>
+      <w>kikou</w>
+      <w>linkurl</w>
+      <w>naseru</w>
+      <w>protobuf</w>
       <w>searchadvanced</w>
       <w>srcfname</w>
+      <w>srcname</w>
       <w>srcurl</w>
+      <w>suiko</w>
       <w>tlgroup</w>
+      <w>vert</w>
+      <w>volare</w>
       <w>watchlists</w>
       <w>wlnupdates</w>
+      <w>wuxia</w>
       <w>wuxiaworld</w>
+      <w>yaoi</w>
+      <w>yururi</w>
+      <w>yuuji</w>
+      <w>zhen</w>
     </words>
   </dictionary>
 </component>

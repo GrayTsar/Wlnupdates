@@ -1,11 +1,13 @@
 package com.graytsar.wlnupdates.rest.interfaces
 
+import androidx.annotation.Keep
 import com.graytsar.wlnupdates.rest.request.*
 import com.graytsar.wlnupdates.rest.response.*
 import retrofit2.Call
 import retrofit2.http.Body
 import retrofit2.http.POST
 
+@Keep
 interface WlnupdatesInterface {
 
     @POST("api")

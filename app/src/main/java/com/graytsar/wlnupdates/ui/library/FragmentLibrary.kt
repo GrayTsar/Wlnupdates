@@ -1,22 +1,20 @@
 package com.graytsar.wlnupdates.ui.library
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
 import com.google.android.flexbox.JustifyContent
 import com.graytsar.wlnupdates.MainActivity
-import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.database.DatabaseService
 import com.graytsar.wlnupdates.database.ModelLibrary
 import com.graytsar.wlnupdates.databinding.FragmentLibraryBinding

@@ -4,9 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import com.graytsar.wlnupdates.rest.SeriesAuthor
 import com.graytsar.wlnupdates.rest.SeriesTitle
-import com.graytsar.wlnupdates.rest.response.ResponseAuthor
 
 class DataAuthor(
     @SerializedName("name")

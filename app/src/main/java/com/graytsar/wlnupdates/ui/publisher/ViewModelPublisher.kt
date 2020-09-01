@@ -5,9 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.graytsar.wlnupdates.rest.SeriesTitle
 import com.graytsar.wlnupdates.rest.interfaces.RestService
-import com.graytsar.wlnupdates.rest.request.RequestIllustrator
 import com.graytsar.wlnupdates.rest.request.RequestPublisher
-import com.graytsar.wlnupdates.rest.response.ResponseIllustrator
 import com.graytsar.wlnupdates.rest.response.ResponsePublisher
 import retrofit2.Call
 import retrofit2.Callback
@@ -20,6 +18,9 @@ class ViewModelPublisher: ViewModel() {
 
     private var requestCall: Call<ResponsePublisher>? = null
 
+    val errorResponsePublisher = MutableLiveData<ResponsePublisher>()
+    val failureResponse = MutableLiveData<Throwable>()
+
     fun getDataPublisher(id:Int) {
         requestCall?.cancel()
         requestCall = RestService.restService.getPublisher(RequestPublisher(id))
@@ -31,10 +32,14 @@ class ViewModelPublisher: ViewModel() {
                         if(!responsePublisher.error!!) {
                             onReceivedResult(responsePublisher)
                         } else {
+                            errorResponsePublisher.postValue(responsePublisher)
                             Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
                 } else {
+                    response.body()?.let {
+                        errorResponsePublisher.postValue(it)
+                    }
                     Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
@@ -42,6 +47,9 @@ class ViewModelPublisher: ViewModel() {
             }
 
             override fun onFailure(call: Call<ResponsePublisher>, t: Throwable) {
+                if(!call.isCanceled){
+                    failureResponse.postValue(t)
+                }
                 isLoading.postValue(false)
                 Log.d("DBG-Failure:", "restService.getPublisher() onFailure")
             }

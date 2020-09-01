@@ -1,24 +1,19 @@
 package com.graytsar.wlnupdates.ui.publisher
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.ARG_ID_PUBLISHER
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentPublisherBinding
-import com.graytsar.wlnupdates.rest.interfaces.RestService
-import com.graytsar.wlnupdates.rest.request.RequestPublisher
-import kotlinx.android.synthetic.main.toolbar_publisher.view.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 
 class FragmentPublisher : Fragment() {
@@ -63,6 +58,14 @@ class FragmentPublisher : Fragment() {
             adapterPublisher.submitList(it)
         })
 
+        viewModelPublisher.errorResponsePublisher.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+        })
+
+        viewModelPublisher.failureResponse.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
+        })
+
         return binding.root
     }
 
@@ -74,4 +77,11 @@ class FragmentPublisher : Fragment() {
         }
     }
 
+    private fun showErrorDialog(title:String, message:String?){
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.alert_dialog_ok), null)
+            .show()
+    }
 }

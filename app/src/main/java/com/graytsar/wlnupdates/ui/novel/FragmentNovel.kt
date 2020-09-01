@@ -2,26 +2,19 @@ package com.graytsar.wlnupdates.ui.novel
 
 import android.os.Bundle
 import android.view.*
-import androidx.appcompat.widget.SearchView
-import androidx.fragment.app.Fragment
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import coil.load
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.snackbar.Snackbar
 import com.graytsar.wlnupdates.*
 import com.graytsar.wlnupdates.database.DatabaseService
 import com.graytsar.wlnupdates.database.ModelLibrary
 import com.graytsar.wlnupdates.databinding.FragmentNovelBinding
-import com.graytsar.wlnupdates.rest.Genre
-import com.graytsar.wlnupdates.rest.interfaces.RestService
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import java.util.*
-import kotlin.collections.ArrayList
 
 class FragmentNovel : Fragment() {
     private lateinit var binding:FragmentNovelBinding
@@ -101,7 +94,7 @@ class FragmentNovel : Fragment() {
         val navController = NavHostFragment.findNavController(this)
         NavigationUI.setupActionBarWithNavController(this.context as MainActivity, navController)
 
-        viewModelNovel.isLoading.observe(viewLifecycleOwner, Observer {
+        viewModelNovel.isLoading.observe(viewLifecycleOwner, {
             binding.includeToolbarNovel.progressBarNovel.visibility = if(it){
                 View.VISIBLE
             } else {
@@ -109,15 +102,23 @@ class FragmentNovel : Fragment() {
             }
         })
 
-        viewModelNovel.description.observe(viewLifecycleOwner, Observer {
+        viewModelNovel.description.observe(viewLifecycleOwner, {
             binding.includeToolbarNovel.includeDescription.textNovelDescriptionContent.text = it
         })
 
-        viewModelNovel.cover.observe(viewLifecycleOwner, Observer {
+        viewModelNovel.cover.observe(viewLifecycleOwner, {
             binding.includeToolbarNovel.imageNovelCover.load(it) {
                 placeholder(R.drawable.ic_app_white)
                 error(R.drawable.ic_app_white)
             }
+        })
+
+        viewModelNovel.errorResponseNovel.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+        })
+
+        viewModelNovel.failureResponse.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
         })
 
         binding.includeToolbarNovel.includeChapter.cardItemNovelChapter.setOnClickListener {
@@ -230,10 +231,12 @@ class FragmentNovel : Fragment() {
                     model.volume = volume
                     model.chapter = volume
                     DatabaseService.db?.daoLibrary()!!.update(model)
+                    Snackbar.make(binding.root, "Already in Library", Snackbar.LENGTH_LONG).show()
                 } else {
                     DatabaseService.db?.daoLibrary()!!.insert(ModelLibrary(0, argIdNovel, title, cover, 0, false, volume, chapter))
+                    Snackbar.make(binding.root, "Added to Library", Snackbar.LENGTH_LONG).show()
                 }
-                Snackbar.make(binding.root, "Added to Library", Snackbar.LENGTH_LONG).show()
+
             }
             else -> {
 
@@ -241,5 +244,13 @@ class FragmentNovel : Fragment() {
         }
 
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun showErrorDialog(title:String, message:String?){
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.alert_dialog_ok), null)
+            .show()
     }
 }

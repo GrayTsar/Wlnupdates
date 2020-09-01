@@ -15,8 +15,6 @@ import com.graytsar.wlnupdates.ARG_ID_NOVEL
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemIllustratorBinding
-import com.graytsar.wlnupdates.databinding.ItemPublisherBinding
-import com.graytsar.wlnupdates.rest.Series
 import com.graytsar.wlnupdates.rest.SeriesTitle
 
 class AdapterIllustrator(private val activity: Fragment): ListAdapter<SeriesTitle, ViewHolderIllustrator>(DiffCallbackIllustrator()) {

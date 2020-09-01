@@ -1,24 +1,20 @@
 package com.graytsar.wlnupdates.ui.recent
 
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentTranslatedBinding
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class FragmentTranslated : Fragment() {
     private lateinit var binding: FragmentTranslatedBinding
@@ -55,7 +51,7 @@ class FragmentTranslated : Fragment() {
         recyclerTranslated = binding.recyclerTranslated
         recyclerTranslated.adapter = adapter
 
-        viewModelTranslated.isLoading.observe(viewLifecycleOwner, Observer {
+        viewModelTranslated.isLoading.observe(viewLifecycleOwner, {
             binding.progressBarTranslated.visibility = if(it){
                 View.VISIBLE
             } else {
@@ -73,27 +69,28 @@ class FragmentTranslated : Fragment() {
 
                     if(firstVisibleItem + visibleItemCount >= totalItemCount) {
                         if(viewModelTranslated.hasNext && !viewModelTranslated.isLoading.value!!){
-                            GlobalScope.launch {
-                                viewModelTranslated.getTranslatedData(viewModelTranslated.nextNum)
-                            }.invokeOnCompletion {
-                                lifecycleScope.launch {
-                                    adapter.submitList(viewModelTranslated.items.toMutableList())
-                                }
-                            }
+                            viewModelTranslated.getTranslatedData(viewModelTranslated.nextNum)
                         }
                     }
                 }
             }
         })
 
+        viewModelTranslated.list.observe(viewLifecycleOwner, {
+            adapter.submitList(it.toMutableList())
+        })
 
-        GlobalScope.launch {
-            viewModelTranslated.getTranslatedData()
-        }.invokeOnCompletion {
-            lifecycleScope.launch {
-                adapter.submitList(viewModelTranslated.items.toMutableList())
-            }
-        }
+        viewModelTranslated.errorResponseTranslated.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+        })
+
+        viewModelTranslated.failureResponse.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
+        })
+
+        viewModelTranslated.getTranslatedData()
+
+        viewModelTranslated.getTranslatedData()
 
         return binding.root
     }
@@ -112,11 +109,18 @@ class FragmentTranslated : Fragment() {
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let {
                     adapter.pattern = it
-                    adapter.submitList(viewModelTranslated.items.toMutableList())
+                    adapter.submitList(viewModelTranslated.list.value!!.toMutableList())
                 }
                 return false
             }
         })
     }
 
+    private fun showErrorDialog(title:String, message:String?){
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.alert_dialog_ok), null)
+            .show()
+    }
 }

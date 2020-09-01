@@ -9,7 +9,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
-import com.graytsar.wlnupdates.ARG_ID_ILLUSTRATOR
 import com.graytsar.wlnupdates.ARG_ID_PUBLISHER
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R

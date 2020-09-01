@@ -171,12 +171,20 @@ class FragmentAdvancedSearch : Fragment() {
             }
         })
 
+        viewModelAdvancedSearch.errorResponseGenre.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+        })
+
+        viewModelAdvancedSearch.errorResponseTag.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+        })
+
         viewModelAdvancedSearch.errorResponseAdvancedSearch.observe(viewLifecycleOwner, {
-            MaterialAlertDialogBuilder(requireContext())
-                .setTitle("Error")
-                .setMessage(it.message)
-                .setPositiveButton("OK", null)
-                .show()
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+        })
+
+        viewModelAdvancedSearch.failureResponse.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
         })
 
         btnTypeAll.setOnClickListener {
@@ -244,7 +252,7 @@ class FragmentAdvancedSearch : Fragment() {
     }
 
 
-    fun onClickSearch(view: View) {
+    private fun onClickSearch(view: View) {
         val titleSearchText = binding.editTextAdvancedSearchTerm.text.toString()
         var sortMode = ""
 
@@ -266,9 +274,9 @@ class FragmentAdvancedSearch : Fragment() {
         if(tAll){
 
         } else if(tOriginal) {
-            sMap.put("Original English Language", "included")
+            sMap["Original English Language"] = "included"
         } else if(tTranslated) {
-            sMap.put("Translated", "included")
+            sMap["Translated"] = "included"
         }
 
         if(sName) {
@@ -281,17 +289,24 @@ class FragmentAdvancedSearch : Fragment() {
 
         genreList.forEach {
             if(it.isSelected.value!!){
-                gMap.put(it.name, "include")
+                gMap[it.name] = "include"
             }
         }
 
         tagList.forEach {
             if(it.isSelected.value!!) {
-                tMap.put(it.name, "include")
+                tMap[it.name] = "include"
             }
         }
 
         viewModelAdvancedSearch.getDataAdvancedSearch(RequestAdvancedSearch(titleSearchText, sMap, gMap, tMap, sortMode))
+    }
 
+    private fun showErrorDialog(title:String, message:String?){
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.alert_dialog_ok), null)
+            .show()
     }
 }

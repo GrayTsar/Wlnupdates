@@ -41,7 +41,10 @@ class ViewModelAdvancedSearch: ViewModel() {
     val sortChapter = MutableLiveData<Boolean>(false)
 
     //errors
+    val errorResponseGenre = MutableLiveData<ResponseGenre>()
+    val errorResponseTag = MutableLiveData<ResponseTag>()
     val errorResponseAdvancedSearch = MutableLiveData<ResponseAdvancedSearch>()
+    val failureResponse = MutableLiveData<Throwable>()
 
     fun getDataGenre() {
         requestCallGenre?.cancel()
@@ -58,6 +61,9 @@ class ViewModelAdvancedSearch: ViewModel() {
                         }
                     }
                 } else {
+                    response.body()?.let {
+                        errorResponseGenre.postValue(it)
+                    }
                     Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
@@ -65,6 +71,9 @@ class ViewModelAdvancedSearch: ViewModel() {
             }
 
             override fun onFailure(call: Call<ResponseGenre>, t: Throwable) {
+                if(!call.isCanceled) {
+                    failureResponse.postValue(t)
+                }
                 isLoading.postValue(false)
                 Log.d("DBG-Failure:", "restService.getGenre() onFailure")
             }
@@ -86,6 +95,9 @@ class ViewModelAdvancedSearch: ViewModel() {
                         }
                     }
                 } else {
+                    response.body()?.let {
+                        errorResponseTag.postValue(it)
+                    }
                     Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
@@ -93,6 +105,9 @@ class ViewModelAdvancedSearch: ViewModel() {
             }
 
             override fun onFailure(call: Call<ResponseTag>, t: Throwable) {
+                if(!call.isCanceled) {
+                    failureResponse.postValue(t)
+                }
                 isLoading.postValue(false)
                 Log.d("DBG-Failure:", "restService.getTag() onFailure")
             }
@@ -115,6 +130,9 @@ class ViewModelAdvancedSearch: ViewModel() {
                         }
                     }
                 } else {
+                    response.body()?.let {
+                        onErrorReceivedResultAdvancedSearch(it)
+                    }
                     Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
@@ -122,6 +140,9 @@ class ViewModelAdvancedSearch: ViewModel() {
             }
 
             override fun onFailure(call: Call<ResponseAdvancedSearch>, t: Throwable) {
+                if(!call.isCanceled) {
+                    failureResponse.postValue(t)
+                }
                 isLoading.postValue(false)
                 Log.d("DBG-Failure:", "restService.getAdvancedSearch() onFailure")
             }

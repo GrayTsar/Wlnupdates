@@ -1,7 +1,5 @@
 package com.graytsar.wlnupdates.ui.publisher
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,10 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.graytsar.wlnupdates.ARG_ID_NOVEL
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
-import com.graytsar.wlnupdates.databinding.ItemGroupFeedBinding
 import com.graytsar.wlnupdates.databinding.ItemPublisherBinding
-import com.graytsar.wlnupdates.rest.FeedPaginated
-import com.graytsar.wlnupdates.rest.Series
 import com.graytsar.wlnupdates.rest.SeriesTitle
 
 class AdapterPublisher(private val activity: Fragment): ListAdapter<SeriesTitle, ViewHolderPublisher>(DiffCallbackPublisher()) {

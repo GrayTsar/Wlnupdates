@@ -28,14 +28,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="4dp"
-                    app:cardCornerRadius="10dp">
+                    style="@style/CardViewShape">
 
                     <EditText
                         android:id="@+id/editTextAdvancedSearchTerm"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_margin="4dp"
-                        android:hint="Type to Search" />
+                        android:hint="@string/type_to_search"
+                        android:inputType="text"
+                        android:singleLine="true"
+                        android:textColor="@color/colorTextPrimary" />
                 </com.google.android.material.card.MaterialCardView>
 
                 <include
@@ -87,6 +90,9 @@
             android:layout_marginEnd="32dp"
             android:layout_marginBottom="32dp"
             android:clickable="true"
+            android:focusable="true"
+            app:tint="@color/colorTextToolbarPrimary"
+            app:backgroundTint="@color/colorAccent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/ic_baseline_search_24" />

@@ -13,7 +13,7 @@
         android:id="@+id/cardSearchSort"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="@dimen/cardCornerRadius">
+        style="@style/CardViewShape">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -25,7 +25,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:layout_marginEnd="8dp"
-                android:textSize="18dp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/colorTextPrimary"
                 android:text="Sort By"
@@ -40,6 +40,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:backgroundTint="@{model.sortName ? @color/colorButtonActive : @color/colorButtonBackground}"
+                android:textColor="@color/colorTextToolbarPrimary"
                 android:text="Name"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/buttonSortUpdate"
@@ -54,6 +55,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:backgroundTint="@{model.sortUpdate ? @color/colorButtonActive : @color/colorButtonBackground}"
+                android:textColor="@color/colorTextToolbarPrimary"
                 android:text="Update"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/buttonSortCount"
@@ -68,6 +70,7 @@
                 android:layout_marginTop="8dp"
                 android:layout_marginBottom="8dp"
                 android:backgroundTint="@{model.sortChapter ? @color/colorButtonActive : @color/colorButtonBackground}"
+                android:textColor="@color/colorTextToolbarPrimary"
                 android:text="Chapters"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

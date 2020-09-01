@@ -18,6 +18,9 @@ class ViewModelIllustrator: ViewModel() {
 
     private var requestCall: Call<ResponseIllustrator>? = null
 
+    val errorResponseIllustrator = MutableLiveData<ResponseIllustrator>()
+    val failureResponse = MutableLiveData<Throwable>()
+
     fun getDataIllustrator(id:Int) {
         requestCall?.cancel()
         requestCall = RestService.restService.getIllustrator(RequestIllustrator(id))
@@ -29,10 +32,14 @@ class ViewModelIllustrator: ViewModel() {
                         if(!responseIllustrator.error!!) {
                             onReceivedResult(responseIllustrator)
                         } else {
+                            errorResponseIllustrator.postValue(responseIllustrator)
                             Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
                 } else {
+                    response.body()?.let {
+                        errorResponseIllustrator.postValue(it)
+                    }
                     Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
@@ -40,6 +47,9 @@ class ViewModelIllustrator: ViewModel() {
             }
 
             override fun onFailure(call: Call<ResponseIllustrator>, t: Throwable) {
+                if(!call.isCanceled){
+                    failureResponse.postValue(t)
+                }
                 isLoading.postValue(false)
                 Log.d("DBG-Failure:", "restService.getIllustrator() onFailure")
             }

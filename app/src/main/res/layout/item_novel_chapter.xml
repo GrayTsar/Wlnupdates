@@ -16,7 +16,7 @@
         android:layout_margin="4dp"
         android:clickable="true"
         android:focusable="true"
-        app:cardCornerRadius="@dimen/cardCornerRadius">
+        style="@style/CardViewShape">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -42,7 +42,7 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:srcCompat="@drawable/ic_baseline_open_in_new_24"
-                app:tint="#000000" />
+                app:tint="@color/colorTextPrimary" />
 
             <TextView
                 android:id="@+id/textItemNovelChapterLastChapter"

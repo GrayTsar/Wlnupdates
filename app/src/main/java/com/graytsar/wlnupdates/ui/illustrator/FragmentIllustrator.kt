@@ -1,35 +1,19 @@
 package com.graytsar.wlnupdates.ui.illustrator
 
 import android.os.Bundle
-import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.ARG_ID_ILLUSTRATOR
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentIllustratorBinding
-import com.graytsar.wlnupdates.rest.MatchContent
-import com.graytsar.wlnupdates.rest.interfaces.RestService
-import com.graytsar.wlnupdates.rest.request.RequestIllustrator
-import com.graytsar.wlnupdates.rest.request.RequestPublisher
-import com.graytsar.wlnupdates.rest.request.RequestSearch
-import com.graytsar.wlnupdates.rest.response.ResponseIllustrator
-import com.graytsar.wlnupdates.rest.response.ResponseSearch
-import kotlinx.android.synthetic.main.toolbar_illustrator.view.*
-import kotlinx.android.synthetic.main.toolbar_publisher.view.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class FragmentIllustrator : Fragment() {
     private lateinit var binding: FragmentIllustratorBinding
@@ -75,6 +59,15 @@ class FragmentIllustrator : Fragment() {
         viewModelIllustrator.list.observe(viewLifecycleOwner, {
             adapterIllustrator.submitList(it)
         })
+
+        viewModelIllustrator.errorResponseIllustrator.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+        })
+
+        viewModelIllustrator.failureResponse.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
+        })
+
         return binding.root
     }
 
@@ -84,5 +77,13 @@ class FragmentIllustrator : Fragment() {
         if(idIllustrator > 0) {
             viewModelIllustrator.getDataIllustrator(idIllustrator)
         }
+    }
+
+    private fun showErrorDialog(title:String, message:String?){
+        MaterialAlertDialogBuilder(requireContext())
+            .setTitle(title)
+            .setMessage(message)
+            .setPositiveButton(getString(R.string.alert_dialog_ok), null)
+            .show()
     }
 }
