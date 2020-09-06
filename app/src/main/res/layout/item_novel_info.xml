@@ -31,7 +31,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/colorTextPrimary"
-                android:text="Info"
+                android:text="@string/text_info"
                 />
 
             <TextView

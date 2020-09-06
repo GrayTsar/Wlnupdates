@@ -69,7 +69,13 @@ class FragmentSearch : Fragment() {
         })
 
         viewModelSearch.errorResponseSearch.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+            it.message?.let { message ->
+                if(message.contains("rate limited")) {
+
+                } else {
+                    showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+                }
+            }
         })
 
         viewModelSearch.failureResponse.observe(viewLifecycleOwner, {

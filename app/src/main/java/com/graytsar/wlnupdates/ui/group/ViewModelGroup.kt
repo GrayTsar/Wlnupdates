@@ -44,14 +44,14 @@ class ViewModelGroup: ViewModel() {
                             onReceivedResult(responseGroup)
                         } else {
                             errorResponseGroup.postValue(responseGroup)
-                            Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                            //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
                 } else {
                     response.body()?.let {
                         errorResponseGroup.postValue(it)
                     }
-                    Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
                 isLoading.postValue(false)
@@ -62,7 +62,7 @@ class ViewModelGroup: ViewModel() {
                     failureResponse.postValue(t)
                 }
                 isLoading.postValue(false)
-                Log.d("DBG-Failure:", "restService.getGroup() onFailure")
+                //Log.d("DBG-Failure:", "restService.getGroup() onFailure")
             }
         })
     }

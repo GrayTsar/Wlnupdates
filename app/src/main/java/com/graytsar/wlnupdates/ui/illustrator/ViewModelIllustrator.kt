@@ -33,14 +33,14 @@ class ViewModelIllustrator: ViewModel() {
                             onReceivedResult(responseIllustrator)
                         } else {
                             errorResponseIllustrator.postValue(responseIllustrator)
-                            Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                            //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
                 } else {
                     response.body()?.let {
                         errorResponseIllustrator.postValue(it)
                     }
-                    Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
                 isLoading.postValue(false)
@@ -51,7 +51,7 @@ class ViewModelIllustrator: ViewModel() {
                     failureResponse.postValue(t)
                 }
                 isLoading.postValue(false)
-                Log.d("DBG-Failure:", "restService.getIllustrator() onFailure")
+                //Log.d("DBG-Failure:", "restService.getIllustrator() onFailure")
             }
         })
     }

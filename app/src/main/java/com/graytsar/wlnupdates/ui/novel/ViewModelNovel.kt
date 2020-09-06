@@ -91,14 +91,14 @@ class ViewModelNovel: ViewModel() {
                             onReceivedResult(responseNovel)
                         } else {
                             errorResponseNovel.postValue(responseNovel)
-                            Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                            //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
                 } else {
                     response.body()?.let {
                         errorResponseNovel.postValue(it)
                     }
-                    Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
                 isLoading.postValue(false)
@@ -109,7 +109,7 @@ class ViewModelNovel: ViewModel() {
                     failureResponse.postValue(t)
                 }
                 isLoading.postValue(false)
-                Log.d("DBG-Failure:", "restService.getNovel() onFailure")
+                //Log.d("DBG-Failure:", "restService.getNovel() onFailure")
             }
         })
     }

@@ -31,7 +31,7 @@ class ViewModelSearch: ViewModel() {
                     response.body()?.let { responseSearch ->
                         if(responseSearch.error!!){
                             errorResponseSearch.postValue(responseSearch)
-                            Log.d("DBG-Error:", "${response.body()?.message}")
+                            //Log.d("DBG-Error:", "${response.body()?.message}")
                         } else {
                             onReceivedResult(response.body())
                         }
@@ -40,7 +40,7 @@ class ViewModelSearch: ViewModel() {
                     response.body()?.let {
                         errorResponseSearch.postValue(it)
                     }
-                    Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
             }
 
@@ -48,7 +48,7 @@ class ViewModelSearch: ViewModel() {
                 if(!call.isCanceled){
                     failureResponse.postValue(t)
                 }
-                Log.d("DBG-Failure:", "restService.getSearch() onFailure    ${call.isCanceled}")
+                //Log.d("DBG-Failure:", "restService.getSearch() onFailure    ${call.isCanceled}")
             }
         })
     }

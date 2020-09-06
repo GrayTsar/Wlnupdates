@@ -35,13 +35,13 @@
                 <com.google.android.material.tabs.TabItem
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Active Series"
+                    android:text="@string/tab_active_series"
                     />
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="Feed"/>
+                    android:text="@string/tab_feed"/>
 
             </com.google.android.material.tabs.TabLayout>
         </com.google.android.material.appbar.AppBarLayout>

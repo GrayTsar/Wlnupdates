@@ -30,15 +30,42 @@
                     android:layout_margin="4dp"
                     style="@style/CardViewShape">
 
-                    <EditText
-                        android:id="@+id/editTextAdvancedSearchTerm"
+                    <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_margin="4dp"
-                        android:hint="@string/type_to_search"
-                        android:inputType="text"
-                        android:singleLine="true"
-                        android:textColor="@color/colorTextPrimary" />
+                        android:layout_height="match_parent">
+
+                        <EditText
+                            android:id="@+id/editTextAdvancedSearchTerm"
+                            android:layout_width="0dp"
+                            android:layout_height="match_parent"
+                            android:layout_marginStart="4dp"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginEnd="4dp"
+                            android:layout_marginBottom="4dp"
+                            android:hint="@string/type_to_search"
+                            android:inputType="text"
+                            android:singleLine="true"
+                            android:textColor="@color/colorTextPrimary"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toStartOf="@+id/advancedSearchGoButton"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <com.google.android.material.button.MaterialButton
+                            android:id="@+id/advancedSearchGoButton"
+                            android:layout_width="45dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="4dp"
+                            android:layout_marginEnd="4dp"
+                            android:layout_marginBottom="4dp"
+                            app:icon="@drawable/ic_baseline_search_24"
+                            app:iconGravity="textStart"
+                            app:iconPadding="0dp"
+                            app:iconTint="@color/colorTextToolbarPrimary"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
                 </com.google.android.material.card.MaterialCardView>
 
                 <include
@@ -82,20 +109,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/floatingAdvancedSearchStart"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="32dp"
-            android:layout_marginBottom="32dp"
-            android:clickable="true"
-            android:focusable="true"
-            app:tint="@color/colorTextToolbarPrimary"
-            app:backgroundTint="@color/colorAccent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:srcCompat="@drawable/ic_baseline_search_24" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

@@ -57,14 +57,14 @@ class ViewModelAdvancedSearch: ViewModel() {
                         if(!responseGenre.error!!) {
                             onReceivedResultGenre(responseGenre)
                         } else {
-                            Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                            //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
                 } else {
                     response.body()?.let {
                         errorResponseGenre.postValue(it)
                     }
-                    Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
                 isLoading.postValue(false)
@@ -75,7 +75,7 @@ class ViewModelAdvancedSearch: ViewModel() {
                     failureResponse.postValue(t)
                 }
                 isLoading.postValue(false)
-                Log.d("DBG-Failure:", "restService.getGenre() onFailure")
+                //Log.d("DBG-Failure:", "restService.getGenre() onFailure")
             }
         })
     }
@@ -91,14 +91,14 @@ class ViewModelAdvancedSearch: ViewModel() {
                         if(!responseTag.error!!) {
                             onReceivedResultTag(responseTag)
                         } else {
-                            Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                            //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
                 } else {
                     response.body()?.let {
                         errorResponseTag.postValue(it)
                     }
-                    Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
                 isLoading.postValue(false)
@@ -109,7 +109,7 @@ class ViewModelAdvancedSearch: ViewModel() {
                     failureResponse.postValue(t)
                 }
                 isLoading.postValue(false)
-                Log.d("DBG-Failure:", "restService.getTag() onFailure")
+                //Log.d("DBG-Failure:", "restService.getTag() onFailure")
             }
         })
     }
@@ -126,14 +126,14 @@ class ViewModelAdvancedSearch: ViewModel() {
                             onReceivedResultAdvancedSearch(responseSearch)
                         } else {
                             onErrorReceivedResultAdvancedSearch(responseSearch)
-                            Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                            //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
                 } else {
                     response.body()?.let {
                         onErrorReceivedResultAdvancedSearch(it)
                     }
-                    Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
                 isLoading.postValue(false)
@@ -144,7 +144,7 @@ class ViewModelAdvancedSearch: ViewModel() {
                     failureResponse.postValue(t)
                 }
                 isLoading.postValue(false)
-                Log.d("DBG-Failure:", "restService.getAdvancedSearch() onFailure")
+                //Log.d("DBG-Failure:", "restService.getAdvancedSearch() onFailure")
             }
         })
     }

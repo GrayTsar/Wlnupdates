@@ -6,18 +6,18 @@
         android:id="@+id/fragmentLibrary"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_library_books_24"
-        android:title="Library"
+        android:title="@string/bottom_nav_library"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/fragmentCollectionRecent"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_refresh_24"
-        android:title="Recent"
+        android:title="@string/bottom_nav_recent"
         app:showAsAction="ifRoom" />
     <item
         android:id="@+id/fragmentCollectionSearch"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_search_24"
-        android:title="Search"
+        android:title="@string/bottom_nav_search"
         app:showAsAction="ifRoom" />
 </menu>

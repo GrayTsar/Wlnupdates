@@ -232,7 +232,7 @@ class FragmentAdvancedSearch : Fragment() {
             }
         }
 
-        binding.floatingAdvancedSearchStart.setOnClickListener {
+        binding.advancedSearchGoButton.setOnClickListener {
             onClickSearch(it)
         }
         

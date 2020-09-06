@@ -21,7 +21,7 @@
                 android:layout_marginEnd="16dp"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="8dp"
-                android:text="Tag"
+                android:text="@string/text_tag"
                 android:textColor="@color/colorTextPrimary"
                 android:textSize="18sp"
                 android:textStyle="bold" />

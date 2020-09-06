@@ -43,7 +43,7 @@ class ViewModelTranslated: ViewModel() {
                     response.body()?.let { responseTranslated ->
                         if(responseTranslated.error!!){
                             errorResponseTranslated.postValue(responseTranslated)
-                            Log.d("DBG-Error:", "${response.body()?.message}")
+                            //Log.d("DBG-Error:", "${response.body()?.message}")
                         } else {
                             onReceivedResult(response.body(), offset)
                         }
@@ -52,7 +52,7 @@ class ViewModelTranslated: ViewModel() {
                     response.body()?.let {
                         errorResponseTranslated.postValue(it)
                     }
-                    Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
             }
 
@@ -60,7 +60,7 @@ class ViewModelTranslated: ViewModel() {
                 if(!call.isCanceled){
                     failureResponse.postValue(t)
                 }
-                Log.d("DBG-Failure:", "restService.getTranslated() onFailure    ${call.isCanceled}")
+                //Log.d("DBG-Failure:", "restService.getTranslated() onFailure    ${call.isCanceled}")
             }
         })
     }

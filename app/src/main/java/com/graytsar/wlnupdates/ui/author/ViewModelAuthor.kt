@@ -33,14 +33,14 @@ class ViewModelAuthor: ViewModel() {
                             onReceivedResult(responseAuthor)
                         } else {
                             errorResponseAuthor.postValue(responseAuthor)
-                            Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                            //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
                 } else {
                     response.body()?.let {
                         errorResponseAuthor.postValue(it)
                     }
-                    Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
                 isLoading.postValue(false)
@@ -51,7 +51,7 @@ class ViewModelAuthor: ViewModel() {
                     failureResponse.postValue(t)
                 }
                 isLoading.postValue(false)
-                Log.d("DBG-Failure:", "restService.getAuthor() onFailure")
+                //Log.d("DBG-Failure:", "restService.getAuthor() onFailure")
             }
         })
     }

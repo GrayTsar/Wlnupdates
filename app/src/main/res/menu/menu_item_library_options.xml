@@ -4,11 +4,11 @@
 
     <item
         android:id="@+id/menuPopLibraryNotification"
-        android:title="Notification"
+        android:title="@string/text_notification"
         />
 
     <item
         android:id="@+id/menuPopLibraryDelete"
-        android:title="Delete"
+        android:title="@string/text_delete"
         />
 </menu>

@@ -24,6 +24,7 @@
             android:id="@+id/menuLibraryOptions"
             android:layout_width="30dp"
             android:layout_height="30dp"
+            android:contentDescription="@string/accessibility_library_more_button"
             app:tint="@color/colorPrimary"
             app:srcCompat="@drawable/ic_baseline_more_vert_24"
             app:layout_constraintBottom_toBottomOf="@+id/imageLibraryCover"

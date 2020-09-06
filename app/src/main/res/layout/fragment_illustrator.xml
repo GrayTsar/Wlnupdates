@@ -47,7 +47,7 @@
                     android:textColor="@color/colorTextPrimary"
                     android:textSize="18sp"
                     android:textStyle="bold"
-                    android:text="Name" />
+                    android:text="@string/text_name" />
 
                 <TextView
                     android:id="@+id/textIllustratorName"
