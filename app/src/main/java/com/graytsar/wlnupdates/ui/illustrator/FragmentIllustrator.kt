@@ -56,6 +56,14 @@ class FragmentIllustrator : Fragment() {
             }
         })
 
+        viewModelIllustrator.progressLoading.observe(viewLifecycleOwner) {
+            binding.progressBarIllustrator.progress = it
+        }
+
+        viewModelIllustrator.name.observe(viewLifecycleOwner) {
+            toolbar.title = it
+        }
+
         viewModelIllustrator.list.observe(viewLifecycleOwner, {
             adapterIllustrator.submitList(it)
         })
@@ -67,6 +75,10 @@ class FragmentIllustrator : Fragment() {
         viewModelIllustrator.failureResponse.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
         })
+
+        viewModelIllustrator.errorServerIllustrator.observe(viewLifecycleOwner) {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+        }
 
         return binding.root
     }

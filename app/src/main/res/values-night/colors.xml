@@ -19,7 +19,7 @@
     <color name="colorButtonBackground">#37474f</color>
 
     <color name="colorCardStoke">#323232</color>
-    <color name="colorCardBackground">#212121</color>
+    <color name="colorCardBackground">#1b1b1b</color>
 
     <color name="colorWindowsBackground">#000000</color>
 </resources>

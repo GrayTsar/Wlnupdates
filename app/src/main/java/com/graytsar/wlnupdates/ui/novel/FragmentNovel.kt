@@ -113,12 +113,20 @@ class FragmentNovel : Fragment() {
             }
         })
 
+        viewModelNovel.progressLoading.observe(viewLifecycleOwner) {
+            binding.includeToolbarNovel.progressBarNovel.progress = it
+        }
+
         viewModelNovel.errorResponseNovel.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
         })
 
         viewModelNovel.failureResponse.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
+        })
+
+        viewModelNovel.errorServerNovel.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
         })
 
         binding.includeToolbarNovel.includeChapter.cardItemNovelChapter.setOnClickListener {

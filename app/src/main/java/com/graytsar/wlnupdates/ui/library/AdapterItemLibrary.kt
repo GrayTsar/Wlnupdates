@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import android.widget.Toast
 import androidx.appcompat.view.ContextThemeWrapper
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -73,9 +74,10 @@ class AdapterItemLibrary(private val activity: Fragment): ListAdapter<ModelLibra
                 when(menuItem.itemId) {
                     R.id.menuPopLibraryNotification -> {
                         item.isNotificationEnabled = if(item.isNotificationEnabled) {
+                            Toast.makeText(view.context, "Disabled", Toast.LENGTH_SHORT).show()
                             false
                         } else {
-                            val c = 0
+                            Toast.makeText(view.context, "Enabled", Toast.LENGTH_SHORT).show()
                             true
                         }
 

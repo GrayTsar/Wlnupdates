@@ -82,6 +82,10 @@ class FragmentSearch : Fragment() {
             showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
         })
 
+        viewModelSearch.errorServerSearch.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+        })
+
         return binding.root
     }
 

@@ -45,4 +45,10 @@ interface WlnupdatesInterface {
 
     @POST("api")
     fun getAdvancedSearch(@Body request:RequestAdvancedSearch): Call<ResponseAdvancedSearch>
+
+    @POST("api")
+    fun getLogin(@Body request:RequestLogin): Call<ResponseLogin>
+
+    @POST("api")
+    fun getWatchList(@Body request:RequestWatchList): Call<ResponseWatchList>
 }

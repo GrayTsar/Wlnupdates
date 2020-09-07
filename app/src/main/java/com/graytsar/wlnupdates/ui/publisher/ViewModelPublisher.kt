@@ -13,6 +13,8 @@ import retrofit2.Response
 
 class ViewModelPublisher: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
+    val progressLoading = MutableLiveData<Int>(0)
+
     val name = MutableLiveData<String>("")
     var list = MutableLiveData<List<SeriesTitle?>>()
 
@@ -20,11 +22,12 @@ class ViewModelPublisher: ViewModel() {
 
     val errorResponsePublisher = MutableLiveData<ResponsePublisher>()
     val failureResponse = MutableLiveData<Throwable>()
+    val errorServerPublisher = MutableLiveData<Response<ResponsePublisher>>()
 
     fun getDataPublisher(id:Int) {
         requestCall?.cancel()
         requestCall = RestService.restService.getPublisher(RequestPublisher(id))
-        isLoading.postValue(true)
+        setLoadingIndicator(true, 25)
         requestCall?.enqueue(object: Callback<ResponsePublisher> {
             override fun onResponse(call: Call<ResponsePublisher>, response: Response<ResponsePublisher>) {
                 if(response.isSuccessful){
@@ -39,18 +42,20 @@ class ViewModelPublisher: ViewModel() {
                 } else {
                     response.body()?.let {
                         errorResponsePublisher.postValue(it)
+                    } ?: let {
+                        errorServerPublisher.postValue(response)
                     }
                     //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
-                isLoading.postValue(false)
+                setLoadingIndicator(false, 100)
             }
 
             override fun onFailure(call: Call<ResponsePublisher>, t: Throwable) {
                 if(!call.isCanceled){
                     failureResponse.postValue(t)
                 }
-                isLoading.postValue(false)
+                setLoadingIndicator(false, 100)
                 //Log.d("DBG-Failure:", "restService.getPublisher() onFailure")
             }
         })
@@ -62,5 +67,10 @@ class ViewModelPublisher: ViewModel() {
             list.postValue(it.series)
 
         }
+    }
+
+    private fun setLoadingIndicator(isVisible: Boolean, progress:Int){
+        progressLoading.postValue(progress)
+        isLoading.postValue(isVisible)
     }
 }

@@ -13,6 +13,8 @@ import retrofit2.Response
 
 class ViewModelAuthor: ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
+    val progressLoading = MutableLiveData<Int>(0)
+
     val name = MutableLiveData<String>("")
     var list = MutableLiveData<List<SeriesTitle?>>()
 
@@ -20,11 +22,12 @@ class ViewModelAuthor: ViewModel() {
 
     val errorResponseAuthor = MutableLiveData<ResponseAuthor>()
     val failureResponse = MutableLiveData<Throwable>()
+    val errorServerAuthor = MutableLiveData<Response<ResponseAuthor>>()
 
     fun getDataAuthor(id:Int) {
         requestCall?.cancel()
         requestCall = RestService.restService.getAuthor(RequestAuthor(id))
-        isLoading.postValue(true)
+        setLoadingIndicator(true, 25)
         requestCall?.enqueue(object: Callback<ResponseAuthor> {
             override fun onResponse(call: Call<ResponseAuthor>, response: Response<ResponseAuthor>) {
                 if(response.isSuccessful){
@@ -39,18 +42,21 @@ class ViewModelAuthor: ViewModel() {
                 } else {
                     response.body()?.let {
                         errorResponseAuthor.postValue(it)
+                    } ?: let {
+                        errorServerAuthor.postValue(response)
                     }
+
                     //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
-                isLoading.postValue(false)
+                setLoadingIndicator(false, 100)
             }
 
             override fun onFailure(call: Call<ResponseAuthor>, t: Throwable) {
                 if(!call.isCanceled){
                     failureResponse.postValue(t)
                 }
-                isLoading.postValue(false)
+                setLoadingIndicator(false, 100)
                 //Log.d("DBG-Failure:", "restService.getAuthor() onFailure")
             }
         })
@@ -62,5 +68,10 @@ class ViewModelAuthor: ViewModel() {
             list.postValue(it.series)
 
         }
+    }
+
+    private fun setLoadingIndicator(isVisible: Boolean, progress:Int){
+        progressLoading.postValue(progress)
+        isLoading.postValue(isVisible)
     }
 }

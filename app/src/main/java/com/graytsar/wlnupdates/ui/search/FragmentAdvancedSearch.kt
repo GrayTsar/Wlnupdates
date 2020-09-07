@@ -9,6 +9,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
@@ -102,6 +103,10 @@ class FragmentAdvancedSearch : Fragment() {
             }
         })
 
+        viewModelAdvancedSearch.progressLoading.observe(viewLifecycleOwner) {
+            binding.progressBarGenre.progress = it
+        }
+
         viewModelAdvancedSearch.listGenre.observe(viewLifecycleOwner, {
             adapterGenre.submitList(it)
         })
@@ -185,6 +190,18 @@ class FragmentAdvancedSearch : Fragment() {
 
         viewModelAdvancedSearch.failureResponse.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
+        })
+
+        viewModelAdvancedSearch.errorServerGenre.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+        })
+
+        viewModelAdvancedSearch.errorServerTag.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+        })
+
+        viewModelAdvancedSearch.errorServerAdvancedSearch.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
         })
 
         btnTypeAll.setOnClickListener {

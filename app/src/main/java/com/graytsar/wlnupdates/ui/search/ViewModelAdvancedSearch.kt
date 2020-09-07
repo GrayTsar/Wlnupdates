@@ -19,6 +19,7 @@ import retrofit2.Response
 
 class ViewModelAdvancedSearch: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
+    val progressLoading = MutableLiveData<Int>(0)
 
     val listGenre = MutableLiveData<List<ItemGenre>>()
     val containerListGenre = ArrayList<ItemGenre>()
@@ -46,10 +47,14 @@ class ViewModelAdvancedSearch: ViewModel() {
     val errorResponseAdvancedSearch = MutableLiveData<ResponseAdvancedSearch>()
     val failureResponse = MutableLiveData<Throwable>()
 
+    val errorServerGenre = MutableLiveData<Response<ResponseGenre>>()
+    val errorServerTag = MutableLiveData<Response<ResponseTag>>()
+    val errorServerAdvancedSearch = MutableLiveData<Response<ResponseAdvancedSearch>>()
+
     fun getDataGenre() {
         requestCallGenre?.cancel()
         requestCallGenre = RestService.restService.getGenre(RequestGenre())
-        isLoading.postValue(true)
+        setLoadingIndicator(true, 25)
         requestCallGenre?.enqueue(object: Callback<ResponseGenre> {
             override fun onResponse(call: Call<ResponseGenre>, response: Response<ResponseGenre>) {
                 if(response.isSuccessful){
@@ -63,18 +68,20 @@ class ViewModelAdvancedSearch: ViewModel() {
                 } else {
                     response.body()?.let {
                         errorResponseGenre.postValue(it)
+                    } ?: let {
+                        errorServerGenre.postValue(response)
                     }
                     //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
-                isLoading.postValue(false)
+                setLoadingIndicator(false, 100)
             }
 
             override fun onFailure(call: Call<ResponseGenre>, t: Throwable) {
                 if(!call.isCanceled) {
                     failureResponse.postValue(t)
                 }
-                isLoading.postValue(false)
+                setLoadingIndicator(false, 100)
                 //Log.d("DBG-Failure:", "restService.getGenre() onFailure")
             }
         })
@@ -83,7 +90,7 @@ class ViewModelAdvancedSearch: ViewModel() {
     fun getDataTag() {
         requestCallTag?.cancel()
         requestCallTag = RestService.restService.getTag(RequestTag())
-        isLoading.postValue(true)
+        setLoadingIndicator(true, 25)
         requestCallTag?.enqueue(object: Callback<ResponseTag> {
             override fun onResponse(call: Call<ResponseTag>, response: Response<ResponseTag>) {
                 if(response.isSuccessful){
@@ -97,18 +104,20 @@ class ViewModelAdvancedSearch: ViewModel() {
                 } else {
                     response.body()?.let {
                         errorResponseTag.postValue(it)
+                    } ?: let {
+                        errorServerTag.postValue(response)
                     }
                     //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
-                isLoading.postValue(false)
+                setLoadingIndicator(false, 100)
             }
 
             override fun onFailure(call: Call<ResponseTag>, t: Throwable) {
                 if(!call.isCanceled) {
                     failureResponse.postValue(t)
                 }
-                isLoading.postValue(false)
+                setLoadingIndicator(false, 100)
                 //Log.d("DBG-Failure:", "restService.getTag() onFailure")
             }
         })
@@ -117,7 +126,7 @@ class ViewModelAdvancedSearch: ViewModel() {
     fun getDataAdvancedSearch(requestAdvancedSearch: RequestAdvancedSearch) {
         requestCallSearch?.cancel()
         requestCallSearch = RestService.restService.getAdvancedSearch(requestAdvancedSearch)
-        isLoading.postValue(true)
+        setLoadingIndicator(true, 25)
         requestCallSearch?.enqueue(object: Callback<ResponseAdvancedSearch> {
             override fun onResponse(call: Call<ResponseAdvancedSearch>, response: Response<ResponseAdvancedSearch>) {
                 if(response.isSuccessful){
@@ -132,18 +141,20 @@ class ViewModelAdvancedSearch: ViewModel() {
                 } else {
                     response.body()?.let {
                         onErrorReceivedResultAdvancedSearch(it)
+                    } ?: let {
+                        errorServerAdvancedSearch.postValue(response)
                     }
                     //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
-                isLoading.postValue(false)
+                setLoadingIndicator(false, 100)
             }
 
             override fun onFailure(call: Call<ResponseAdvancedSearch>, t: Throwable) {
                 if(!call.isCanceled) {
                     failureResponse.postValue(t)
                 }
-                isLoading.postValue(false)
+                setLoadingIndicator(false, 100)
                 //Log.d("DBG-Failure:", "restService.getAdvancedSearch() onFailure")
             }
         })
@@ -166,7 +177,7 @@ class ViewModelAdvancedSearch: ViewModel() {
             listGenre.postValue(containerListGenre)
 
         }
-        isLoading.postValue(false)
+        setLoadingIndicator(false, 100)
     }
 
     private fun onReceivedResultTag(result: ResponseTag){
@@ -186,7 +197,7 @@ class ViewModelAdvancedSearch: ViewModel() {
             listTag.postValue(containerListTag)
 
         }
-        isLoading.postValue(false)
+        setLoadingIndicator(false, 100)
     }
 
     private fun onReceivedResultAdvancedSearch(result: ResponseAdvancedSearch){
@@ -194,10 +205,15 @@ class ViewModelAdvancedSearch: ViewModel() {
             listResultSearch.postValue(it)
         }
 
-        isLoading.postValue(false)
+        setLoadingIndicator(false, 100)
     }
 
     private fun onErrorReceivedResultAdvancedSearch(result: ResponseAdvancedSearch) {
         errorResponseAdvancedSearch.postValue(result)
+    }
+
+    private fun setLoadingIndicator(isVisible: Boolean, progress:Int){
+        progressLoading.postValue(progress)
+        isLoading.postValue(isVisible)
     }
 }

@@ -59,6 +59,10 @@ class FragmentOriginals : Fragment() {
             }
         })
 
+        viewModelOriginal.progressLoading.observe(viewLifecycleOwner) {
+            binding.progressBarOriginal.progress = it
+        }
+
         recyclerOriginal.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -86,6 +90,10 @@ class FragmentOriginals : Fragment() {
 
         viewModelOriginal.failureResponse.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
+        })
+
+        viewModelOriginal.errorServerOriginal.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
         })
 
         viewModelOriginal.getOriginalsData()

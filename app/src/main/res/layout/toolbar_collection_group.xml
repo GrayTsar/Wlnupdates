@@ -12,13 +12,13 @@
             android:id="@+id/appbarCollectionGroup"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorPrimary"
             android:animateLayoutChanges="true" >
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbarCollectionGroup"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_width="match_parent"
+                android:background="@color/colorPrimary"
                 >
 
             </androidx.appcompat.widget.Toolbar>

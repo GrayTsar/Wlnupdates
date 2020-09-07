@@ -13,6 +13,8 @@ import retrofit2.Response
 
 class ViewModelIllustrator: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
+    val progressLoading = MutableLiveData<Int>(0)
+
     val name = MutableLiveData<String>("")
     var list = MutableLiveData<List<SeriesTitle?>>()
 
@@ -20,11 +22,12 @@ class ViewModelIllustrator: ViewModel() {
 
     val errorResponseIllustrator = MutableLiveData<ResponseIllustrator>()
     val failureResponse = MutableLiveData<Throwable>()
+    val errorServerIllustrator = MutableLiveData<Response<ResponseIllustrator>>()
 
     fun getDataIllustrator(id:Int) {
         requestCall?.cancel()
         requestCall = RestService.restService.getIllustrator(RequestIllustrator(id))
-        isLoading.postValue(true)
+        setLoadingIndicator(true, 25)
         requestCall?.enqueue(object: Callback<ResponseIllustrator> {
             override fun onResponse(call: Call<ResponseIllustrator>, response: Response<ResponseIllustrator>) {
                 if(response.isSuccessful){
@@ -39,18 +42,20 @@ class ViewModelIllustrator: ViewModel() {
                 } else {
                     response.body()?.let {
                         errorResponseIllustrator.postValue(it)
+                    } ?: let {
+                        errorServerIllustrator.postValue(response)
                     }
                     //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
-                isLoading.postValue(false)
+                setLoadingIndicator(false, 100)
             }
 
             override fun onFailure(call: Call<ResponseIllustrator>, t: Throwable) {
                 if(!call.isCanceled){
                     failureResponse.postValue(t)
                 }
-                isLoading.postValue(false)
+                setLoadingIndicator(false, 100)
                 //Log.d("DBG-Failure:", "restService.getIllustrator() onFailure")
             }
         })
@@ -62,5 +67,10 @@ class ViewModelIllustrator: ViewModel() {
             list.postValue(it.series)
 
         }
+    }
+
+    private fun setLoadingIndicator(isVisible: Boolean, progress:Int){
+        progressLoading.postValue(progress)
+        isLoading.postValue(isVisible)
     }
 }

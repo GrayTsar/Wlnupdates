@@ -21,9 +21,10 @@ class ViewModelSearch: ViewModel() {
 
     val errorResponseSearch = MutableLiveData<ResponseSearch>()
     val failureResponse = MutableLiveData<Throwable>()
+    val errorServerSearch = MutableLiveData<Response<ResponseSearch>>()
 
     fun getSearchQuery(query: String) {
-        requestCall?.cancel()
+        //requestCall?.cancel()
         requestCall = RestService.restService.getSearch(RequestSearch(query))
         requestCall?.enqueue(object: Callback<ResponseSearch> {
             override fun onResponse(call: Call<ResponseSearch>, response: Response<ResponseSearch>) {
@@ -31,7 +32,7 @@ class ViewModelSearch: ViewModel() {
                     response.body()?.let { responseSearch ->
                         if(responseSearch.error!!){
                             errorResponseSearch.postValue(responseSearch)
-                            //Log.d("DBG-Error:", "${response.body()?.message}")
+                            Log.d("DBG-Error:", "${response.body()?.message}")
                         } else {
                             onReceivedResult(response.body())
                         }
@@ -39,8 +40,10 @@ class ViewModelSearch: ViewModel() {
                 } else {
                     response.body()?.let {
                         errorResponseSearch.postValue(it)
+                    } ?: let {
+                        errorServerSearch.postValue(response)
                     }
-                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
             }
 
@@ -48,7 +51,7 @@ class ViewModelSearch: ViewModel() {
                 if(!call.isCanceled){
                     failureResponse.postValue(t)
                 }
-                //Log.d("DBG-Failure:", "restService.getSearch() onFailure    ${call.isCanceled}")
+                Log.d("DBG-Failure:", "restService.getSearch() onFailure    ${call.isCanceled}")
             }
         })
     }

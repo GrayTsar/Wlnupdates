@@ -59,6 +59,10 @@ class FragmentTranslated : Fragment() {
             }
         })
 
+        viewModelTranslated.progressLoading.observe(viewLifecycleOwner) {
+            binding.progressBarTranslated.progress = it
+        }
+
         recyclerTranslated.addOnScrollListener(object: RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
@@ -86,6 +90,10 @@ class FragmentTranslated : Fragment() {
 
         viewModelTranslated.failureResponse.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
+        })
+
+        viewModelTranslated.errorServerTranslated.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
         })
 
         viewModelTranslated.getTranslatedData()

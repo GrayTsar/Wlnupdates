@@ -54,6 +54,14 @@ class FragmentPublisher : Fragment() {
             }
         })
 
+        viewModelPublisher.progressLoading.observe(viewLifecycleOwner) {
+            binding.progressBarPublisher.progress = it
+        }
+
+        viewModelPublisher.name.observe(viewLifecycleOwner) {
+            toolbar.title = it
+        }
+
         viewModelPublisher.list.observe(viewLifecycleOwner, {
             adapterPublisher.submitList(it)
         })
@@ -64,6 +72,10 @@ class FragmentPublisher : Fragment() {
 
         viewModelPublisher.failureResponse.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
+        })
+
+        viewModelPublisher.errorServerPublisher.observe(viewLifecycleOwner, {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
         })
 
         return binding.root

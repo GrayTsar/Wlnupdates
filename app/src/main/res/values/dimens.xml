@@ -1,4 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="cardCornerRadius">10dp</dimen>
+
+    <dimen name="titleMedium">16sp</dimen>
+    <dimen name="textBody">14sp</dimen>
 </resources>

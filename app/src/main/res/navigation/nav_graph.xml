@@ -115,4 +115,9 @@
         android:name="com.graytsar.wlnupdates.ui.group.FragmentGroupFeed"
         android:label="Group"
         tools:layout="@layout/fragment_group_feed" />
+    <fragment
+        android:id="@+id/fragmentLogin"
+        android:name="com.graytsar.wlnupdates.ui.login.FragmentLogin"
+        android:label="Login"
+        tools:layout="@layout/fragment_login" />
 </navigation>

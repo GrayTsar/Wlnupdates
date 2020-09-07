@@ -12,8 +12,8 @@
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageLibraryCover"
-            android:layout_width="115dp"
-            android:layout_height="144dp"
+            android:layout_width="100dp"
+            android:layout_height="125dp"
             android:scaleType="fitCenter"
             app:shapeAppearanceOverlay="@style/LibraryImageShape"
             app:srcCompat="@drawable/ic_app"
@@ -21,18 +21,29 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/menuLibraryOptions"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:id="@+id/imageLibraryOverlay"
+            android:layout_width="100dp"
+            android:layout_height="125dp"
+            android:background="@drawable/overlay_library_gradient"
             android:contentDescription="@string/accessibility_library_more_button"
-            app:tint="@color/colorPrimary"
-            app:srcCompat="@drawable/ic_baseline_more_vert_24"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/colorPrimary" />
+
+        <ImageView
+            android:id="@+id/menuLibraryOptions"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:padding="6dp"
+            android:contentDescription="@string/accessibility_library_more_button"
             app:layout_constraintBottom_toBottomOf="@+id/imageLibraryCover"
-            app:layout_constraintEnd_toEndOf="@+id/imageLibraryCover" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:srcCompat="@drawable/ic_baseline_more_vert_24"
+            app:tint="#ffffff" />
 
         <TextView
             android:id="@+id/textLibraryTitle"
-            android:layout_width="115dp"
+            android:layout_width="100dp"
             android:layout_height="wrap_content"
             android:ellipsize="marquee"
             android:maxLines="3"

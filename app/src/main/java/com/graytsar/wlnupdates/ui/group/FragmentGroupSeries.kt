@@ -54,6 +54,10 @@ class FragmentGroupSeries(private val viewModelGroup: ViewModelGroup, private va
             }
         })
 
+        viewModelGroup.name.observe(viewLifecycleOwner) {
+            toolbar.title = it
+        }
+
         viewModelGroup.isLoading.observe(viewLifecycleOwner, {
             binding.progressBarGroupSeries.visibility = if(it){
                 View.VISIBLE
@@ -61,6 +65,10 @@ class FragmentGroupSeries(private val viewModelGroup: ViewModelGroup, private va
                 View.GONE
             }
         })
+
+        viewModelGroup.progressLoading.observe(viewLifecycleOwner) {
+            binding.progressBarGroupSeries.progress = it
+        }
 
         viewModelGroup.activeSeries.observe(viewLifecycleOwner, {
             val mapList = ArrayList<Map.Entry<String, String>>()
@@ -77,6 +85,10 @@ class FragmentGroupSeries(private val viewModelGroup: ViewModelGroup, private va
         viewModelGroup.failureResponse.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
         })
+
+        viewModelGroup.errorServerGroup.observe(viewLifecycleOwner) {
+            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+        }
 
         return binding.root
     }

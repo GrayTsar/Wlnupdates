@@ -7,7 +7,8 @@
         android:id="@+id/cardItemAuthor"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="4dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginHorizontal="4dp"
         android:clickable="true"
         android:focusable="true"
         style="@style/CardViewShape">
@@ -17,9 +18,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:textSize="18sp"
+            android:textSize="@dimen/titleMedium"
             android:textColor="@color/colorTextPrimary"
-            tools:text="Mars Gravity"/>
+            android:textStyle="bold"
+            tools:text="I Shall Seal the Heavens"/>
     </com.google.android.material.card.MaterialCardView>
 </layout>
 

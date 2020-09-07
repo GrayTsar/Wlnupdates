@@ -16,6 +16,7 @@
                 android:id="@+id/toolbar_collection_search"
                 android:layout_height="?attr/actionBarSize"
                 android:layout_width="match_parent"
+                android:background="@color/colorPrimary"
                 app:title="@string/title_latest"
                 app:layout_scrollFlags="scroll|enterAlways">
 

@@ -13,6 +13,8 @@ import retrofit2.Response
 
 class ViewModelRecent: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
+    val progressLoading = MutableLiveData<Int>(0)
+
     var currentPage:Int = 0
 
     var hasNext: Boolean = false
@@ -28,13 +30,14 @@ class ViewModelRecent: ViewModel() {
 
     val errorResponseRecent = MutableLiveData<ResponseRecent>()
     val failureResponse = MutableLiveData<Throwable>()
+    val errorServerRecent = MutableLiveData<Response<ResponseRecent>>()
 
     fun getRecentData(offset:Int = 1) {
         if(currentPage == offset) {
             return
         }
 
-        isLoading.postValue(true)
+        setLoadingIndicator(true, 25)
         requestCall?.cancel()
         requestCall = RestService.restService.getRecent(RequestRecent(offset))
         requestCall?.enqueue(object: Callback<ResponseRecent> {
@@ -51,15 +54,19 @@ class ViewModelRecent: ViewModel() {
                 } else {
                     response.body()?.let {
                         errorResponseRecent.postValue(it)
+                    } ?: let {
+                        errorServerRecent.postValue(response)
                     }
                     //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
+                setLoadingIndicator(false, 100)
             }
 
             override fun onFailure(call: Call<ResponseRecent>, t: Throwable) {
                 if(!call.isCanceled){
                     failureResponse.postValue(t)
                 }
+                setLoadingIndicator(false, 100)
                 //Log.d("DBG-Failure:", "restService.getRecent() onFailure    ${call.isCanceled}")
             }
         })
@@ -85,7 +92,12 @@ class ViewModelRecent: ViewModel() {
             list.postValue(items.toMutableList())
 
             currentPage = offset
-            isLoading.postValue(false)
+            setLoadingIndicator(false, 100)
         }
+    }
+
+    private fun setLoadingIndicator(isVisible: Boolean, progress:Int){
+        progressLoading.postValue(progress)
+        isLoading.postValue(isVisible)
     }
 }
