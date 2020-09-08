@@ -38,7 +38,7 @@ class FragmentLibrary : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        //setHasOptionsMenu(true)
+        setHasOptionsMenu(true)
         binding = FragmentLibraryBinding.inflate(inflater, container, false)
 
         val toolbar: Toolbar = binding.includeToolbarLibrary.toolbarLibrary
@@ -80,6 +80,11 @@ class FragmentLibrary : Fragment() {
         return binding.root
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        requestReview()
+    }
+
     override fun onStop() {
         super.onStop()
         adapter.currentList.forEach {
@@ -88,7 +93,6 @@ class FragmentLibrary : Fragment() {
 
     }
 
-    /*
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu_library,menu)
@@ -110,8 +114,6 @@ class FragmentLibrary : Fragment() {
         return super.onOptionsItemSelected(item)
     }
 
-     */
-
     private fun requestReview(){
         try {
             val sharedPref = activity?.getSharedPreferences(keyPreferenceUtils, Context.MODE_PRIVATE)
@@ -125,12 +127,16 @@ class FragmentLibrary : Fragment() {
                     val request = manager.requestReviewFlow()
                     request.addOnCompleteListener { req ->
                         if(req.isSuccessful){
-                            val reviewInfo = req.result
-                            val flow = manager.launchReviewFlow(requireActivity(), reviewInfo)
-                            flow.addOnCompleteListener {
-                                // The flow has finished. The API does not indicate whether the user
-                                // reviewed or not, or even whether the review dialog was shown. Thus, no
-                                // matter the result, we continue our app flow.
+                            context?.let { context ->
+                                if(context is MainActivity) {
+                                    val reviewInfo = req.result
+                                    val flow = manager.launchReviewFlow(context, reviewInfo)
+                                    flow.addOnCompleteListener {
+                                        // The flow has finished. The API does not indicate whether the user
+                                        // reviewed or not, or even whether the review dialog was shown. Thus, no
+                                        // matter the result, we continue our app flow.
+                                    }
+                                }
                             }
                         } else {
                             // There was some problem, continue regardless of the result.

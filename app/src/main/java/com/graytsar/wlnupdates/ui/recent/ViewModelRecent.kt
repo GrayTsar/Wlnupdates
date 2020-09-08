@@ -1,103 +1,88 @@
 package com.graytsar.wlnupdates.ui.recent
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
+import androidx.paging.PagingSource
+import androidx.paging.cachedIn
 import com.graytsar.wlnupdates.rest.Item
-import com.graytsar.wlnupdates.rest.interfaces.RestService
+import com.graytsar.wlnupdates.rest.interfaces.RestService.restService
 import com.graytsar.wlnupdates.rest.request.RequestRecent
 import com.graytsar.wlnupdates.rest.response.ResponseRecent
-import retrofit2.Call
-import retrofit2.Callback
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import retrofit2.Response
+import java.io.IOException
 
 class ViewModelRecent: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
     val progressLoading = MutableLiveData<Int>(0)
 
-    var currentPage:Int = 0
-
-    var hasNext: Boolean = false
-    var hasPrev: Boolean = false
-
-    var nextNum: Int = 0
-    var prevNum: Int = 0
-
-    private val items = ArrayList<Item>()
-    var list = MutableLiveData<List<Item>>()
-
-    private var requestCall: Call<ResponseRecent>? = null
-
     val errorResponseRecent = MutableLiveData<ResponseRecent>()
     val failureResponse = MutableLiveData<Throwable>()
     val errorServerRecent = MutableLiveData<Response<ResponseRecent>>()
 
-    fun getRecentData(offset:Int = 1) {
-        if(currentPage == offset) {
-            return
-        }
-
-        setLoadingIndicator(true, 25)
-        requestCall?.cancel()
-        requestCall = RestService.restService.getRecent(RequestRecent(offset))
-        requestCall?.enqueue(object: Callback<ResponseRecent> {
-            override fun onResponse(call: Call<ResponseRecent>, response: Response<ResponseRecent>) {
-                if(response.isSuccessful){
-                    response.body()?.let { responseRecent ->
-                        if(responseRecent.error!!){
-                            errorResponseRecent.postValue(responseRecent)
-                            //Log.d("DBG-Error:", "${response.body()?.message}")
-                        } else {
-                            onReceivedResult(response.body(), offset)
-                        }
-                    }
-                } else {
-                    response.body()?.let {
-                        errorResponseRecent.postValue(it)
-                    } ?: let {
-                        errorServerRecent.postValue(response)
-                    }
-                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
-                }
-                setLoadingIndicator(false, 100)
-            }
-
-            override fun onFailure(call: Call<ResponseRecent>, t: Throwable) {
-                if(!call.isCanceled){
-                    failureResponse.postValue(t)
-                }
-                setLoadingIndicator(false, 100)
-                //Log.d("DBG-Failure:", "restService.getRecent() onFailure    ${call.isCanceled}")
-            }
-        })
-    }
-
-    private fun onReceivedResult(result: ResponseRecent?, offset: Int){
-        result?.data?.let { data ->
-            data.hasNext?.let {
-                hasNext = it
-            }
-            data.hasPrev?.let {
-                hasPrev = it
-            }
-            data.nextNum?.let {
-                nextNum = it
-            }
-            data.prevNum?.let {
-                prevNum = it
-            }
-            data.items?.forEach {
-                items.add(it)
-            }
-            list.postValue(items.toMutableList())
-
-            currentPage = offset
-            setLoadingIndicator(false, 100)
-        }
-    }
+    val pager = Pager(PagingConfig(pageSize = 50)) {
+        pagingSourceRecent
+    }.flow.cachedIn(viewModelScope)
 
     private fun setLoadingIndicator(isVisible: Boolean, progress:Int){
         progressLoading.postValue(progress)
         isLoading.postValue(isVisible)
+    }
+
+    private val pagingSourceRecent = object: PagingSource<Int, Item>() {
+        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Item> {
+            setLoadingIndicator(true, 25)
+
+            // Load page 1 if undefined.
+            val nextPageNumber = params.key ?: 1
+
+            try {
+                var response:Response<ResponseRecent>? = null
+                withContext(Dispatchers.IO)  {
+                    response = restService.getRecent(RequestRecent(nextPageNumber)).execute()
+                }
+
+
+                if(response!!.isSuccessful) {
+                    //server responded
+                    response!!.body()?.let { body ->
+                        if(!body.error){
+                            //no error
+                            body.data?.let { data ->
+                                val nextPage = if(data.hasNext!!) data.nextNum else null
+
+                                setLoadingIndicator(false, 100)
+                                return LoadResult.Page(data = data.items!!, prevKey = null, nextKey = nextPage)
+                            }
+                        } else {
+                            //had error
+                            errorResponseRecent.postValue(body)
+                            setLoadingIndicator(false, 100)
+                        }
+                    }
+                } else {
+                    //server did not respond
+                    errorServerRecent.postValue(response)
+                    setLoadingIndicator(false, 100)
+                }
+            } catch(e: IOException) {
+                //network error
+                failureResponse.postValue(e)
+                setLoadingIndicator(false, 100)
+                return LoadResult.Error(e)
+            } catch(e: HttpException) {
+                //http error
+                failureResponse.postValue(e)
+                setLoadingIndicator(false, 100)
+                return LoadResult.Error(e)
+            }
+            setLoadingIndicator(false, 100)
+            return LoadResult.Error(Exception())
+        }
     }
 }

@@ -80,6 +80,7 @@ class ViewModelLogin: ViewModel() {
             }
 
             override fun onFailure(call: Call<ResponseWatchList>, t: Throwable) {
+                val c = call.request()
                 if(!call.isCanceled){
 
                 }

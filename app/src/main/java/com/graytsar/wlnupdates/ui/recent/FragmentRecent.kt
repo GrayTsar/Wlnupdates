@@ -7,6 +7,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,12 +16,18 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentRecentBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FragmentRecent : Fragment() {
     private lateinit var binding: FragmentRecentBinding
     private val viewModelRecent by viewModels<ViewModelRecent>()
 
-    private val adapter = AdapterItem(this)
+    //private val adapter = AdapterItem(this)
+    private val adapter = PagingAdapterItem(this)
 
     private lateinit var recyclerRecent:RecyclerView
 
@@ -64,26 +71,6 @@ class FragmentRecent : Fragment() {
             binding.progressBarRecent.progress = it
         }
 
-        recyclerRecent.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                (recyclerView.layoutManager as LinearLayoutManager).let { layoutManager ->
-                    val totalItemCount = layoutManager.itemCount
-                    val visibleItemCount = layoutManager.childCount
-                    val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
-
-                    if(firstVisibleItem + visibleItemCount >= totalItemCount) {
-                        if(viewModelRecent.hasNext && !viewModelRecent.isLoading.value!!){
-                            viewModelRecent.getRecentData(viewModelRecent.nextNum)
-                        }
-                    }
-                }
-            }
-        })
-
-        viewModelRecent.list.observe(viewLifecycleOwner, {
-            adapter.submitList(it.toMutableList())
-        })
 
         viewModelRecent.errorResponseRecent.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
@@ -97,7 +84,11 @@ class FragmentRecent : Fragment() {
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
         })
 
-        viewModelRecent.getRecentData()
+        lifecycleScope.launch {
+            viewModelRecent.pager.collectLatest { pagingData ->
+                adapter.submitData(pagingData)
+            }
+        }
 
         return binding.root
     }
@@ -115,8 +106,8 @@ class FragmentRecent : Fragment() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 newText?.let {
-                    adapter.pattern = it
-                    adapter.submitList(viewModelRecent.list.value!!.toMutableList())
+                    //adapter.pattern = it
+                    //adapter.submitList(viewModelRecent.list.value!!.toMutableList())
                 }
                 return false
             }

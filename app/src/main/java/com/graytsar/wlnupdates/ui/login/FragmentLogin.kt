@@ -69,8 +69,8 @@ class FragmentLogin : Fragment() {
                 editor.putString(keyPreferencePassword, editPassword.text.toString())
                 editor.apply()
 
-                viewModelLogin.getTest()
-                //navController.popBackStack()
+                //viewModelLogin.getTest()
+                navController.popBackStack()
             }
         }
 

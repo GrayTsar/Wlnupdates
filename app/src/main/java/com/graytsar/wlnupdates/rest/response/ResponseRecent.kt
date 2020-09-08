@@ -13,7 +13,7 @@ class ResponseRecent(
 
     @SerializedName("error")
     @Expose
-    var error: Boolean? = null,
+    var error: Boolean = false,
 
     @SerializedName("message")
     @Expose
@@ -21,7 +21,7 @@ class ResponseRecent(
 ) : Parcelable {
     constructor(source: Parcel) : this(
         source.readParcelable<DataRecent>(DataRecent::class.java.classLoader),
-        source.readValue(Boolean::class.java.classLoader) as Boolean?,
+        source.readValue(Boolean::class.java.classLoader) as Boolean,
         source.readString()
     )
 

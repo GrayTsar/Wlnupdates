@@ -24,7 +24,7 @@ class ViewModelSearch: ViewModel() {
     val errorServerSearch = MutableLiveData<Response<ResponseSearch>>()
 
     fun getSearchQuery(query: String) {
-        //requestCall?.cancel()
+        requestCall?.cancel()
         requestCall = RestService.restService.getSearch(RequestSearch(query))
         requestCall?.enqueue(object: Callback<ResponseSearch> {
             override fun onResponse(call: Call<ResponseSearch>, response: Response<ResponseSearch>) {

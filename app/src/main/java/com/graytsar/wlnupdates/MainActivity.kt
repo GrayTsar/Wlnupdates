@@ -36,6 +36,7 @@ import com.google.android.play.core.install.model.UpdateAvailability
 import com.graytsar.wlnupdates.background.UpdateWorker
 import com.graytsar.wlnupdates.database.DatabaseService
 import com.graytsar.wlnupdates.database.LibraryDatabase
+import com.graytsar.wlnupdates.rest.interfaces.RestService
 import java.util.concurrent.TimeUnit
 
 const val ARG_ID_NOVEL:String = "argIdNovel"
@@ -63,6 +64,10 @@ const val keyPreferenceUtils:String = "keyPreferenceUtils"
 const val keyPreferenceRequestReview:String = "keyPreferenceRequestReview"
 const val requestReviewAt:Int = 50
 const val RC_UPDATE_IMMEDIATE = 100
+
+const val keyPreferenceCookieStore:String = "keyPreferenceCookieStore"
+const val keyCookieDomain:String = "www.wlnupdates.com"
+var cookieSession:String? = null //must be set before RestService is created
 
 const val keyPreferenceCredentials:String = "keyPreferenceCredentials"
 const val keyPreferenceUsername:String = "keyPreferenceUsername"
@@ -101,6 +106,13 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         setupActionBarWithNavController(navController, appBarConfiguration)
         bottomNavigationView.setupWithNavController(navController)
         navController.addOnDestinationChangedListener(this)
+
+
+        val sp = getSharedPreferences(keyPreferenceCredentials, Context.MODE_PRIVATE)
+        cookieSession = sp.getString(keyCookieDomain, null)
+        RestService.sharedPreference = sp
+
+
 
         DatabaseService.db = Room.databaseBuilder(
             applicationContext,
@@ -149,7 +161,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         destination: NavDestination,
         arguments: Bundle?
     ) {
-        val c = 0
     }
 
     fun pushNotify(title: String, text: String){
