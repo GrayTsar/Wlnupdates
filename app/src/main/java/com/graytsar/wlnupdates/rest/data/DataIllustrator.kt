@@ -13,7 +13,7 @@ class DataIllustrator(
     var name: String? = null,
     @SerializedName("series")
     @Expose
-    var series: List<SeriesTitle?>? = null
+    var series: List<SeriesTitle>? = null
 ) : Parcelable {
     constructor(source: Parcel) : this(
         source.readString(),

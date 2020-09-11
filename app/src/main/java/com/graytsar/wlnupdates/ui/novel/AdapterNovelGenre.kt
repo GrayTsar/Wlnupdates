@@ -10,7 +10,7 @@ import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemNovelSimpleExpandedBinding
 import com.graytsar.wlnupdates.rest.Genre
 
-class AdapterNovelGenre(private val activity: Fragment): ListAdapter<Genre, ViewHolderNovelSimpleExpanded>(DiffCallbackGenre()) {
+class AdapterNovelGenre(private val activity: Fragment): ListAdapter<Genre, ViewHolderNovelSimpleExpanded>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderNovelSimpleExpanded {
         val binding = DataBindingUtil.inflate<ItemNovelSimpleExpandedBinding>(
@@ -23,14 +23,16 @@ class AdapterNovelGenre(private val activity: Fragment): ListAdapter<Genre, View
 
         holder.binding.textSimpleExpanded.text = getItem(position).genre
     }
-}
 
-class DiffCallbackGenre: DiffUtil.ItemCallback<Genre>(){
-    override fun areItemsTheSame(oldItem: Genre, newItem: Genre): Boolean {
-        return oldItem == newItem
-    }
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Genre>(){
+            override fun areItemsTheSame(oldItem: Genre, newItem: Genre): Boolean {
+                return oldItem == newItem
+            }
 
-    override fun areContentsTheSame(oldItem: Genre, newItem: Genre): Boolean {
-        return oldItem.id == newItem.id
+            override fun areContentsTheSame(oldItem: Genre, newItem: Genre): Boolean {
+                return oldItem.id == newItem.id
+            }
+        }
     }
 }

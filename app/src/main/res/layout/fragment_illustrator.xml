@@ -34,12 +34,12 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/includeToolbarIllustrator" />
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.ProgressIndicator
             android:id="@+id/progressBarIllustrator"
-            style="?android:attr/progressBarStyleHorizontal"
+            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
             android:layout_width="0dp"
             android:layout_height="4dp"
-            android:progressTint="@color/colorProgressBarTint"
+            app:indicatorColor="@color/colorProgressBarTint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/includeToolbarIllustrator" />

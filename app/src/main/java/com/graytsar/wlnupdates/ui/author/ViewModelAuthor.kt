@@ -13,7 +13,6 @@ import retrofit2.Response
 
 class ViewModelAuthor: ViewModel() {
     val isLoading = MutableLiveData<Boolean>()
-    val progressLoading = MutableLiveData<Int>(0)
 
     val name = MutableLiveData<String>("")
     var list = MutableLiveData<List<SeriesTitle?>>()
@@ -27,7 +26,7 @@ class ViewModelAuthor: ViewModel() {
     fun getDataAuthor(id:Int) {
         requestCall?.cancel()
         requestCall = RestService.restService.getAuthor(RequestAuthor(id))
-        setLoadingIndicator(true, 25)
+        setLoadingIndicator(true)
         requestCall?.enqueue(object: Callback<ResponseAuthor> {
             override fun onResponse(call: Call<ResponseAuthor>, response: Response<ResponseAuthor>) {
                 if(response.isSuccessful){
@@ -49,14 +48,14 @@ class ViewModelAuthor: ViewModel() {
                     //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
-                setLoadingIndicator(false, 100)
+                setLoadingIndicator(false)
             }
 
             override fun onFailure(call: Call<ResponseAuthor>, t: Throwable) {
                 if(!call.isCanceled){
                     failureResponse.postValue(t)
                 }
-                setLoadingIndicator(false, 100)
+                setLoadingIndicator(false)
                 //Log.d("DBG-Failure:", "restService.getAuthor() onFailure")
             }
         })
@@ -70,8 +69,7 @@ class ViewModelAuthor: ViewModel() {
         }
     }
 
-    private fun setLoadingIndicator(isVisible: Boolean, progress:Int){
-        progressLoading.postValue(progress)
+    private fun setLoadingIndicator(isVisible: Boolean){
         isLoading.postValue(isVisible)
     }
 }

@@ -6,25 +6,31 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.paging.LoadState
+import androidx.paging.filter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentTranslatedBinding
+import com.graytsar.wlnupdates.extensions.FunctionExtensions.getQueryTextChangeStateFlow
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class FragmentTranslated : Fragment() {
     private lateinit var binding: FragmentTranslatedBinding
     private val viewModelTranslated by viewModels<ViewModelTranslated>()
 
-    private val adapter = AdapterItem(this)
+    private val adapter = PagingAdapterItem(this)
 
     private lateinit var recyclerTranslated: RecyclerView
 
     private var searchView:SearchView? = null
+    private val queryChangedData = MutableLiveData<String>("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,31 +65,6 @@ class FragmentTranslated : Fragment() {
             }
         })
 
-        viewModelTranslated.progressLoading.observe(viewLifecycleOwner) {
-            binding.progressBarTranslated.progress = it
-        }
-
-        recyclerTranslated.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                (recyclerView.layoutManager as LinearLayoutManager).let { layoutManager ->
-                    val totalItemCount = layoutManager.itemCount
-                    val visibleItemCount = layoutManager.childCount
-                    val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
-
-                    if(firstVisibleItem + visibleItemCount >= totalItemCount) {
-                        if(viewModelTranslated.hasNext && !viewModelTranslated.isLoading.value!!){
-                            viewModelTranslated.getTranslatedData(viewModelTranslated.nextNum)
-                        }
-                    }
-                }
-            }
-        })
-
-        viewModelTranslated.list.observe(viewLifecycleOwner, {
-            adapter.submitList(it.toMutableList())
-        })
-
         viewModelTranslated.errorResponseTranslated.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
         })
@@ -96,9 +77,47 @@ class FragmentTranslated : Fragment() {
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
         })
 
-        viewModelTranslated.getTranslatedData()
+        lifecycleScope.launch {
+            viewModelTranslated.pager.collectLatest { pagingData ->
+                adapter.submitData(pagingData)
+            }
+        }
 
-        viewModelTranslated.getTranslatedData()
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest { loadStates ->
+                when (loadStates.refresh) {
+                    is LoadState.Loading -> {
+                        viewModelTranslated.setLoadingIndicator(true)
+                    }
+                    !is LoadState.Loading -> {
+                        viewModelTranslated.setLoadingIndicator(false)
+                    }
+                    is LoadState.Error -> {
+                        viewModelTranslated.setLoadingIndicator(false)
+                    }
+                    else -> {
+                        viewModelTranslated.setLoadingIndicator(false)
+                    }
+                }
+            }
+        }
+
+        queryChangedData.observe(viewLifecycleOwner) { query ->
+            lifecycleScope.launch {
+                if(query.isEmpty()) {
+                    viewModelTranslated.pager.collect { pagingData ->
+                        adapter.submitData(pagingData)
+                    }
+                } else {
+                    viewModelTranslated.pager.collect { pagingData ->
+                        val filteredData = pagingData.filter { item ->
+                            item.series!!.name!!.contains(query, true) || item.tlgroup!!.name!!.contains(query, true)
+                        }
+                        adapter.submitData(filteredData)
+                    }
+                }
+            }
+        }
 
         return binding.root
     }
@@ -109,20 +128,16 @@ class FragmentTranslated : Fragment() {
 
         searchView = menu.findItem(R.id.menuSearchRecent).actionView as SearchView
 
-        searchView?.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let {
-                    adapter.pattern = it
-                    adapter.submitList(viewModelTranslated.list.value!!.toMutableList())
+        lifecycleScope.launch {
+            searchView!!.getQueryTextChangeStateFlow()
+                .debounce(600)
+                .collect { query ->
+                    queryChangedData.postValue(query)
                 }
-                return false
-            }
-        })
+        }
     }
+
+
 
     private fun showErrorDialog(title:String, message:String?){
         MaterialAlertDialogBuilder(requireContext())

@@ -1,72 +1,109 @@
 package com.graytsar.wlnupdates.ui.search
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.*
 import com.graytsar.wlnupdates.rest.MatchContent
 import com.graytsar.wlnupdates.rest.interfaces.RestService
 import com.graytsar.wlnupdates.rest.request.RequestSearch
 import com.graytsar.wlnupdates.rest.response.ResponseSearch
-import retrofit2.Call
-import retrofit2.Callback
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import retrofit2.Response
+import java.io.IOException
+import java.util.stream.Collectors
 
 class ViewModelSearch: ViewModel() {
-    var searchText: String = ""
-
-    val list = ArrayList<MatchContent>()
-    val listMatchContent = MutableLiveData<List<MatchContent>>()
-
-    private var requestCall: Call<ResponseSearch>? = null
+    var isLoading = MutableLiveData<Boolean>(false)
 
     val errorResponseSearch = MutableLiveData<ResponseSearch>()
     val failureResponse = MutableLiveData<Throwable>()
     val errorServerSearch = MutableLiveData<Response<ResponseSearch>>()
 
-    fun getSearchQuery(query: String) {
-        requestCall?.cancel()
-        requestCall = RestService.restService.getSearch(RequestSearch(query))
-        requestCall?.enqueue(object: Callback<ResponseSearch> {
-            override fun onResponse(call: Call<ResponseSearch>, response: Response<ResponseSearch>) {
-                if(response.isSuccessful){
-                    response.body()?.let { responseSearch ->
-                        if(responseSearch.error!!){
-                            errorResponseSearch.postValue(responseSearch)
-                            Log.d("DBG-Error:", "${response.body()?.message}")
+    private var ps: PagingSourceSearch? = null
+    private var query:String = ""
+    var pagerSearch =  Pager(PagingConfig(pageSize = 50)){
+        PagingSourceSearch(this, query).also {
+            ps = it
+        }
+    }.flow.cachedIn(viewModelScope)
+
+    fun doSearch(query:String){
+        this.query = query
+        ps?.invalidate()
+    }
+
+    private class PagingSourceSearch(private val viewModelSearch:ViewModelSearch, private val query: String): PagingSource<Long, MatchContent>() {
+        private val pageSize:Long = 50
+        private var response:Response<ResponseSearch>? = null
+        private val listSearch = ArrayList<MatchContent>()
+
+        override suspend fun load(params: LoadParams<Long>): LoadResult<Long, MatchContent> {
+            if(query.length < 2) {
+                return LoadResult.Page(data = ArrayList<MatchContent>(), null, null)
+            }
+
+            // Load page 1 if undefined.
+            val nextPageNumber = params.key ?: pageSize
+
+            try {
+                if(response == null) {
+                    withContext(Dispatchers.IO)  {
+                        response = RestService.restService.getSearch(RequestSearch(query)).execute()
+                    }
+                }
+
+                if(response!!.isSuccessful) {
+                    //server responded
+                    response!!.body()?.let { body ->
+                        if(!body.error){
+                            //no error
+                            return if(params.key == null) {
+                                val resultSearch = body.dataSearch!!.results
+
+                                resultSearch!!.forEach { search ->
+                                    search.match?.forEach { item ->
+                                        listSearch.add(MatchContent(search.sid!!, item[0] as Double, item[1] as String))
+                                    }
+                                }
+
+                                val subList = listSearch.stream().limit(pageSize).collect(Collectors.toList())
+                                LoadResult.Page(data = subList, prevKey = null, nextKey = nextPageNumber + pageSize)
+                            } else {
+                                if(nextPageNumber < listSearch.size) {
+                                    val subList = listSearch.stream().skip(nextPageNumber - pageSize).limit(nextPageNumber).collect(Collectors.toList())
+                                    LoadResult.Page(data = subList, prevKey = null, nextKey = nextPageNumber + pageSize)
+                                } else {
+                                    val max:Long = listSearch.size.toLong()
+                                    val subList = listSearch.stream().skip(nextPageNumber - pageSize).limit(max).collect(Collectors.toList())
+                                    LoadResult.Page(data = subList, prevKey = null, nextKey = null)
+                                }
+                            }
                         } else {
-                            onReceivedResult(response.body())
+                            //had error
+                            viewModelSearch.errorResponseSearch.postValue(body)
                         }
                     }
                 } else {
-                    response.body()?.let {
-                        errorResponseSearch.postValue(it)
-                    } ?: let {
-                        errorServerSearch.postValue(response)
-                    }
-                    Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    //server did not respond
+                    viewModelSearch.errorServerSearch.postValue(response)
                 }
+            } catch(e: IOException) {
+                // IOException for network failures.
+                viewModelSearch.failureResponse.postValue(e)
+                return LoadResult.Error(e)
+            } catch(e: HttpException) {
+                // HttpException for any non-2xx HTTP status codes.
+                viewModelSearch.failureResponse.postValue(e)
+                return LoadResult.Error(e)
             }
-
-            override fun onFailure(call: Call<ResponseSearch>, t: Throwable) {
-                if(!call.isCanceled){
-                    failureResponse.postValue(t)
-                }
-                Log.d("DBG-Failure:", "restService.getSearch() onFailure    ${call.isCanceled}")
-            }
-        })
+            return LoadResult.Error(Exception())
+        }
     }
 
-    private fun onReceivedResult(result: ResponseSearch?){
-        result?.let { response ->
-            list.clear()
-
-            response.dataSearch?.results?.forEach { search ->
-                search.match?.forEach { item ->
-                    list.add(MatchContent(search.sid!!, item[0] as Double, item[1] as String))
-                }
-            }
-
-            listMatchContent.postValue(list)
-        }
+    fun setLoadingIndicator(isVisible: Boolean){
+        isLoading.postValue(isVisible)
     }
 }

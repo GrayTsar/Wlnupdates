@@ -17,11 +17,11 @@ class DataGroup(
 
     @SerializedName("alternate-names")
     @Expose
-    var alternateNames: List<String?>? = null,
+    var alternateNames: List<String>? = null,
 
     @SerializedName("feed-paginated")
     @Expose
-    var feedPaginated: List<FeedPaginated?>? = null,
+    var feedPaginated: List<FeedPaginated>? = null,
 
     @SerializedName("group")
     @Expose
@@ -33,7 +33,7 @@ class DataGroup(
 
     @SerializedName("releases-paginated")
     @Expose
-    var releasesPaginated: List<ReleasesPaginated?>? = null,
+    var releasesPaginated: List<ReleasesPaginated>? = null,
 
     @SerializedName("site")
     @Expose
@@ -41,7 +41,7 @@ class DataGroup(
 ) : Parcelable  {
     constructor(source: Parcel) : this(
         source.readSerializable() as LinkedTreeMap<String, String>?,
-        ArrayList<String?>().apply { source.readList(this, String::class.java.classLoader) },
+        ArrayList<String>().apply { source.readList(this, String::class.java.classLoader) },
         source.createTypedArrayList(FeedPaginated.CREATOR),
         source.readString(),
         source.readValue(Int::class.java.classLoader) as Int?,

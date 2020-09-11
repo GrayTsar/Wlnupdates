@@ -17,14 +17,14 @@ import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemLatestBinding
 import com.graytsar.wlnupdates.rest.Item
 
-class PagingAdapterItem(private val activity: Fragment): PagingDataAdapter<Item, ViewHolderItem2>(DiffCallbackItem2()) {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderItem2 {
+class PagingAdapterItem(private val activity: Fragment): PagingDataAdapter<Item, ViewHolderItem>(DIFF_CALLBACK) {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderItem {
         val binding = DataBindingUtil.inflate<ItemLatestBinding>(
             LayoutInflater.from(activity.context), R.layout.item_latest, parent, false)
-        return ViewHolderItem2(binding.root, binding)
+        return ViewHolderItem(binding.root, binding)
     }
 
-    override fun onBindViewHolder(holder: ViewHolderItem2, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolderItem, position: Int) {
         holder.binding.lifecycleOwner = activity
 
         val item = getItem(position)!!
@@ -64,18 +64,18 @@ class PagingAdapterItem(private val activity: Fragment): PagingDataAdapter<Item,
             }
         }
     }
+
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Item>(){
+            override fun areItemsTheSame(old: Item, aNew: Item) = old == aNew
+
+            override fun areContentsTheSame(old: Item, aNew: Item): Boolean {
+                return (old.chapter == aNew.chapter && old.volume == aNew.volume && old.series?.id == aNew.series?.id)
+            }
+        }
+    }
 }
 
-class ViewHolderItem2(view: View, val binding: ItemLatestBinding): RecyclerView.ViewHolder(view){
+class ViewHolderItem(view: View, val binding: ItemLatestBinding): RecyclerView.ViewHolder(view){
 
-}
-
-class DiffCallbackItem2: DiffUtil.ItemCallback<Item>(){
-    override fun areItemsTheSame(old: Item, aNew: Item): Boolean {
-        return old == aNew
-    }
-
-    override fun areContentsTheSame(old: Item, aNew: Item): Boolean {
-        return (old.chapter == aNew.chapter && old.volume == aNew.volume && old.series?.id == aNew.series?.id)
-    }
 }

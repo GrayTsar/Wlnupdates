@@ -16,12 +16,13 @@ import com.graytsar.wlnupdates.ARG_ID_NOVEL
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemAdvancedSearchResultBinding
+import com.graytsar.wlnupdates.databinding.ItemListAdvancedHeaderBinding
 import com.graytsar.wlnupdates.rest.data.DataAdvancedSearch
 import java.lang.Exception
 import java.util.*
 
 class AdapterAdvancedSearchResult(private val activity: Fragment): ListAdapter<DataAdvancedSearch, ViewHolderItemAdvancedSearchResult>(
-    DiffCallbackAdvancedSearchResult()
+    DIFF_CALLBACK
 ) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderItemAdvancedSearchResult {
         val binding = DataBindingUtil.inflate<ItemAdvancedSearchResultBinding>(
@@ -59,18 +60,19 @@ class AdapterAdvancedSearchResult(private val activity: Fragment): ListAdapter<D
         }
     }
 
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<DataAdvancedSearch>(){
+            override fun areItemsTheSame(old: DataAdvancedSearch, aNew: DataAdvancedSearch): Boolean {
+                return old == aNew
+            }
+
+            override fun areContentsTheSame(old: DataAdvancedSearch, aNew: DataAdvancedSearch): Boolean {
+                return (old.id == aNew.id && old.title == aNew.title)
+            }
+        }
+    }
 }
 
 class ViewHolderItemAdvancedSearchResult(view: View, val binding: ItemAdvancedSearchResultBinding): RecyclerView.ViewHolder(view){
 
-}
-
-class DiffCallbackAdvancedSearchResult: DiffUtil.ItemCallback<DataAdvancedSearch>(){
-    override fun areItemsTheSame(old: DataAdvancedSearch, aNew: DataAdvancedSearch): Boolean {
-        return old == aNew
-    }
-
-    override fun areContentsTheSame(old: DataAdvancedSearch, aNew: DataAdvancedSearch): Boolean {
-        return (old.id == aNew.id && old.title == aNew.title)
-    }
 }

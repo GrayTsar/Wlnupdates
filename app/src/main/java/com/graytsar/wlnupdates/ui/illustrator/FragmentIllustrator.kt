@@ -7,22 +7,24 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import androidx.paging.LoadState
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.ARG_ID_ILLUSTRATOR
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentIllustratorBinding
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class FragmentIllustrator : Fragment() {
     private lateinit var binding: FragmentIllustratorBinding
     private val viewModelIllustrator by viewModels<ViewModelIllustrator>()
-    private val adapterIllustrator = AdapterIllustrator(this)
+    private val adapterIllustrator = PagingAdapterIllustrator(this)
 
     private var idIllustrator:Int = -1
-
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -56,17 +58,9 @@ class FragmentIllustrator : Fragment() {
             }
         })
 
-        viewModelIllustrator.progressLoading.observe(viewLifecycleOwner) {
-            binding.progressBarIllustrator.progress = it
-        }
-
         viewModelIllustrator.name.observe(viewLifecycleOwner) {
             toolbar.title = it
         }
-
-        viewModelIllustrator.list.observe(viewLifecycleOwner, {
-            adapterIllustrator.submitList(it)
-        })
 
         viewModelIllustrator.errorResponseIllustrator.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
@@ -80,6 +74,25 @@ class FragmentIllustrator : Fragment() {
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
         }
 
+        lifecycleScope.launch {
+            adapterIllustrator.loadStateFlow.collectLatest { loadStates ->
+                when (loadStates.refresh) {
+                    is LoadState.Loading -> {
+                        viewModelIllustrator.setLoadingIndicator(true)
+                    }
+                    !is LoadState.Loading -> {
+                        viewModelIllustrator.setLoadingIndicator(false)
+                    }
+                    is LoadState.Error -> {
+                        viewModelIllustrator.setLoadingIndicator(false)
+                    }
+                    else -> {
+                        viewModelIllustrator.setLoadingIndicator(false)
+                    }
+                }
+            }
+        }
+
         return binding.root
     }
 
@@ -87,7 +100,13 @@ class FragmentIllustrator : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         if(idIllustrator > 0) {
-            viewModelIllustrator.getDataIllustrator(idIllustrator)
+            viewModelIllustrator.createPager(idIllustrator)
+
+            lifecycleScope.launch {
+                viewModelIllustrator.pagerIllustrator?.collectLatest { pagingData ->
+                    adapterIllustrator.submitData(pagingData)
+                }
+            }
         }
     }
 

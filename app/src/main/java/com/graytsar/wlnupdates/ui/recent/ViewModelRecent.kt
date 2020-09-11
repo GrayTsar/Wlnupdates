@@ -19,7 +19,6 @@ import java.io.IOException
 
 class ViewModelRecent: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
-    val progressLoading = MutableLiveData<Int>(0)
 
     val errorResponseRecent = MutableLiveData<ResponseRecent>()
     val failureResponse = MutableLiveData<Throwable>()
@@ -29,15 +28,8 @@ class ViewModelRecent: ViewModel() {
         pagingSourceRecent
     }.flow.cachedIn(viewModelScope)
 
-    private fun setLoadingIndicator(isVisible: Boolean, progress:Int){
-        progressLoading.postValue(progress)
-        isLoading.postValue(isVisible)
-    }
-
     private val pagingSourceRecent = object: PagingSource<Int, Item>() {
         override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Item> {
-            setLoadingIndicator(true, 25)
-
             // Load page 1 if undefined.
             val nextPageNumber = params.key ?: 1
 
@@ -55,34 +47,31 @@ class ViewModelRecent: ViewModel() {
                             //no error
                             body.data?.let { data ->
                                 val nextPage = if(data.hasNext!!) data.nextNum else null
-
-                                setLoadingIndicator(false, 100)
                                 return LoadResult.Page(data = data.items!!, prevKey = null, nextKey = nextPage)
                             }
                         } else {
                             //had error
                             errorResponseRecent.postValue(body)
-                            setLoadingIndicator(false, 100)
                         }
                     }
                 } else {
                     //server did not respond
                     errorServerRecent.postValue(response)
-                    setLoadingIndicator(false, 100)
                 }
             } catch(e: IOException) {
-                //network error
+                // IOException for network failures.
                 failureResponse.postValue(e)
-                setLoadingIndicator(false, 100)
                 return LoadResult.Error(e)
             } catch(e: HttpException) {
-                //http error
+                // HttpException for any non-2xx HTTP status codes.
                 failureResponse.postValue(e)
-                setLoadingIndicator(false, 100)
                 return LoadResult.Error(e)
             }
-            setLoadingIndicator(false, 100)
             return LoadResult.Error(Exception())
         }
+    }
+
+    fun setLoadingIndicator(isVisible: Boolean){
+        isLoading.postValue(isVisible)
     }
 }

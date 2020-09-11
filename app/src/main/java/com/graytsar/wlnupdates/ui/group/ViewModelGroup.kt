@@ -3,132 +3,158 @@ package com.graytsar.wlnupdates.ui.group
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.gson.internal.LinkedTreeMap
+import androidx.lifecycle.viewModelScope
+import androidx.paging.*
 import com.graytsar.wlnupdates.rest.FeedPaginated
+import com.graytsar.wlnupdates.rest.ModelActiveSeries
 import com.graytsar.wlnupdates.rest.ReleasesPaginated
 import com.graytsar.wlnupdates.rest.interfaces.RestService
 import com.graytsar.wlnupdates.rest.request.RequestGroup
 import com.graytsar.wlnupdates.rest.response.ResponseGroup
-import retrofit2.Call
-import retrofit2.Callback
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.withContext
+import retrofit2.HttpException
 import retrofit2.Response
+import java.io.IOException
+import java.util.stream.Collectors
 
 class ViewModelGroup: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
-    val progressLoading = MutableLiveData<Int>(0)
 
     val name = MutableLiveData<String>("")
     val siteLink = MutableLiveData<String>("")
 
-    private val listSize:Int = 50
-
-    var listActiveSeries = LinkedTreeMap<String, String>()
-
-    var activeSeries = MutableLiveData<LinkedTreeMap<String, String>>()
     var alternateNames = MutableLiveData<List<String?>>()
     var feedPaginated = MutableLiveData<List<FeedPaginated?>>()
-    var releasesPaginated = MutableLiveData<List<ReleasesPaginated?>>()
-
-    private var requestCall: Call<ResponseGroup>? = null
+    var releasesPaginated = MutableLiveData<List<ReleasesPaginated?>>() //doesn't have title string
 
     val errorResponseGroup = MutableLiveData<ResponseGroup>()
     val failureResponse = MutableLiveData<Throwable>()
     val errorServerGroup = MutableLiveData<Response<ResponseGroup>>()
 
-    fun getDataGroup(id:Int) {
-        requestCall?.cancel()
-        requestCall = RestService.restService.getGroup(RequestGroup(id))
-        setLoadingIndicator(true, 25)
-        requestCall?.enqueue(object: Callback<ResponseGroup> {
-            override fun onResponse(call: Call<ResponseGroup>, response: Response<ResponseGroup>) {
-                if(response.isSuccessful){
-                    response.body()?.let { responseGroup ->
-                        if(!responseGroup.error!!) {
-                            onReceivedResult(responseGroup)
+    var pagerGroup: Flow<PagingData<ModelActiveSeries>>? = null
+    var pagerGroupFeed = MutableLiveData<Flow<PagingData<FeedPaginated>>>()
+
+    fun createPagerGroupSeries(id:Int) {
+        pagerGroup = Pager(PagingConfig(pageSize = 50)){
+            PagingSourceGroupSeries(this, id)
+        }.flow.cachedIn(viewModelScope)
+    }
+
+    class PagingSourceGroupFeed(private val viewModelGroup: ViewModelGroup, private val listFeed:List<FeedPaginated>): PagingSource<Long, FeedPaginated>() {
+        private val pageSize:Long = 50
+
+        override suspend fun load(params: LoadParams<Long>): LoadResult<Long, FeedPaginated> {
+            // Load page 1 if undefined.
+            val nextPageNumber = params.key ?: pageSize
+
+            return if(params.key == null) {
+                val subList = listFeed.stream().limit(pageSize).collect(
+                    Collectors.toList())
+
+                Log.d("DBG-1", nextPageNumber.toString())
+                LoadResult.Page(data = subList, prevKey = null, nextKey = nextPageNumber + pageSize)
+            } else {
+                if(nextPageNumber < listFeed.size) {
+                    val subList = listFeed.stream().skip(nextPageNumber - pageSize).limit(nextPageNumber).collect(
+                        Collectors.toList())
+                    Log.d("DBG-2", nextPageNumber.toString())
+                    LoadResult.Page(data = subList, prevKey = null, nextKey = nextPageNumber + pageSize)
+                } else {
+                    val max:Long = listFeed.size.toLong()
+                    val subList = listFeed.stream().skip(nextPageNumber - pageSize).limit(max).collect(
+                        Collectors.toList())
+                    Log.d("DBG-3", max.toString())
+                    LoadResult.Page(data = subList, prevKey = null, nextKey = null)
+                }
+            }
+        }
+
+    }
+
+    private class PagingSourceGroupSeries(val viewModelGroup: ViewModelGroup, val id:Int): PagingSource<Long, ModelActiveSeries>() {
+        private val pageSize:Long = 50
+        private var response:Response<ResponseGroup>? = null
+        private var listActiveSeries = ArrayList<ModelActiveSeries>()
+
+        override suspend fun load(params: LoadParams<Long>): LoadResult<Long, ModelActiveSeries> {
+            // Load page 1 if undefined.
+            val nextPageNumber = params.key ?: pageSize
+
+            try {
+                if(response == null) {
+                    withContext(Dispatchers.IO)  {
+                        response = RestService.restService.getGroup(RequestGroup(id)).execute()
+                    }
+                }
+
+                if(response!!.isSuccessful) {
+                    //server responded
+                    response!!.body()?.let { body ->
+                        if(!body.error){
+                            //no error
+                            return if(listActiveSeries.isEmpty()) {
+                                viewModelGroup.name.postValue(body.data!!.group)
+
+                                body.data.activeSeries?.forEach {
+                                    listActiveSeries.add(ModelActiveSeries(it.key, it.value))
+                                }
+
+                                body.data.feedPaginated?.let {
+                                    //listFeedPaginated = ArrayList(it)
+                                    viewModelGroup.feedPaginated.postValue(it)
+                                    createPagerFeed(it)
+                                }
+
+                                val subList = listActiveSeries.stream().limit(pageSize).collect(
+                                    Collectors.toList())
+
+                                //Log.d("DBG-1", nextPageNumber.toString())
+                                LoadResult.Page(data = subList, prevKey = null, nextKey = nextPageNumber + pageSize)
+                            } else {
+                                if(nextPageNumber < listActiveSeries.size) {
+                                    val subList = listActiveSeries.stream().skip(nextPageNumber - pageSize).limit(nextPageNumber).collect(
+                                        Collectors.toList())
+                                    //Log.d("DBG-2", nextPageNumber.toString())
+                                    LoadResult.Page(data = subList, prevKey = null, nextKey = nextPageNumber + pageSize)
+                                } else {
+                                    val max:Long = listActiveSeries.size.toLong()
+                                    val subList = listActiveSeries.stream().skip(nextPageNumber - pageSize).limit(max).collect(
+                                        Collectors.toList())
+                                    //Log.d("DBG-3", max.toString())
+                                    LoadResult.Page(data = subList, prevKey = null, nextKey = null)
+                                }
+                            }
                         } else {
-                            errorResponseGroup.postValue(responseGroup)
-                            //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                            //had error
+                            viewModelGroup.errorResponseGroup.postValue(body)
                         }
                     }
                 } else {
-                    response.body()?.let {
-                        errorResponseGroup.postValue(it)
-                    } ?: let {
-                        errorServerGroup.postValue(response)
-                    }
-                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    //server did not respond
+                    viewModelGroup.errorServerGroup.postValue(response)
                 }
-
-                setLoadingIndicator(false, 100)
+            } catch(e: IOException) {
+                // IOException for network failures.
+                viewModelGroup.failureResponse.postValue(e)
+                return LoadResult.Error(e)
+            } catch(e: HttpException) {
+                // HttpException for any non-2xx HTTP status codes.
+                viewModelGroup.failureResponse.postValue(e)
+                return LoadResult.Error(e)
             }
+            return LoadResult.Error(Exception())
+        }
 
-            override fun onFailure(call: Call<ResponseGroup>, t: Throwable) {
-                if(!call.isCanceled){
-                    failureResponse.postValue(t)
-                }
-                setLoadingIndicator(false, 100)
-                //Log.d("DBG-Failure:", "restService.getGroup() onFailure")
-            }
-        })
-    }
-
-    private fun onReceivedResult(result: ResponseGroup){
-        result.data?.let { dataGroup ->
-            name.postValue(dataGroup.group)
-
-            dataGroup.feedPaginated?.let {
-                //listFeedPaginated = ArrayList(it)
-                feedPaginated.postValue(it)
-            }
-
-            dataGroup.activeSeries?.let {
-                listActiveSeries = it
-
-                val c = LinkedTreeMap<String, String>()
-                var i:Int = 0
-
-                for(entry in listActiveSeries) {
-                    i += 1
-                    c[entry.key] = entry.value
-
-                    if(i == listSize) {
-                        break
-                    }
-                }
-
-                activeSeries.postValue(c)
-            }
-
-            //activeSeries.postValue(dataGroup.activeSeries)
-            //feedPaginated.postValue(dataGroup.feedPaginated)
+        private fun createPagerFeed(listFeed:List<FeedPaginated>) {
+            viewModelGroup.pagerGroupFeed.postValue(Pager(PagingConfig(pageSize = 50)){
+                PagingSourceGroupFeed(viewModelGroup, listFeed)
+            }.flow.cachedIn(viewModelGroup.viewModelScope))
         }
     }
 
-    fun getMoreActiveSeries(){
-        activeSeries.value?.let { listSeries ->
-            if(listSeries.size >= listActiveSeries.size){
-                return
-            }
-
-            val tempMap = LinkedTreeMap<String, String>()
-            var i:Int = 0
-            val currentSize = listSeries.size
-            val requestedSize = currentSize + listSize
-
-            for(entry in listActiveSeries) {
-                i += 1
-                tempMap[entry.key] = entry.value
-
-                if(i == requestedSize) {
-                    break
-                }
-            }
-            activeSeries.postValue(tempMap)
-        }
-    }
-
-    private fun setLoadingIndicator(isVisible: Boolean, progress:Int){
-        progressLoading.postValue(progress)
+    fun setLoadingIndicator(isVisible: Boolean){
         isLoading.postValue(isVisible)
     }
 }

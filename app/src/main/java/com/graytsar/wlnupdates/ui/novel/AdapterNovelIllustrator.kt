@@ -15,7 +15,7 @@ import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemNovelSimpleExpandedBinding
 import com.graytsar.wlnupdates.rest.Illustrator
 
-class AdapterNovelIllustrator(private val activity: Fragment): ListAdapter<Illustrator, ViewHolderNovelSimpleExpanded>(DiffCallbackIllustrator()) {
+class AdapterNovelIllustrator(private val activity: Fragment): ListAdapter<Illustrator, ViewHolderNovelSimpleExpanded>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderNovelSimpleExpanded {
         val binding = DataBindingUtil.inflate<ItemNovelSimpleExpandedBinding>(
@@ -41,14 +41,16 @@ class AdapterNovelIllustrator(private val activity: Fragment): ListAdapter<Illus
             }
         }
     }
-}
 
-class DiffCallbackIllustrator: DiffUtil.ItemCallback<Illustrator>(){
-    override fun areItemsTheSame(oldItem: Illustrator, newItem: Illustrator): Boolean {
-        return oldItem == newItem
-    }
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Illustrator>(){
+            override fun areItemsTheSame(oldItem: Illustrator, newItem: Illustrator): Boolean {
+                return oldItem == newItem
+            }
 
-    override fun areContentsTheSame(oldItem: Illustrator, newItem: Illustrator): Boolean {
-        return oldItem.id == newItem.id
+            override fun areContentsTheSame(oldItem: Illustrator, newItem: Illustrator): Boolean {
+                return oldItem.id == newItem.id
+            }
+        }
     }
 }

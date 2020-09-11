@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +18,7 @@ import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemIllustratorBinding
 import com.graytsar.wlnupdates.rest.SeriesTitle
 
-class AdapterIllustrator(private val activity: Fragment): ListAdapter<SeriesTitle, ViewHolderIllustrator>(DiffCallbackIllustrator()) {
+class PagingAdapterIllustrator(private val activity: Fragment): PagingDataAdapter<SeriesTitle, ViewHolderIllustrator>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderIllustrator {
         val binding = DataBindingUtil.inflate<ItemIllustratorBinding>(
             LayoutInflater.from(activity.context), R.layout.item_illustrator, parent, false)
@@ -34,6 +35,17 @@ class AdapterIllustrator(private val activity: Fragment): ListAdapter<SeriesTitl
         }
     }
 
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<SeriesTitle>(){
+            override fun areItemsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
+                return old == aNew
+            }
+
+            override fun areContentsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
+                return (old.id == aNew.id && old.title == aNew.title)
+            }
+        }
+    }
 }
 
 class ViewHolderIllustrator(view: View, val binding: ItemIllustratorBinding): RecyclerView.ViewHolder(view){
@@ -50,15 +62,5 @@ class ViewHolderIllustrator(view: View, val binding: ItemIllustratorBinding): Re
 
             navController.navigate(R.id.fragmentNovel, bundle)
         }
-    }
-}
-
-class DiffCallbackIllustrator: DiffUtil.ItemCallback<SeriesTitle>(){
-    override fun areItemsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
-        return old == aNew
-    }
-
-    override fun areContentsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
-        return (old.id == aNew.id && old.title == aNew.title)
     }
 }

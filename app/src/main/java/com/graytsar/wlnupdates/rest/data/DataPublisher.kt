@@ -13,7 +13,7 @@ class DataPublisher(
     var name: String? = null,
     @SerializedName("series")
     @Expose
-    var series: List<SeriesTitle?>? = null,
+    var series: List<SeriesTitle>? = null,
     @SerializedName("site")
     @Expose
     var site: String? = null

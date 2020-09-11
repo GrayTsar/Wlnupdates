@@ -15,7 +15,7 @@ class ResponseGroup(
 
     @SerializedName("error")
     @Expose
-    val error: Boolean? = null,
+    val error: Boolean = false,
 
     @SerializedName("message")
     @Expose
@@ -23,7 +23,7 @@ class ResponseGroup(
 ) : Parcelable {
     constructor(source: Parcel) : this(
         source.readParcelable<DataGroup>(DataGroup::class.java.classLoader),
-        source.readValue(Boolean::class.java.classLoader) as Boolean?,
+        source.readValue(Boolean::class.java.classLoader) as Boolean,
         source.readString()
     )
 

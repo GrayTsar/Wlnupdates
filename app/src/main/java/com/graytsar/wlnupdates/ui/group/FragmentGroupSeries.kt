@@ -6,18 +6,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
+import androidx.paging.LoadState
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentGroupSeriesBinding
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class FragmentGroupSeries(private val viewModelGroup: ViewModelGroup, private val idGroup: Int) : Fragment() {
     private lateinit var binding: FragmentGroupSeriesBinding
-    private val adapterGroupSeries = AdapterGroupSeries(this)
+    private val adapterGroupSeries = PagingAdapterGroupSeries(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,20 +41,6 @@ class FragmentGroupSeries(private val viewModelGroup: ViewModelGroup, private va
         NavigationUI.setupActionBarWithNavController(this.context as MainActivity, navController)
 
         binding.recyclerGroupSeries.adapter = adapterGroupSeries
-        binding.recyclerGroupSeries.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                (recyclerView.layoutManager as LinearLayoutManager).let { layoutManager ->
-                    val totalItemCount = layoutManager.itemCount
-                    val visibleItemCount = layoutManager.childCount
-                    val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
-
-                    if(firstVisibleItem + visibleItemCount >= totalItemCount) {
-                        viewModelGroup.getMoreActiveSeries()
-                    }
-                }
-            }
-        })
 
         viewModelGroup.name.observe(viewLifecycleOwner) {
             toolbar.title = it
@@ -64,18 +52,6 @@ class FragmentGroupSeries(private val viewModelGroup: ViewModelGroup, private va
             } else {
                 View.GONE
             }
-        })
-
-        viewModelGroup.progressLoading.observe(viewLifecycleOwner) {
-            binding.progressBarGroupSeries.progress = it
-        }
-
-        viewModelGroup.activeSeries.observe(viewLifecycleOwner, {
-            val mapList = ArrayList<Map.Entry<String, String>>()
-            it.forEach { entry ->
-                mapList.add(entry)
-            }
-            adapterGroupSeries.submitList(mapList.toMutableList())
         })
 
         viewModelGroup.errorResponseGroup.observe(viewLifecycleOwner, {
@@ -90,13 +66,38 @@ class FragmentGroupSeries(private val viewModelGroup: ViewModelGroup, private va
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
         }
 
+        lifecycleScope.launch {
+            adapterGroupSeries.loadStateFlow.collectLatest { loadStates ->
+                when (loadStates.refresh) {
+                    is LoadState.Loading -> {
+                        viewModelGroup.setLoadingIndicator(true)
+                    }
+                    !is LoadState.Loading -> {
+                        viewModelGroup.setLoadingIndicator(false)
+                    }
+                    is LoadState.Error -> {
+                        viewModelGroup.setLoadingIndicator(false)
+                    }
+                    else -> {
+                        viewModelGroup.setLoadingIndicator(false)
+                    }
+                }
+            }
+        }
+
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if(idGroup > 0) {
-            viewModelGroup.getDataGroup(idGroup)
+            viewModelGroup.createPagerGroupSeries(idGroup)
+
+            lifecycleScope.launch {
+                viewModelGroup.pagerGroup?.collectLatest { pagingData ->
+                    adapterGroupSeries.submitData(pagingData)
+                }
+            }
         }
     }
 

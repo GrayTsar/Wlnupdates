@@ -35,7 +35,6 @@ fun setText(view: TextView, text: String?) {
 
 class ViewModelNovel: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
-    val progressLoading = MutableLiveData<Int>(0)
 
     private var requestCall: Call<ResponseNovel>? = null
 
@@ -84,7 +83,7 @@ class ViewModelNovel: ViewModel() {
     fun getDataNovel(id:Int) {
         requestCall?.cancel()
         requestCall = RestService.restService.getNovel(RequestNovel(id))
-        setLoadingIndicator(true, 25)
+        setLoadingIndicator(true)
         requestCall?.enqueue(object: Callback<ResponseNovel> {
             override fun onResponse(call: Call<ResponseNovel>, response: Response<ResponseNovel>) {
                 if(response.isSuccessful){
@@ -105,14 +104,14 @@ class ViewModelNovel: ViewModel() {
                     //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                 }
 
-                setLoadingIndicator(false, 100)
+                setLoadingIndicator(false)
             }
 
             override fun onFailure(call: Call<ResponseNovel>, t: Throwable) {
                 if(!call.isCanceled){
                     failureResponse.postValue(t)
                 }
-                setLoadingIndicator(false, 100)
+                setLoadingIndicator(false)
                 //Log.d("DBG-Failure:", "restService.getNovel() onFailure")
             }
         })
@@ -243,8 +242,7 @@ class ViewModelNovel: ViewModel() {
         }
     }
 
-    private fun setLoadingIndicator(isVisible: Boolean, progress:Int){
-        progressLoading.postValue(progress)
+    private fun setLoadingIndicator(isVisible: Boolean){
         isLoading.postValue(isVisible)
     }
 }

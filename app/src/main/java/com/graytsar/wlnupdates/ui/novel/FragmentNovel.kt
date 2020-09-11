@@ -113,10 +113,6 @@ class FragmentNovel : Fragment() {
             }
         })
 
-        viewModelNovel.progressLoading.observe(viewLifecycleOwner) {
-            binding.includeToolbarNovel.progressBarNovel.progress = it
-        }
-
         viewModelNovel.errorResponseNovel.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
         })

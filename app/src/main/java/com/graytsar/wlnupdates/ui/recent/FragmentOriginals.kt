@@ -6,25 +6,35 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import androidx.paging.LoadState
+import androidx.paging.filter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentOriginalsBinding
+import com.graytsar.wlnupdates.extensions.FunctionExtensions.getQueryTextChangeStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.launch
 
 class FragmentOriginals : Fragment() {
     private lateinit var binding: FragmentOriginalsBinding
     private val viewModelOriginal by viewModels<ViewModelOriginal>()
 
-    private val adapter = AdapterItem(this)
+    private val adapter = PagingAdapterItem(this)
 
     private lateinit var recyclerOriginal: RecyclerView
 
     private var searchView:SearchView? = null
+    private val queryChangedData = MutableLiveData<String>("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -59,31 +69,6 @@ class FragmentOriginals : Fragment() {
             }
         })
 
-        viewModelOriginal.progressLoading.observe(viewLifecycleOwner) {
-            binding.progressBarOriginal.progress = it
-        }
-
-        recyclerOriginal.addOnScrollListener(object: RecyclerView.OnScrollListener() {
-            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                super.onScrolled(recyclerView, dx, dy)
-                (recyclerView.layoutManager as LinearLayoutManager).let { layoutManager ->
-                    val totalItemCount = layoutManager.itemCount
-                    val visibleItemCount = layoutManager.childCount
-                    val firstVisibleItem = layoutManager.findFirstVisibleItemPosition()
-
-                    if(firstVisibleItem + visibleItemCount >= totalItemCount) {
-                        if(viewModelOriginal.hasNext && !viewModelOriginal.isLoading.value!!){
-                            viewModelOriginal.getOriginalsData(viewModelOriginal.nextNum)
-                        }
-                    }
-                }
-            }
-        })
-
-        viewModelOriginal.list.observe(viewLifecycleOwner, {
-            adapter.submitList(it.toMutableList())
-        })
-
         viewModelOriginal.errorResponseOriginal.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
         })
@@ -96,7 +81,46 @@ class FragmentOriginals : Fragment() {
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
         })
 
-        viewModelOriginal.getOriginalsData()
+        lifecycleScope.launch {
+            viewModelOriginal.pager.collectLatest { pagingData ->
+                adapter.submitData(pagingData)
+            }
+        }
+
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest { loadStates ->
+                when (loadStates.refresh) {
+                    is LoadState.Loading -> {
+                        viewModelOriginal.setLoadingIndicator(true)
+                    }
+                    !is LoadState.Loading -> {
+                        viewModelOriginal.setLoadingIndicator(false)
+                    }
+                    is LoadState.Error -> {
+                        viewModelOriginal.setLoadingIndicator(false)
+                    } else -> {
+                    viewModelOriginal.setLoadingIndicator(false)
+                    }
+                }
+            }
+        }
+
+        queryChangedData.observe(viewLifecycleOwner) { query ->
+            lifecycleScope.launch {
+                if(query.isEmpty()) {
+                    viewModelOriginal.pager.collect { pagingData ->
+                        adapter.submitData(pagingData)
+                    }
+                } else {
+                    viewModelOriginal.pager.collect { pagingData ->
+                        val filteredData = pagingData.filter { item ->
+                            item.series!!.name!!.contains(query, true) || item.tlgroup!!.name!!.contains(query, true)
+                        }
+                        adapter.submitData(filteredData)
+                    }
+                }
+            }
+        }
 
         return binding.root
     }
@@ -107,19 +131,13 @@ class FragmentOriginals : Fragment() {
 
         searchView = menu.findItem(R.id.menuSearchRecent).actionView as SearchView
 
-        searchView?.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let {
-                    adapter.pattern = it
-                    adapter.submitList(viewModelOriginal.list.value!!.toMutableList())
+        lifecycleScope.launch {
+            searchView!!.getQueryTextChangeStateFlow()
+                .debounce(600)
+                .collect { query ->
+                    queryChangedData.postValue(query)
                 }
-                return false
-            }
-        })
+        }
     }
 
     private fun showErrorDialog(title:String, message:String?){

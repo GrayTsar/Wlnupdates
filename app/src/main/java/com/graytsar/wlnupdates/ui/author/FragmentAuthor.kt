@@ -53,10 +53,6 @@ class FragmentAuthor : Fragment() {
             }
         })
 
-        viewModelAuthor.progressLoading.observe(viewLifecycleOwner) {
-            binding.progressBarAuthor.progress = it
-        }
-
         viewModelAuthor.name.observe(viewLifecycleOwner) {
             toolbar.title = it
         }

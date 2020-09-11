@@ -14,7 +14,7 @@ import com.graytsar.wlnupdates.databinding.ItemLatestBinding
 import com.graytsar.wlnupdates.rest.Release
 import com.graytsar.wlnupdates.ui.recent.ViewHolderItem
 
-class AdapterNovelChapter(private val activity: Fragment): ListAdapter<Release, ViewHolderItem>(DiffCallbackChapter()) {
+class AdapterNovelChapter(private val activity: Fragment): ListAdapter<Release, ViewHolderItem>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderItem {
         val binding = DataBindingUtil.inflate<ItemLatestBinding>(
@@ -61,14 +61,16 @@ class AdapterNovelChapter(private val activity: Fragment): ListAdapter<Release, 
             }
         }
     }
-}
 
-class DiffCallbackChapter: DiffUtil.ItemCallback<Release>(){
-    override fun areItemsTheSame(oldItem: Release, newItem: Release): Boolean {
-        return oldItem == newItem
-    }
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Release>(){
+            override fun areItemsTheSame(oldItem: Release, newItem: Release): Boolean {
+                return oldItem == newItem
+            }
 
-    override fun areContentsTheSame(oldItem: Release, newItem: Release): Boolean {
-        return (oldItem.chapter == newItem.chapter && oldItem.volume == newItem.volume && oldItem.series?.id == newItem.series?.id)
+            override fun areContentsTheSame(oldItem: Release, newItem: Release): Boolean {
+                return (oldItem.chapter == newItem.chapter && oldItem.volume == newItem.volume && oldItem.series?.id == newItem.series?.id)
+            }
+        }
     }
 }

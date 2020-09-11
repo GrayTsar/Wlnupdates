@@ -38,6 +38,8 @@ class Item(
     @Expose
     var volume: String? = null
 ) : Parcelable {
+
+
     constructor(source: Parcel) : this(
         source.readValue(Double::class.java.classLoader) as Double?,
         source.readValue(Double::class.java.classLoader) as Double?,

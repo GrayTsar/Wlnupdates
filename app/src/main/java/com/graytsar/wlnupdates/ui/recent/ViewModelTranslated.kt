@@ -3,102 +3,93 @@ package com.graytsar.wlnupdates.ui.recent
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.*
 import com.graytsar.wlnupdates.rest.Item
 import com.graytsar.wlnupdates.rest.interfaces.RestService
+import com.graytsar.wlnupdates.rest.request.RequestOriginal
 import com.graytsar.wlnupdates.rest.request.RequestTranslated
+import com.graytsar.wlnupdates.rest.response.ResponseOriginal
 import com.graytsar.wlnupdates.rest.response.ResponseTranslated
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
+import retrofit2.HttpException
 import retrofit2.Response
+import java.io.IOException
+import java.util.stream.Collectors
 
 class ViewModelTranslated: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
-    val progressLoading = MutableLiveData<Int>(0)
-
-    var currentPage:Int = 0
-
-    var hasNext: Boolean = false
-    var hasPrev: Boolean = false
-
-    var nextNum: Int = 0
-    var prevNum: Int = 0
-
-    private val items = ArrayList<Item>()
-    val list = MutableLiveData<List<Item>>()
-
-    private var requestCall: Call<ResponseTranslated>? = null
 
     val errorResponseTranslated = MutableLiveData<ResponseTranslated>()
     val failureResponse = MutableLiveData<Throwable>()
     val errorServerTranslated = MutableLiveData<Response<ResponseTranslated>>()
 
-    fun getTranslatedData(offset:Int = 1) {
-        if(currentPage == offset) {
-            return
+    fun search(query: String) {
+        pager.map { pagingData ->
+            pagingData.filter { item ->
+                item.series!!.name!!.contains(query, true)
+            }
         }
+    }
 
-        setLoadingIndicator(true, 25)
-        requestCall?.cancel()
-        requestCall = RestService.restService.getTranslated(RequestTranslated(offset))
-        requestCall?.enqueue(object: Callback<ResponseTranslated> {
-            override fun onResponse(call: Call<ResponseTranslated>, response: Response<ResponseTranslated>) {
-                if(response.isSuccessful){
-                    response.body()?.let { responseTranslated ->
-                        if(responseTranslated.error!!){
-                            errorResponseTranslated.postValue(responseTranslated)
-                            //Log.d("DBG-Error:", "${response.body()?.message}")
+    val pager = Pager(PagingConfig(pageSize = 50)) {
+        pagingSourceTranslated
+    }.flow.cachedIn(viewModelScope)
+
+    private val pagingSourceTranslated = object: PagingSource<Int, Item>() {
+
+        override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Item> {
+            // Load page 1 if undefined.
+            val nextPageNumber = params.key ?: 1
+
+            try {
+                var response:Response<ResponseTranslated>? = null
+                withContext(Dispatchers.IO)  {
+                    response = RestService.restService.getTranslated(RequestTranslated(nextPageNumber)).execute()
+                }
+
+                if(response!!.isSuccessful) {
+                    //server responded
+                    response!!.body()?.let { body ->
+                        if(!body.error){
+                            //no error
+                            body.data?.let { data ->
+                                val nextPage = if(data.hasNext!!) data.nextNum else null
+
+                                return LoadResult.Page(data = data.items!!, prevKey = null, nextKey = nextPage)
+                            }
                         } else {
-                            onReceivedResult(response.body(), offset)
+                            //had error
+                            errorResponseTranslated.postValue(body)
                         }
                     }
                 } else {
-                    response.body()?.let {
-                        errorResponseTranslated.postValue(it)
-                    } ?: let {
-                        errorServerTranslated.postValue(response)
-                    }
-                    //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
+                    //server did not respond
+                    errorServerTranslated.postValue(response)
                 }
-                setLoadingIndicator(false, 100)
+            } catch(e: IOException) {
+                // IOException for network failures.
+                failureResponse.postValue(e)
+                return LoadResult.Error(e)
+            } catch(e: HttpException) {
+                // HttpException for any non-2xx HTTP status codes.
+                failureResponse.postValue(e)
+                return LoadResult.Error(e)
             }
-
-            override fun onFailure(call: Call<ResponseTranslated>, t: Throwable) {
-                if(!call.isCanceled){
-                    failureResponse.postValue(t)
-                }
-                setLoadingIndicator(false, 100)
-                //Log.d("DBG-Failure:", "restService.getTranslated() onFailure    ${call.isCanceled}")
-            }
-        })
-    }
-
-    private fun onReceivedResult(result: ResponseTranslated?, offset: Int){
-        result?.data?.let { data ->
-            data.hasNext?.let {
-                hasNext = it
-            }
-            data.hasPrev?.let {
-                hasPrev = it
-            }
-            data.nextNum?.let {
-                nextNum = it
-            }
-            data.prevNum?.let {
-                prevNum = it
-            }
-
-            data.items?.forEach {
-                items.add(it)
-            }
-            list.postValue(items.toMutableList())
-
-            currentPage = offset
-            setLoadingIndicator(false, 100)
+            return LoadResult.Error(Exception())
         }
     }
 
-    private fun setLoadingIndicator(isVisible: Boolean, progress:Int){
-        progressLoading.postValue(progress)
+    fun setLoadingIndicator(isVisible: Boolean){
         isLoading.postValue(isVisible)
     }
 }

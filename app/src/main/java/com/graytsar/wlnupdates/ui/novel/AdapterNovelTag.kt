@@ -10,7 +10,7 @@ import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemNovelSimpleExpandedBinding
 import com.graytsar.wlnupdates.rest.Tag
 
-class AdapterNovelTag(private val activity: Fragment): ListAdapter<Tag, ViewHolderNovelSimpleExpanded>(DiffCallbackNovelTag()) {
+class AdapterNovelTag(private val activity: Fragment): ListAdapter<Tag, ViewHolderNovelSimpleExpanded>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderNovelSimpleExpanded {
         val binding = DataBindingUtil.inflate<ItemNovelSimpleExpandedBinding>(
@@ -23,14 +23,16 @@ class AdapterNovelTag(private val activity: Fragment): ListAdapter<Tag, ViewHold
 
         holder.binding.textSimpleExpanded.text = getItem(position).tag
     }
-}
 
-class DiffCallbackNovelTag: DiffUtil.ItemCallback<Tag>(){
-    override fun areItemsTheSame(oldItem: Tag, newItem: Tag): Boolean {
-        return oldItem == newItem
-    }
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Tag>(){
+            override fun areItemsTheSame(oldItem: Tag, newItem: Tag): Boolean {
+                return oldItem == newItem
+            }
 
-    override fun areContentsTheSame(oldItem: Tag, newItem: Tag): Boolean {
-        return oldItem.id == newItem.id
+            override fun areContentsTheSame(oldItem: Tag, newItem: Tag): Boolean {
+                return oldItem.id == newItem.id
+            }
+        }
     }
 }

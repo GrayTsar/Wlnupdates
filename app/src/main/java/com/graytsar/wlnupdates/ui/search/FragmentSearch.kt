@@ -1,26 +1,32 @@
 package com.graytsar.wlnupdates.ui.search
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import androidx.paging.LoadState
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentSearchBinding
+import com.graytsar.wlnupdates.extensions.FunctionExtensions.getQueryTextChangeStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.launch
 
 
 class FragmentSearch : Fragment() {
     private lateinit var binding:FragmentSearchBinding
     private val viewModelSearch by viewModels<ViewModelSearch>()
-    private val adapterSearch = AdapterSearch(this)
+    private val adapterSearch = PagingAdapterSearch(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,29 +49,28 @@ class FragmentSearch : Fragment() {
 
         binding.recyclerSearch.adapter = adapterSearch
 
-        adapterSearch.submitList(viewModelSearch.list.toMutableList())
 
         val searchBar = binding.editTextSearchNovel
-        searchBar.setText(viewModelSearch.searchText)
-        searchBar.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable) {
+        //searchBar.setText(viewModelSearch.searchText)
 
-            }
 
-            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {
-
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                if(s.length > 1){
-                    viewModelSearch.searchText = s.toString()
-                    viewModelSearch.getSearchQuery(s.toString())
+        lifecycleScope.launch {
+            searchBar.getQueryTextChangeStateFlow()
+                .debounce(600)
+                .filter {
+                    return@filter !(it.isNullOrEmpty() || it.length < 2)
                 }
-            }
-        })
+                .collect {
+                    viewModelSearch.doSearch(it)
+                }
+        }
 
-        viewModelSearch.listMatchContent.observe(viewLifecycleOwner, {
-            adapterSearch.submitList(it.toMutableList())
+        viewModelSearch.isLoading.observe(viewLifecycleOwner, {
+            binding.progressBarSearch.visibility = if(it){
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
         })
 
         viewModelSearch.errorResponseSearch.observe(viewLifecycleOwner, {
@@ -85,6 +90,32 @@ class FragmentSearch : Fragment() {
         viewModelSearch.errorServerSearch.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
         })
+
+        lifecycleScope.launch {
+            adapterSearch.loadStateFlow.collectLatest { loadStates ->
+                when (loadStates.refresh) {
+                    is LoadState.Loading -> {
+                        viewModelSearch.setLoadingIndicator(true)
+                    }
+                    !is LoadState.Loading -> {
+                        viewModelSearch.setLoadingIndicator(false)
+                    }
+                    is LoadState.Error -> {
+                        viewModelSearch.setLoadingIndicator(false)
+                    }
+                    else -> {
+                        viewModelSearch.setLoadingIndicator(false)
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModelSearch.pagerSearch?.collectLatest { pagingData ->
+                adapterSearch.submitData(pagingData)
+            }
+        }
+
 
         return binding.root
     }

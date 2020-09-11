@@ -68,12 +68,13 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/editPassword" />
 
-        <ProgressBar
+        <com.google.android.material.progressindicator.ProgressIndicator
             android:id="@+id/progressBarLogin"
-            style="?android:attr/progressBarStyle"
+            style="@style/Widget.MaterialComponents.ProgressIndicator.Circular.Indeterminate"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="90dp"
+            app:indicatorColor="@color/colorProgressBarTint"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/includeToolbarLogin" />

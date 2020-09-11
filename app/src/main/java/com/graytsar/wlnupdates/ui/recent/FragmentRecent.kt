@@ -6,19 +6,25 @@ import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import androidx.paging.LoadState
+import androidx.paging.filter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentRecentBinding
+import com.graytsar.wlnupdates.extensions.FunctionExtensions.getQueryTextChangeStateFlow
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
@@ -26,13 +32,12 @@ class FragmentRecent : Fragment() {
     private lateinit var binding: FragmentRecentBinding
     private val viewModelRecent by viewModels<ViewModelRecent>()
 
-    //private val adapter = AdapterItem(this)
     private val adapter = PagingAdapterItem(this)
 
     private lateinit var recyclerRecent:RecyclerView
 
     private var searchView:SearchView? = null
-
+    private val queryChangedData = MutableLiveData<String>("")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,10 +72,6 @@ class FragmentRecent : Fragment() {
             }
         })
 
-        viewModelRecent.progressLoading.observe(viewLifecycleOwner) {
-            binding.progressBarRecent.progress = it
-        }
-
 
         viewModelRecent.errorResponseRecent.observe(viewLifecycleOwner, {
             showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
@@ -90,6 +91,41 @@ class FragmentRecent : Fragment() {
             }
         }
 
+        lifecycleScope.launch {
+            adapter.loadStateFlow.collectLatest { loadStates ->
+                when (loadStates.refresh) {
+                    is LoadState.Loading -> {
+                        viewModelRecent.setLoadingIndicator(true)
+                    }
+                    !is LoadState.Loading -> {
+                        viewModelRecent.setLoadingIndicator(false)
+                    }
+                    is LoadState.Error -> {
+                        viewModelRecent.setLoadingIndicator(false)
+                    } else -> {
+                        viewModelRecent.setLoadingIndicator(false)
+                    }
+                }
+            }
+        }
+
+        queryChangedData.observe(viewLifecycleOwner) { query ->
+            lifecycleScope.launch {
+                if(query.isEmpty()) {
+                    viewModelRecent.pager.collect { pagingData ->
+                        adapter.submitData(pagingData)
+                    }
+                } else {
+                    viewModelRecent.pager.collect { pagingData ->
+                        val filteredData = pagingData.filter { item ->
+                            item.series!!.name!!.contains(query, true) || item.tlgroup!!.name!!.contains(query, true)
+                        }
+                        adapter.submitData(filteredData)
+                    }
+                }
+            }
+        }
+
         return binding.root
     }
 
@@ -99,19 +135,13 @@ class FragmentRecent : Fragment() {
 
         searchView = menu.findItem(R.id.menuSearchRecent).actionView as SearchView
 
-        searchView?.setOnQueryTextListener(object: SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return false
-            }
-
-            override fun onQueryTextChange(newText: String?): Boolean {
-                newText?.let {
-                    //adapter.pattern = it
-                    //adapter.submitList(viewModelRecent.list.value!!.toMutableList())
+        lifecycleScope.launch {
+            searchView!!.getQueryTextChangeStateFlow()
+                .debounce(600)
+                .collect { query ->
+                    queryChangedData.postValue(query)
                 }
-                return false
-            }
-        })
+        }
     }
 
     private fun showErrorDialog(title:String, message:String?){

@@ -22,7 +22,7 @@ import com.graytsar.wlnupdates.database.DatabaseService
 import com.graytsar.wlnupdates.database.ModelLibrary
 import com.graytsar.wlnupdates.databinding.ItemLibraryBinding
 
-class AdapterItemLibrary(private val activity: Fragment): ListAdapter<ModelLibrary, ViewHolderLibrary>(DiffCallbackLibrary()) {
+class AdapterItemLibrary(private val activity: Fragment): ListAdapter<ModelLibrary, ViewHolderLibrary>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderLibrary {
         val binding = DataBindingUtil.inflate<ItemLibraryBinding>(
             LayoutInflater.from(activity.context), R.layout.item_library, parent, false)
@@ -100,18 +100,19 @@ class AdapterItemLibrary(private val activity: Fragment): ListAdapter<ModelLibra
         }
     }
 
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<ModelLibrary>(){
+            override fun areItemsTheSame(old: ModelLibrary, aNew: ModelLibrary): Boolean {
+                return old == aNew
+            }
+
+            override fun areContentsTheSame(old: ModelLibrary, aNew: ModelLibrary): Boolean {
+                return old.pk == aNew.pk
+            }
+        }
+    }
 }
 
 class ViewHolderLibrary(view: View, val binding: ItemLibraryBinding): RecyclerView.ViewHolder(view){
 
-}
-
-class DiffCallbackLibrary: DiffUtil.ItemCallback<ModelLibrary>(){
-    override fun areItemsTheSame(old: ModelLibrary, aNew: ModelLibrary): Boolean {
-        return old == aNew
-    }
-
-    override fun areContentsTheSame(old: ModelLibrary, aNew: ModelLibrary): Boolean {
-        return old.pk == aNew.pk
-    }
 }

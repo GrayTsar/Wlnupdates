@@ -141,7 +141,7 @@ class DataNovel(
 
     @SerializedName("watchlists")
     @Expose
-    var watchlists: Boolean? = null,
+    var watchlists: List<String>? = null,
 
     @SerializedName("website")
     @Expose
@@ -181,7 +181,7 @@ class DataNovel(
         source.readValue(Int::class.java.classLoader) as Int?,
         source.readString(),
         source.readValue(Boolean::class.java.classLoader) as Boolean?,
-        source.readValue(Boolean::class.java.classLoader) as Boolean?,
+        source.createStringArrayList(),
         source.readString()
     )
 
@@ -221,7 +221,7 @@ class DataNovel(
         writeValue(totalWatches)
         writeString(type)
         writeValue(watch)
-        writeValue(watchlists)
+        writeStringList(watchlists)
         writeString(website)
     }
 

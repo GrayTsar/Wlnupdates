@@ -1,14 +1,21 @@
 package com.graytsar.wlnupdates.ui.search
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.asLiveData
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
+import androidx.paging.LoadState
+import androidx.paging.filter
+import androidx.paging.map
+import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
@@ -21,7 +28,11 @@ import com.graytsar.wlnupdates.ARG_PARCEL_ADVANCED_SEARCH_RESULT
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentAdvancedSearchBinding
+import com.graytsar.wlnupdates.rest.ItemGenre
+import com.graytsar.wlnupdates.rest.ItemTag
 import com.graytsar.wlnupdates.rest.request.RequestAdvancedSearch
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
 class FragmentAdvancedSearch : Fragment() {
     private lateinit var binding: FragmentAdvancedSearchBinding
@@ -32,7 +43,6 @@ class FragmentAdvancedSearch : Fragment() {
 
 
     private lateinit var recyclerAdvancedGenre:RecyclerView
-    private lateinit var recyclerAdvancedTag:RecyclerView
 
     private lateinit var btnTypeAll:MaterialButton
     private lateinit var btnTypeOriginal:MaterialButton
@@ -68,20 +78,10 @@ class FragmentAdvancedSearch : Fragment() {
             flexWrap = FlexWrap.WRAP
         }
 
-        val flexBoxLayoutManagerTag = FlexboxLayoutManager(context)
-        flexBoxLayoutManagerTag.apply {
-            flexDirection = FlexDirection.ROW
-            justifyContent = JustifyContent.CENTER
-            flexWrap = FlexWrap.WRAP
-        }
-
         recyclerAdvancedGenre = binding.includeItemAdvancedSearchGenre.recyclerAdvancedGenre
         recyclerAdvancedGenre.layoutManager = flexBoxLayoutManagerGenre
-        recyclerAdvancedGenre.adapter = adapterGenre
-
-        recyclerAdvancedTag = binding.includeItemAdvancedSearchTag.recyclerAdvancedTag
-        recyclerAdvancedTag.layoutManager = flexBoxLayoutManagerTag
-        recyclerAdvancedTag.adapter = adapterTag
+        recyclerAdvancedGenre.adapter = ConcatAdapter(adapterGenre, adapterTag)
+        recyclerAdvancedGenre.setItemViewCacheSize(200)
 
         binding.includeItemAdvancedSearchType.lifecycleOwner = this
         binding.includeItemAdvancedSearchType.model = viewModelAdvancedSearch
@@ -95,6 +95,7 @@ class FragmentAdvancedSearch : Fragment() {
         btnSortUpdate = binding.includeItemAdvancedSearchSort.buttonSortUpdate
         btnSortChapters = binding.includeItemAdvancedSearchSort.buttonSortCount
 
+
         viewModelAdvancedSearch.isLoading.observe(viewLifecycleOwner, {
             binding.progressBarGenre.visibility = if(it){
                 View.VISIBLE
@@ -103,17 +104,22 @@ class FragmentAdvancedSearch : Fragment() {
             }
         })
 
-        viewModelAdvancedSearch.progressLoading.observe(viewLifecycleOwner) {
-            binding.progressBarGenre.progress = it
-        }
-
+        /*
         viewModelAdvancedSearch.listGenre.observe(viewLifecycleOwner, {
-            adapterGenre.submitList(it)
+            val ar = ArrayList<ItemGenre>()
+            ar.add(ItemGenre(0, "Genre", 0))
+            ar.addAll(it)
+            adapterGenre.submitList(ar)
         })
 
         viewModelAdvancedSearch.listTag.observe(viewLifecycleOwner, {
+            val ar = ArrayList<ItemTag>()
+            ar.add(ItemTag(0, "Tag", 0))
+            ar.addAll(it)
             adapterTag.submitList(it)
         })
+
+         */
 
 
         viewModelAdvancedSearch.typeAll.observe(viewLifecycleOwner, {
@@ -226,7 +232,6 @@ class FragmentAdvancedSearch : Fragment() {
             }
         }
 
-
         btnSortName.setOnClickListener {
             val isActive = viewModelAdvancedSearch.sortName.value!!
 
@@ -249,28 +254,66 @@ class FragmentAdvancedSearch : Fragment() {
             }
         }
 
-        binding.advancedSearchGoButton.setOnClickListener {
+        binding.includeItemAdvancedSearchBar.advancedSearchGoButton.setOnClickListener {
             onClickSearch(it)
+
         }
-        
+
+        lifecycleScope.launch {
+            adapterGenre.loadStateFlow.collectLatest { loadStates ->
+                when (loadStates.refresh) {
+                    is LoadState.Loading -> {
+                        viewModelAdvancedSearch.setLoadingIndicator(true)
+                    }
+                    !is LoadState.Loading -> {
+                        viewModelAdvancedSearch.setLoadingIndicator(false)
+                    }
+                    is LoadState.Error -> {
+                        viewModelAdvancedSearch.setLoadingIndicator(false)
+                    }
+                    else -> {
+                        viewModelAdvancedSearch.setLoadingIndicator(false)
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            adapterTag.loadStateFlow.collectLatest { loadStates ->
+                when (loadStates.refresh) {
+                    is LoadState.Loading -> {
+                        viewModelAdvancedSearch.setLoadingIndicator(true)
+                    }
+                    !is LoadState.Loading -> {
+                        viewModelAdvancedSearch.setLoadingIndicator(false)
+                    }
+                    is LoadState.Error -> {
+                        viewModelAdvancedSearch.setLoadingIndicator(false)
+                    }
+                    else -> {
+                        viewModelAdvancedSearch.setLoadingIndicator(false)
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModelAdvancedSearch.pagerGenre.collectLatest { pagingData ->
+                adapterGenre.submitData(pagingData)
+            }
+        }
+
+        lifecycleScope.launch {
+            viewModelAdvancedSearch.pagerTag.collectLatest { pagingData ->
+                adapterTag.submitData(pagingData)
+            }
+        }
+
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        if(viewModelAdvancedSearch.containerListGenre.isEmpty()){
-            viewModelAdvancedSearch.getDataGenre()
-        }
-
-        if(viewModelAdvancedSearch.containerListTag.isEmpty()){
-            viewModelAdvancedSearch.getDataTag()
-        }
-    }
-
-
     private fun onClickSearch(view: View) {
-        val titleSearchText = binding.editTextAdvancedSearchTerm.text.toString()
+        val titleSearchText = binding.includeItemAdvancedSearchBar.editTextAdvancedSearchTerm.text.toString()
         var sortMode = ""
 
         val tAll = viewModelAdvancedSearch.typeAll.value!!
@@ -281,12 +324,26 @@ class FragmentAdvancedSearch : Fragment() {
         val sUpdate = viewModelAdvancedSearch.sortUpdate.value!!
         val sChapter = viewModelAdvancedSearch.sortChapter.value!!
 
-        val genreList = adapterGenre.currentList
-        val tagList = adapterTag.currentList
+
+        val genreList = ArrayList<ItemGenre>()
+        val tagList = ArrayList<ItemTag>()
 
         val sMap = LinkedHashMap<String, String>() //series type
         val gMap = LinkedHashMap<String, String>() //genre
         val tMap = LinkedHashMap<String, String>() //tag
+
+        adapterGenre.snapshot().forEach{ item ->
+            if(item!!.isSelected.value!!) {
+                genreList.add(item)
+            }
+        }
+
+        adapterTag.snapshot().forEach{ item ->
+            if(item!!.isSelected.value!!) {
+                tagList.add(item)
+            }
+        }
+
 
         if(tAll){
 

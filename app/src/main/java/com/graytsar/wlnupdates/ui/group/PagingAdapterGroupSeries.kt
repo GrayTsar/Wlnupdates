@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,9 +16,10 @@ import com.graytsar.wlnupdates.ARG_ID_NOVEL
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemGroupSeriesBinding
+import com.graytsar.wlnupdates.rest.ModelActiveSeries
 import java.lang.Exception
 
-class AdapterGroupSeries(private val activity: Fragment): ListAdapter<Map.Entry<String, String>, ViewHolderGroupSeries>(DiffCallbackGroupSeries()) {
+class PagingAdapterGroupSeries(private val activity: Fragment): PagingDataAdapter<ModelActiveSeries, ViewHolderGroupSeries>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderGroupSeries {
         val binding = DataBindingUtil.inflate<ItemGroupSeriesBinding>(
             LayoutInflater.from(activity.context), R.layout.item_group_series, parent, false)
@@ -26,20 +28,31 @@ class AdapterGroupSeries(private val activity: Fragment): ListAdapter<Map.Entry<
 
     override fun onBindViewHolder(holder: ViewHolderGroupSeries, position: Int) {
         holder.binding.lifecycleOwner = activity
-        val item = getItem(position)
+        val item = getItem(position)!!
         holder.model = item
 
-        holder.binding.textGroupSeries.text = item.value
+        holder.binding.textGroupSeries.text = item.title
         holder.binding.cardItemGroupSeries.setOnClickListener {
             holder.onClick(it)
         }
 
     }
 
+    companion object {
+        val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ModelActiveSeries>(){
+            override fun areItemsTheSame(old: ModelActiveSeries, aNew: ModelActiveSeries): Boolean {
+                return old == aNew
+            }
+
+            override fun areContentsTheSame(old: ModelActiveSeries, aNew: ModelActiveSeries): Boolean {
+                return (old.id == aNew.id && old.title == aNew.title)
+            }
+        }
+    }
 }
 
 class ViewHolderGroupSeries(view: View, val binding: ItemGroupSeriesBinding): RecyclerView.ViewHolder(view){
-    var model:Map.Entry<String, String>? = null
+    var model:ModelActiveSeries? = null
 
     fun onClick(view: View) {
         model?.let { model ->
@@ -47,7 +60,7 @@ class ViewHolderGroupSeries(view: View, val binding: ItemGroupSeriesBinding): Re
                 val navHostFragment = (view.context as MainActivity).supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
                 val navController: NavController = navHostFragment.navController
 
-                model.key.toIntOrNull()?.let { id ->
+                model.id.toIntOrNull()?.let { id ->
                     val bundle = Bundle()
                     bundle.putInt(ARG_ID_NOVEL, id)
 
@@ -57,15 +70,5 @@ class ViewHolderGroupSeries(view: View, val binding: ItemGroupSeriesBinding): Re
 
             }
         }
-    }
-}
-
-class DiffCallbackGroupSeries: DiffUtil.ItemCallback<Map.Entry<String, String>>(){
-    override fun areItemsTheSame(old: Map.Entry<String, String>, aNew: Map.Entry<String, String>): Boolean {
-        return old == aNew
-    }
-
-    override fun areContentsTheSame(old: Map.Entry<String, String>, aNew: Map.Entry<String, String>): Boolean {
-        return (old.key == aNew.key && old.value == aNew.value)
     }
 }

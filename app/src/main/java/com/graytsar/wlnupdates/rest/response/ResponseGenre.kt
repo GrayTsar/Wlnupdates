@@ -10,7 +10,7 @@ class ResponseGenre(
 
     @SerializedName("error")
     @Expose
-    var error: Boolean? = null,
+    var error: Boolean = false,
 
     @SerializedName("message")
     @Expose

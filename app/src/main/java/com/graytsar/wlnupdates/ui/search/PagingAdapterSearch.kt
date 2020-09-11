@@ -8,6 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
+import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -17,7 +18,7 @@ import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemSearchBinding
 import com.graytsar.wlnupdates.rest.MatchContent
 
-class AdapterSearch(private val activity: Fragment): ListAdapter<MatchContent, ViewHolderItemSearch>(DiffCallbackItemSearch()) {
+class PagingAdapterSearch(private val activity: Fragment): PagingDataAdapter<MatchContent, ViewHolderItemSearch>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderItemSearch {
         val binding = DataBindingUtil.inflate<ItemSearchBinding>(
             LayoutInflater.from(activity.context), R.layout.item_search, parent, false)
@@ -26,7 +27,7 @@ class AdapterSearch(private val activity: Fragment): ListAdapter<MatchContent, V
 
     override fun onBindViewHolder(holder: ViewHolderItemSearch, position: Int) {
         holder.binding.lifecycleOwner = activity
-        val item = getItem(position)
+        val item = getItem(position)!!
 
         holder.binding.textItemSearch.text = item.name
 
@@ -41,18 +42,19 @@ class AdapterSearch(private val activity: Fragment): ListAdapter<MatchContent, V
         }
     }
 
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<MatchContent>(){
+            override fun areItemsTheSame(old: MatchContent, aNew: MatchContent): Boolean {
+                return old == aNew
+            }
+
+            override fun areContentsTheSame(old: MatchContent, aNew: MatchContent): Boolean {
+                return (old.name == aNew.name && old.sid == aNew.sid && old.percent == aNew.percent)
+            }
+        }
+    }
 }
 
 class ViewHolderItemSearch(view: View, val binding: ItemSearchBinding): RecyclerView.ViewHolder(view){
 
-}
-
-class DiffCallbackItemSearch: DiffUtil.ItemCallback<MatchContent>(){
-    override fun areItemsTheSame(old: MatchContent, aNew: MatchContent): Boolean {
-        return old == aNew
-    }
-
-    override fun areContentsTheSame(old: MatchContent, aNew: MatchContent): Boolean {
-        return (old.name == aNew.name && old.sid == aNew.sid && old.percent == aNew.percent)
-    }
 }

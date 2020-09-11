@@ -15,7 +15,7 @@ import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemNovelSimpleExpandedBinding
 import com.graytsar.wlnupdates.rest.Publisher
 
-class AdapterNovelPublisher(private val activity: Fragment): ListAdapter<Publisher, ViewHolderNovelSimpleExpanded>(DiffCallbackPublisher()) {
+class AdapterNovelPublisher(private val activity: Fragment): ListAdapter<Publisher, ViewHolderNovelSimpleExpanded>(DIFF_CALLBACK) {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderNovelSimpleExpanded {
         val binding = DataBindingUtil.inflate<ItemNovelSimpleExpandedBinding>(
@@ -41,14 +41,16 @@ class AdapterNovelPublisher(private val activity: Fragment): ListAdapter<Publish
             }
         }
     }
-}
 
-class DiffCallbackPublisher: DiffUtil.ItemCallback<Publisher>(){
-    override fun areItemsTheSame(oldItem: Publisher, newItem: Publisher): Boolean {
-        return oldItem == newItem
-    }
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Publisher>(){
+            override fun areItemsTheSame(oldItem: Publisher, newItem: Publisher): Boolean {
+                return oldItem == newItem
+            }
 
-    override fun areContentsTheSame(oldItem: Publisher, newItem: Publisher): Boolean {
-        return oldItem.id == newItem.id
+            override fun areContentsTheSame(oldItem: Publisher, newItem: Publisher): Boolean {
+                return oldItem.id == newItem.id
+            }
+        }
     }
 }
