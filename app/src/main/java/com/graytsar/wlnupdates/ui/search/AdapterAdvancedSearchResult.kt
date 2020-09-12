@@ -16,9 +16,7 @@ import com.graytsar.wlnupdates.ARG_ID_NOVEL
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemAdvancedSearchResultBinding
-import com.graytsar.wlnupdates.databinding.ItemListAdvancedHeaderBinding
 import com.graytsar.wlnupdates.rest.data.DataAdvancedSearch
-import java.lang.Exception
 import java.util.*
 
 class AdapterAdvancedSearchResult(private val activity: Fragment): ListAdapter<DataAdvancedSearch, ViewHolderItemAdvancedSearchResult>(

@@ -10,19 +10,16 @@ import androidx.paging.PagingSource
 import androidx.paging.cachedIn
 import com.graytsar.wlnupdates.rest.ItemGenre
 import com.graytsar.wlnupdates.rest.ItemTag
-import com.graytsar.wlnupdates.rest.SeriesTitle
 import com.graytsar.wlnupdates.rest.data.DataAdvancedSearch
 import com.graytsar.wlnupdates.rest.interfaces.RestService
 import com.graytsar.wlnupdates.rest.request.RequestAdvancedSearch
 import com.graytsar.wlnupdates.rest.request.RequestGenre
-import com.graytsar.wlnupdates.rest.request.RequestPublisher
 import com.graytsar.wlnupdates.rest.request.RequestTag
 import com.graytsar.wlnupdates.rest.response.ResponseAdvancedSearch
 import com.graytsar.wlnupdates.rest.response.ResponseGenre
-import com.graytsar.wlnupdates.rest.response.ResponsePublisher
 import com.graytsar.wlnupdates.rest.response.ResponseTag
-import com.graytsar.wlnupdates.ui.publisher.ViewModelPublisher
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.withContext
 import retrofit2.Call
 import retrofit2.Callback
@@ -47,14 +44,25 @@ class ViewModelAdvancedSearch: ViewModel() {
     val sortChapter = MutableLiveData<Boolean>(false)
 
     //errors
+    var lastErrorResponseGenre:ResponseGenre? = null
     val errorResponseGenre = MutableLiveData<ResponseGenre>()
-    val errorResponseTag = MutableLiveData<ResponseTag>()
-    val errorResponseAdvancedSearch = MutableLiveData<ResponseAdvancedSearch>()
 
+    var lastErrorResponseTag:ResponseTag? = null
+    val errorResponseTag = MutableLiveData<ResponseTag>()
+
+    var lastErrorResponseAdvancedSearch:ResponseAdvancedSearch? = null
+    val errorResponseAdvancedSearch = MutableStateFlow<ResponseAdvancedSearch?>(null)
+
+    var lastErrorServerGenre:Response<ResponseGenre>? = null
     val errorServerGenre = MutableLiveData<Response<ResponseGenre>>()
+
+    var lastErrorServerTag:Response<ResponseTag>? = null
     val errorServerTag = MutableLiveData<Response<ResponseTag>>()
+
+    var lastErrorServerAdvancedSearch:Response<ResponseAdvancedSearch>? = null
     val errorServerAdvancedSearch = MutableLiveData<Response<ResponseAdvancedSearch>>()
 
+    var lastFailureResponse:Throwable? = null
     val failureResponse = MutableLiveData<Throwable>()
 
 
@@ -77,13 +85,13 @@ class ViewModelAdvancedSearch: ViewModel() {
                         if(!responseSearch.error) {
                             onReceivedResultAdvancedSearch(responseSearch)
                         } else {
-                            onErrorReceivedResultAdvancedSearch(responseSearch)
+                            errorResponseAdvancedSearch.value = responseSearch
                             //Log.d("DBG-Error:", "${response.body()?.error}, ${response.body()?.message}")
                         }
                     }
                 } else {
                     response.body()?.let {
-                        onErrorReceivedResultAdvancedSearch(it)
+                        errorResponseAdvancedSearch.value = it
                     } ?: let {
                         errorServerAdvancedSearch.postValue(response)
                     }
@@ -108,10 +116,6 @@ class ViewModelAdvancedSearch: ViewModel() {
             listResultSearch.postValue(it)
         }
         setLoadingIndicator(false)
-    }
-
-    private fun onErrorReceivedResultAdvancedSearch(result: ResponseAdvancedSearch) {
-        errorResponseAdvancedSearch.postValue(result)
     }
 
     private val pagingSourceGenre = object: PagingSource<Long, ItemGenre>() {
@@ -187,7 +191,7 @@ class ViewModelAdvancedSearch: ViewModel() {
     }
 
     private val pagingSourceTag = object: PagingSource<Long, ItemTag>() {
-        private val pageSize:Long = 50
+        private val pageSize:Long = 100
         private var response:Response<ResponseTag>? = null
         private var listSeriesTag = ArrayList<ItemTag>()
 
@@ -222,16 +226,19 @@ class ViewModelAdvancedSearch: ViewModel() {
 
                                 val subList = listSeriesTag.stream().limit(pageSize).collect(
                                     Collectors.toList())
+                                Log.d("DBG-1", nextPageNumber.toString())
                                 LoadResult.Page(data = subList, prevKey = null, nextKey = nextPageNumber + pageSize)
                             } else {
                                 if(nextPageNumber < listSeriesTag.size) {
                                     val subList = listSeriesTag.stream().skip(nextPageNumber - pageSize).limit(nextPageNumber).collect(
                                         Collectors.toList())
+                                    Log.d("DBG-2", nextPageNumber.toString())
                                     LoadResult.Page(data = subList, prevKey = null, nextKey = nextPageNumber + pageSize)
                                 } else {
                                     val max:Long = listSeriesTag.size.toLong()
                                     val subList = listSeriesTag.stream().skip(nextPageNumber - pageSize).limit(max).collect(
                                         Collectors.toList())
+                                    Log.d("DBG-3", max.toString())
                                     LoadResult.Page(data = subList, prevKey = null, nextKey = null)
                                 }
                             }

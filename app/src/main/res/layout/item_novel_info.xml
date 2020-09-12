@@ -35,6 +35,17 @@
                 />
 
             <TextView
+                android:id="@+id/textItemNovelInfoFirstRelease"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="4dp"
+                android:gravity="center_vertical"
+                android:text="@{@string/novel_first_release_date(viewModelNovel.firstRelease)}"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                tools:text="First Release:" />
+
+            <TextView
                 android:id="@+id/textItemNovelInfoTlType"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+        <variable
+            name="viewModelNovel"
+            type="com.graytsar.wlnupdates.ui.novel.ViewModelNovel" />
+    </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardItemNovelSimilarSeries"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="4dp"
+        android:clickable="true"
+        android:focusable="true"
+        style="@style/CardViewShape">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="8dp">
+
+            <TextView
+                android:id="@+id/textItemNovelSimilarSeriesTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/novel_similar_series"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/textItemNovelSimilarSeriesContent"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/colorTextPrimary"
+                android:textSize="14sp"
+                android:text="@{viewModelNovel.similarSeries}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/textItemNovelSimilarSeriesTitle" />
+
+            <ImageView
+                android:id="@+id/imageItemNovelSimilarSeriesExpand"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:contentDescription="@string/accessibility_show_more_icon"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:tint="@color/colorTextPrimary"
+                app:srcCompat="@drawable/ic_baseline_open_in_new_24" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </com.google.android.material.card.MaterialCardView>
+</layout>

@@ -42,7 +42,7 @@
                         android:layout_height="150dp"
                         android:layout_marginStart="8dp"
                         android:layout_marginBottom="8dp"
-                        android:scaleType="fitCenter"
+                        android:scaleType="fitXY"
                         android:src="@drawable/ic_app_white"
                         android:contentDescription="@string/accessibility_novel_cover"
                         app:layout_collapseMode="parallax"
@@ -161,6 +161,10 @@
                     <include
                         android:id="@+id/includeAlternateNames"
                         layout="@layout/item_novel_alternate_names" />
+
+                    <include
+                        android:id="@+id/includeSimilarSeries"
+                        layout="@layout/item_novel_similar_series" />
 
                 </LinearLayout>
 

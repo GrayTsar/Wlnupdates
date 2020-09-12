@@ -2,6 +2,7 @@
 <resources>
     <dimen name="cardCornerRadius">10dp</dimen>
 
+    <dimen name="titleBig">24sp</dimen>
     <dimen name="titleMedium">16sp</dimen>
     <dimen name="textBody">14sp</dimen>
 </resources>

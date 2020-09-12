@@ -14,9 +14,11 @@
     <string name="novel_licensed">Licensed: %s</string>
     <string name="novel_illustrator">Illustrator</string>
     <string name="novel_publisher">Publisher</string>
+    <string name="novel_latest_release_date">Latest Release: %s</string>
     <string name="novel_first_release_date">First Release: %s</string>
     <string name="novel_alternative_names">Alternative Names</string>
     <string name="novel_newest_chapter">Newest Chapter: %s</string>
+    <string name="novel_similar_series">Similar Series</string>
 
     <string name="tab_recent">Recent</string>
     <string name="tab_translated">Translated</string>
@@ -37,7 +39,9 @@
     <string name="title_chapters">Chapters</string>
 
     <string name="menu_item_search">Search</string>
-
+    <string name="menu_delete">Delete</string>
+    <string name="menu_notifications">Notifications</string>
+    <string name="menu_sign_in">Sign In</string>
 
     <string name="name_illustrator">Name: %s</string>
     <string name="name_author">Name: %s</string>
@@ -67,12 +71,13 @@
     <string name="text_notification">Notification</string>
     <string name="text_delete">Delete</string>
     <string name="text_add">Add</string>
+    <string name="text_username">Username</string>
+    <string name="text_password">Password</string>
+    <string name="text_sign_in">Sign In</string>
 
     <string name="accessibility_library_more_button">Library More Button</string>
     <string name="accessibility_open_chapter_link">Open Chapter Link</string>
     <string name="accessibility_show_more_icon">Show More Icon</string>
     <string name="accessibility_novel_cover">Novel Cover</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="menu_sign_in">Sign In</string>
+
 </resources>

@@ -2,26 +2,21 @@ package com.graytsar.wlnupdates.ui.search
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.paging.LoadState
-import androidx.paging.filter
-import androidx.paging.map
 import androidx.recyclerview.widget.ConcatAdapter
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
 import com.google.android.flexbox.FlexWrap
 import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.flexbox.JustifyContent
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.ARG_PARCEL_ADVANCED_SEARCH_RESULT
@@ -31,7 +26,7 @@ import com.graytsar.wlnupdates.databinding.FragmentAdvancedSearchBinding
 import com.graytsar.wlnupdates.rest.ItemGenre
 import com.graytsar.wlnupdates.rest.ItemTag
 import com.graytsar.wlnupdates.rest.request.RequestAdvancedSearch
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class FragmentAdvancedSearch : Fragment() {
@@ -74,14 +69,14 @@ class FragmentAdvancedSearch : Fragment() {
         val flexBoxLayoutManagerGenre = FlexboxLayoutManager(context)
         flexBoxLayoutManagerGenre.apply {
             flexDirection = FlexDirection.ROW
-            justifyContent = JustifyContent.CENTER
             flexWrap = FlexWrap.WRAP
+            isItemPrefetchEnabled = true
         }
 
         recyclerAdvancedGenre = binding.includeItemAdvancedSearchGenre.recyclerAdvancedGenre
         recyclerAdvancedGenre.layoutManager = flexBoxLayoutManagerGenre
         recyclerAdvancedGenre.adapter = ConcatAdapter(adapterGenre, adapterTag)
-        recyclerAdvancedGenre.setItemViewCacheSize(200)
+        recyclerAdvancedGenre.setItemViewCacheSize(400)
 
         binding.includeItemAdvancedSearchType.lifecycleOwner = this
         binding.includeItemAdvancedSearchType.model = viewModelAdvancedSearch
@@ -183,31 +178,56 @@ class FragmentAdvancedSearch : Fragment() {
         })
 
         viewModelAdvancedSearch.errorResponseGenre.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+            if(it != viewModelAdvancedSearch.lastErrorResponseGenre) {
+                viewModelAdvancedSearch.lastErrorResponseGenre = it
+                showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+            }
         })
 
         viewModelAdvancedSearch.errorResponseTag.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+            if(it != viewModelAdvancedSearch.lastErrorResponseTag) {
+                viewModelAdvancedSearch.lastErrorResponseTag = it
+                showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+            }
         })
 
-        viewModelAdvancedSearch.errorResponseAdvancedSearch.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
-        })
+        lifecycleScope.launch {
+            viewModelAdvancedSearch.errorResponseAdvancedSearch.collectLatest {
+                if(it != null && it != viewModelAdvancedSearch.lastErrorResponseAdvancedSearch) {
+                    viewModelAdvancedSearch.lastErrorResponseAdvancedSearch = it
+                    Log.d("DBG-Flow", "something")
+                    showErrorDialog("Flow", it.message)
+                }
+            }
+        }
+
 
         viewModelAdvancedSearch.failureResponse.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
+            if(it != viewModelAdvancedSearch.lastFailureResponse) {
+                viewModelAdvancedSearch.lastFailureResponse = it
+                showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
+            }
         })
 
         viewModelAdvancedSearch.errorServerGenre.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+            if(it != viewModelAdvancedSearch.lastErrorServerGenre) {
+                viewModelAdvancedSearch.lastErrorServerGenre = it
+                showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+            }
         })
 
         viewModelAdvancedSearch.errorServerTag.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+            if(it != viewModelAdvancedSearch.lastErrorServerTag) {
+                viewModelAdvancedSearch.lastErrorServerTag = it
+                showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+            }
         })
 
         viewModelAdvancedSearch.errorServerAdvancedSearch.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+            if(it != viewModelAdvancedSearch.lastErrorServerAdvancedSearch) {
+                viewModelAdvancedSearch.lastErrorServerAdvancedSearch = it
+                showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+            }
         })
 
         btnTypeAll.setOnClickListener {
@@ -299,13 +319,13 @@ class FragmentAdvancedSearch : Fragment() {
 
         lifecycleScope.launch {
             viewModelAdvancedSearch.pagerGenre.collectLatest { pagingData ->
-                adapterGenre.submitData(pagingData)
+                adapterGenre.submitData(pagingData.insertHeaderItem(ItemGenre(0, "GenreHeader", 0)))
             }
         }
 
         lifecycleScope.launch {
             viewModelAdvancedSearch.pagerTag.collectLatest { pagingData ->
-                adapterTag.submitData(pagingData)
+                adapterTag.submitData(pagingData.insertHeaderItem(ItemTag(0, "TagHeader", 0)))
             }
         }
 
@@ -363,13 +383,13 @@ class FragmentAdvancedSearch : Fragment() {
 
         genreList.forEach {
             if(it.isSelected.value!!){
-                gMap[it.name] = "include"
+                gMap[it.name] = "included"
             }
         }
 
         tagList.forEach {
             if(it.isSelected.value!!) {
-                tMap[it.name] = "include"
+                tMap[it.name] = "included"
             }
         }
 

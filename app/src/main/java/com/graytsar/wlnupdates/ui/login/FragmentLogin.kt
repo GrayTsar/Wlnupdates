@@ -2,8 +2,6 @@ package com.graytsar.wlnupdates.ui.login
 
 import android.content.Context
 import android.os.Bundle
-import androidx.preference.PreferenceManager
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,11 +9,11 @@ import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.firebase.ktx.Firebase
 import com.graytsar.wlnupdates.*
 import com.graytsar.wlnupdates.databinding.FragmentLoginBinding
 
@@ -120,7 +118,7 @@ class FragmentLogin : Fragment() {
             .show()
     }
 
-    fun onClickSignIn(view: View) {
+    private fun onClickSignIn(view: View) {
         val username = editUsername.text.toString()
         val password = editPassword.text.toString()
 

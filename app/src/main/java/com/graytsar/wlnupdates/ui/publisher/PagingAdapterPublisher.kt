@@ -10,7 +10,6 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.graytsar.wlnupdates.ARG_ID_NOVEL
 import com.graytsar.wlnupdates.MainActivity

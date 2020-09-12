@@ -10,12 +10,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
-import com.google.android.flexbox.FlexDirection
-import com.google.android.flexbox.FlexWrap
-import com.google.android.flexbox.FlexboxLayoutManager
-import com.google.android.flexbox.JustifyContent
+import com.google.android.flexbox.*
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.graytsar.wlnupdates.*
+import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.database.DatabaseService
 import com.graytsar.wlnupdates.database.ModelLibrary
 import com.graytsar.wlnupdates.databinding.FragmentLibraryBinding
@@ -50,7 +48,8 @@ class FragmentLibrary : Fragment() {
         val flexBoxLayoutManager = FlexboxLayoutManager(context)
         flexBoxLayoutManager.apply {
             flexDirection = FlexDirection.ROW
-            justifyContent = JustifyContent.CENTER
+            justifyContent = JustifyContent.FLEX_START
+            alignItems = AlignItems.BASELINE
             flexWrap = FlexWrap.WRAP
         }
 

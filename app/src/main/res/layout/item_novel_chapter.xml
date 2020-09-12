@@ -73,8 +73,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textColor="@color/colorTextPrimary"
-                android:text="@{@string/novel_first_release_date(viewModelNovel.firstRelease)}"
-                tools:text="First Release: Dec 13, 2014"
+                android:text="@{@string/novel_latest_release_date(viewModelNovel.lastRelease)}"
+                tools:text="Latest Release: Dec 13, 2014"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/textItemNovelChapterStatus" />

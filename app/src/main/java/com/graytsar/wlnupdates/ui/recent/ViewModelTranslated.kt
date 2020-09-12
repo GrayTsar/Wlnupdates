@@ -1,30 +1,19 @@
 package com.graytsar.wlnupdates.ui.recent
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.*
 import com.graytsar.wlnupdates.rest.Item
 import com.graytsar.wlnupdates.rest.interfaces.RestService
-import com.graytsar.wlnupdates.rest.request.RequestOriginal
 import com.graytsar.wlnupdates.rest.request.RequestTranslated
-import com.graytsar.wlnupdates.rest.response.ResponseOriginal
 import com.graytsar.wlnupdates.rest.response.ResponseTranslated
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.toList
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import retrofit2.Call
-import retrofit2.Callback
 import retrofit2.HttpException
 import retrofit2.Response
 import java.io.IOException
-import java.util.stream.Collectors
 
 class ViewModelTranslated: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)

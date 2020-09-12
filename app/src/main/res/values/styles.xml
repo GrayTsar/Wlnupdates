@@ -2,14 +2,22 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your theme here. -->
+        <item name="android:windowBackground">@color/colorWindowsBackground</item>
+
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
         <item name="drawerArrowStyle">@style/ArrowHamburgerStyle</item>
+
         <item name="android:textColorPrimary">@color/colorTextToolbarPrimary</item>
-        <item name="android:windowBackground">@color/colorWindowsBackground</item>
+        <item name="android:textColorSecondary">@color/colorTextToolbarPrimary</item>
         <item name="android:textColorHint">@color/colorTextHint</item>
-        <item name="colorControlNormal">@color/colorTextPrimary</item>
+
+        <item name="android:itemTextAppearance">@style/themeMenuTextColor</item>
+        <item name="actionOverflowButtonStyle">@style/optionsMenuStyle</item>
+
+        <item name="colorControlNormal">@color/colorTextToolbarPrimary</item>
     </style>
 
     <style name="ArrowHamburgerStyle" parent="@style/Widget.AppCompat.DrawerArrowToggle">
@@ -33,6 +41,14 @@
         <item name="android:buttonTint">@color/colorAccent</item>
         <item name="android:textColor">@color/colorTextPrimary</item>
         <item name="android:itemBackground">@color/colorLibraryBackground</item>
+    </style>
+
+    <style name="themeMenuTextColor" parent="@android:style/TextAppearance.Widget.IconMenu.Item">
+        <item name="android:textColor">@color/colorTextPrimary</item>
+    </style>
+
+    <style name="optionsMenuStyle" parent="Widget.AppCompat.ActionButton.Overflow">
+        <item name="android:tint">#ffffff</item>
     </style>
 
 </resources>

@@ -1,6 +1,5 @@
 package com.graytsar.wlnupdates.ui.author
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.graytsar.wlnupdates.rest.SeriesTitle
@@ -31,7 +30,7 @@ class ViewModelAuthor: ViewModel() {
             override fun onResponse(call: Call<ResponseAuthor>, response: Response<ResponseAuthor>) {
                 if(response.isSuccessful){
                     response.body()?.let { responseAuthor ->
-                        if(!responseAuthor.error!!) {
+                        if(!responseAuthor.error) {
                             onReceivedResult(responseAuthor)
                         } else {
                             errorResponseAuthor.postValue(responseAuthor)

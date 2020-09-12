@@ -28,7 +28,7 @@ class UpdateWorker(val context: Context, workerParams: WorkerParameters): Worker
         listNotify.forEach { model ->
             val request = RestService.restService.getNovel(RequestNovel(model.idWlnupdates)).execute().body()
             request?.let { response ->
-                if(response.error!! == false){
+                if(response.error == false){
                     response.dataNovel?.let { dataNovel ->
                         dataNovel.releases?.let { listRelease ->
                             val release = listRelease.firstOrNull()

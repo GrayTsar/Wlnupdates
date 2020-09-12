@@ -111,7 +111,7 @@ class FragmentSearch : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModelSearch.pagerSearch?.collectLatest { pagingData ->
+            viewModelSearch.pagerSearch.collectLatest { pagingData ->
                 adapterSearch.submitData(pagingData)
             }
         }

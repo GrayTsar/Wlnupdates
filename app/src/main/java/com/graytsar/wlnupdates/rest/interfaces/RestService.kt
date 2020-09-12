@@ -1,16 +1,12 @@
 package com.graytsar.wlnupdates.rest.interfaces
 
 import android.content.SharedPreferences
-import android.util.Log
-import androidx.preference.PreferenceManager
-import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.cookieSession
 import com.graytsar.wlnupdates.keyCookieDomain
 import okhttp3.Cookie
 import okhttp3.CookieJar
 import okhttp3.HttpUrl
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -63,13 +59,14 @@ object RestService {
 
         }
 
-
+        /*
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+         */
 
         val clientBuilder = OkHttpClient.Builder()
         clientBuilder.cookieJar(cookieJar)
-        clientBuilder.addInterceptor(loggingInterceptor)
+        //clientBuilder.addInterceptor(loggingInterceptor)
 
 
         val retrofit = Retrofit.Builder()

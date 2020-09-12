@@ -3,10 +3,8 @@ package com.graytsar.wlnupdates.ui.login
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.graytsar.wlnupdates.rest.interfaces.RestService
-import com.graytsar.wlnupdates.rest.request.RequestIllustrator
 import com.graytsar.wlnupdates.rest.request.RequestLogin
 import com.graytsar.wlnupdates.rest.request.RequestWatchList
-import com.graytsar.wlnupdates.rest.response.ResponseIllustrator
 import com.graytsar.wlnupdates.rest.response.ResponseLogin
 import com.graytsar.wlnupdates.rest.response.ResponseWatchList
 import retrofit2.Call

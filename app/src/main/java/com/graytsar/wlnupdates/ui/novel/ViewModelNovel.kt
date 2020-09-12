@@ -2,7 +2,6 @@ package com.graytsar.wlnupdates.ui.novel
 
 import android.text.TextUtils
 import android.text.format.DateUtils
-import android.util.Log
 import android.widget.TextView
 import androidx.core.text.HtmlCompat
 import androidx.databinding.BindingAdapter
@@ -63,6 +62,7 @@ class ViewModelNovel: ViewModel() {
     val listIllustrator = MutableLiveData<List<Illustrator>>()
     val listPublisher = MutableLiveData<List<Publisher>>()
     val listAlternativeNames = MutableLiveData<List<String>>()
+    val listSimilarSeries = MutableLiveData<List<SimilarSeries>>()
     val listCovers = MutableLiveData<List<Cover>>()
 
     val listGroup = MutableLiveData<List<Tlgroup?>>()
@@ -75,6 +75,7 @@ class ViewModelNovel: ViewModel() {
     val alternativeNames = MutableLiveData<String>()
     val cover = MutableLiveData<String>()
     val group = MutableLiveData<String>()
+    val similarSeries = MutableLiveData<String>()
 
     val errorResponseNovel = MutableLiveData<ResponseNovel>()
     val failureResponse = MutableLiveData<Throwable>()
@@ -88,7 +89,7 @@ class ViewModelNovel: ViewModel() {
             override fun onResponse(call: Call<ResponseNovel>, response: Response<ResponseNovel>) {
                 if(response.isSuccessful){
                     response.body()?.let { responseNovel ->
-                        if(!responseNovel.error!!) {
+                        if(!responseNovel.error) {
                             onReceivedResult(responseNovel)
                         } else {
                             errorResponseNovel.postValue(responseNovel)
@@ -183,6 +184,17 @@ class ViewModelNovel: ViewModel() {
                 alternativeNames.postValue(altNamesString.toString())
             }
 
+            novel.similarSeries?.let {
+                listSimilarSeries.postValue(it)
+
+                val listSimilarSeriesString = StringBuilder()
+                it.stream().map { SimilarSeries -> SimilarSeries.title }.collect(Collectors.toList()).forEach { title ->
+                    listSimilarSeriesString.append("<br>$title</br>")
+                }
+
+                similarSeries.postValue(listSimilarSeriesString.toString())
+            }
+
             novel.covers?.let { list ->
                 if(list.isNotEmpty()){
                     cover.postValue(list[0].url)
@@ -228,7 +240,7 @@ class ViewModelNovel: ViewModel() {
                     val formatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z")
                     val date = formatter.parse(pubDate)?.time
                     date?.let {
-                        val ago = DateUtils.getRelativeTimeSpanString(it, Calendar.getInstance().timeInMillis, DateUtils.MINUTE_IN_MILLIS)
+                        val ago = DateUtils.getRelativeTimeSpanString(it, Calendar.getInstance().timeInMillis, DateUtils.DAY_IN_MILLIS)
                         firstRelease.postValue(ago.toString())
                     }
                 } catch (e:Exception) {
@@ -237,6 +249,22 @@ class ViewModelNovel: ViewModel() {
             }
 
             lastRelease.postValue(novel.latestPublished)
+            novel.latestPublished?.let { latestDate ->
+                try {
+                    val formatter = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z")
+                    val date = formatter.parse(latestDate)?.time
+                    date?.let {
+                        val ago = DateUtils.getRelativeTimeSpanString(it, Calendar.getInstance().timeInMillis, DateUtils.HOUR_IN_MILLIS)
+                        lastRelease.postValue(ago.toString())
+                    }
+                } catch (e:Exception) {
+                    lastRelease.postValue(novel.latestPublished)
+                }
+            }
+
+
+
+
             latestChapter.postValue("${novel.latestStr} [${novel.releases?.count()}]")
 
         }

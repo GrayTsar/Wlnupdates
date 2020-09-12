@@ -14,21 +14,21 @@
             android:id="@+id/imageLibraryCover"
             android:layout_width="100dp"
             android:layout_height="125dp"
-            android:scaleType="fitCenter"
+            android:scaleType="fitXY"
             app:shapeAppearanceOverlay="@style/LibraryImageShape"
             app:srcCompat="@drawable/ic_app"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
+        <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/imageLibraryOverlay"
             android:layout_width="100dp"
             android:layout_height="125dp"
             android:background="@drawable/overlay_library_gradient"
             android:contentDescription="@string/accessibility_library_more_button"
+            app:shapeAppearanceOverlay="@style/LibraryImageShape"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:tint="@color/colorPrimary" />
+            app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
             android:id="@+id/menuLibraryOptions"

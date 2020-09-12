@@ -48,11 +48,14 @@ const val ARG_ID_ILLUSTRATOR:String = "argIdPublisher"
 
 const val ARG_ID_NOVEL_GROUP:String = "argIdNovelGroup"
 
+const val ARG_PARCEL_LIBRARY_ITEM:String = "argParcelLibraryItem"
+
 const val ARG_PARCEL_NOVEL_CHAPTER:String = "argParcelNovelChapter"
 const val ARG_PARCEL_NOVEL_GENRE:String = "argParcelNovelGenre"
 const val ARG_PARCEL_NOVEL_TAG:String = "argParcelNovelTag"
 const val ARG_PARCEL_NOVEL_ILLUSTRATOR:String = "argParcelNovelIllustrator"
 const val ARG_PARCEL_NOVEL_PUBLISHER:String = "argParcelNovelPublisher"
+const val ARG_PARCEL_NOVEL_SIMILAR_SERIES:String = "argParcelNovelSimilarSeries"
 const val ARG_PARCEL_ADVANCED_SEARCH_RESULT:String = "argParcelAdvancedSearchResult"
 
 const val channelID:String = "com.graytsar.wlnupdates.Updates"

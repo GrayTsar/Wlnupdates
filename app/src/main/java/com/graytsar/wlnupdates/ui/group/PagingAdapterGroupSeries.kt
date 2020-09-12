@@ -10,14 +10,12 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.paging.PagingDataAdapter
 import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.graytsar.wlnupdates.ARG_ID_NOVEL
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemGroupSeriesBinding
 import com.graytsar.wlnupdates.rest.ModelActiveSeries
-import java.lang.Exception
 
 class PagingAdapterGroupSeries(private val activity: Fragment): PagingDataAdapter<ModelActiveSeries, ViewHolderGroupSeries>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderGroupSeries {
