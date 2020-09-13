@@ -33,10 +33,14 @@ import com.google.android.play.core.install.model.ActivityResult
 import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.InstallStatus
 import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.ktx.bytesDownloaded
+import com.google.android.play.core.ktx.totalBytesToDownload
 import com.graytsar.wlnupdates.background.UpdateWorker
 import com.graytsar.wlnupdates.database.DatabaseService
 import com.graytsar.wlnupdates.database.LibraryDatabase
+import com.graytsar.wlnupdates.databinding.ActivityMainBinding
 import com.graytsar.wlnupdates.rest.interfaces.RestService
+import kotlinx.android.synthetic.main.toolbar.view.*
 import java.util.concurrent.TimeUnit
 
 const val ARG_ID_NOVEL:String = "argIdNovel"
@@ -67,8 +71,9 @@ const val keyPreferenceUtils:String = "keyPreferenceUtils"
 const val keyPreferenceRequestReview:String = "keyPreferenceRequestReview"
 const val requestReviewAt:Int = 50
 const val RC_UPDATE_IMMEDIATE = 100
+const val RC_UPDATE_FLEXIBLE = 101
 
-const val keyPreferenceCookieStore:String = "keyPreferenceCookieStore"
+//const val keyPreferenceCookieStore:String = "keyPreferenceCookieStore"
 const val keyCookieDomain:String = "www.wlnupdates.com"
 var cookieSession:String? = null //must be set before RestService is created
 
@@ -77,6 +82,7 @@ const val keyPreferenceUsername:String = "keyPreferenceUsername"
 const val keyPreferencePassword:String = "keyPreferencePassword"
 
 class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedListener {
+    private lateinit var binding: ActivityMainBinding
     private lateinit var appBarConfiguration: AppBarConfiguration
     private lateinit var notificationManager:NotificationManager
 
@@ -85,18 +91,19 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         createNotificationChannel(channelID, "Updates", "New Chapter Released")
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar) //replace toolbar
+        val toolbar: Toolbar = binding.includeToolbar.toolbar
+        setSupportActionBar(toolbar) //replace actionbar
 
         val navHostFragment = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController: NavController = navHostFragment.navController
 
-        val bottomNavigationView = findViewById<View>(R.id.bottom_navigation) as BottomNavigationView
+        val bottomNavigationView = binding.bottomNavigation
 
         appBarConfiguration = AppBarConfiguration(
             setOf(
@@ -116,7 +123,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         RestService.sharedPreference = sp
 
 
-
         DatabaseService.db = Room.databaseBuilder(
             applicationContext,
             LibraryDatabase::class.java, "Library_Database"
@@ -132,15 +138,27 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             periodicWorkRequest
         )
 
-        requestInAppUpdate()
+        //requestInAppUpdate()
     }
 
+    /*
     override fun onResume() {
         super.onResume()
 
         appUpdateManager?.appUpdateInfo?.addOnSuccessListener { appUpdateInfo ->
-            if (appUpdateInfo.installStatus() == InstallStatus.DOWNLOADED) {
-                popupSnackbarForCompleteUpdate()
+            when (appUpdateInfo.installStatus()) {
+                InstallStatus.DOWNLOADING -> {
+                    binding.progressMainUpdateIndicator.visibility = View.VISIBLE
+                    binding.progressMainUpdateIndicator.progress = ((appUpdateInfo.bytesDownloaded / appUpdateInfo.totalBytesToDownload) * 100).toInt()
+                }
+                InstallStatus.DOWNLOADED -> {
+                    binding.progressMainUpdateIndicator.progress = 100
+                    binding.progressMainUpdateIndicator.visibility = View.GONE
+                    popupSnackbarForCompleteUpdate()
+                }
+                else -> {
+
+                }
             }
         }
 
@@ -151,6 +169,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             }
         }
     }
+     */
 
     //when navigation back button is pressed
     override fun onSupportNavigateUp(): Boolean {
@@ -162,8 +181,7 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
     override fun onDestinationChanged(
         controller: NavController,
         destination: NavDestination,
-        arguments: Bundle?
-    ) {
+        arguments: Bundle?) {
     }
 
     fun pushNotify(title: String, text: String){
@@ -174,11 +192,6 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             launchIntent,
             PendingIntent.FLAG_CANCEL_CURRENT
         )
-
-        //switch does not update with MutableLiveData change, remove this feature till i think of something different that works
-        //val deleteIntent = Intent(this, ModelBattery::class.java)
-        //deleteIntent.action = "notification_cancelled"
-        //val pendingDeleteIntent = PendingIntent.getBroadcast(this, 1, deleteIntent, PendingIntent.FLAG_CANCEL_CURRENT)
 
         val notification = NotificationCompat.Builder(this, channelID).apply {
             setContentTitle(title)
@@ -204,23 +217,72 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         notificationManager.createNotificationChannel(channel)
     }
 
+    /*
     private fun requestInAppUpdate() {
         appUpdateManager = AppUpdateManagerFactory.create(this)
         val appUpdateInfoTask = appUpdateManager!!.appUpdateInfo
 
         appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
-            if ((appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
-                && appUpdateInfo.clientVersionStalenessDays() != null)
-                || appUpdateInfo.clientVersionStalenessDays()!! >= 14) {
-
+            val availability = appUpdateInfo.updateAvailability()
+            if (availability > 0) {
 
                 appUpdateManager!!.startUpdateFlowForResult(
                     appUpdateInfo,
-                    AppUpdateType.IMMEDIATE,
+                    AppUpdateType.FLEXIBLE,
                     this,
-                    RC_UPDATE_IMMEDIATE
+                    RC_UPDATE_FLEXIBLE
                 )
+
+                updateListener = InstallStateUpdatedListener { state ->
+                    when (state.installStatus()) {
+                        InstallStatus.DOWNLOADING -> {
+                            binding.progressMainUpdateIndicator.visibility = View.VISIBLE
+                            binding.progressMainUpdateIndicator.progress = ((state.bytesDownloaded / state.totalBytesToDownload) * 100).toInt()
+                        }
+                        InstallStatus.DOWNLOADED -> {
+                            binding.progressMainUpdateIndicator.progress = 100
+                            binding.progressMainUpdateIndicator.visibility = View.GONE
+                            popupSnackbarForCompleteUpdate()
+                        }
+                        else -> {
+
+                        }
+                    }
+                }
+
+                appUpdateManager!!.registerListener(updateListener!!)
+            }
+        }
+    }
+     */
+    /*
+    private fun requestInAppUpdate() {
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+        val appUpdateInfoTask = appUpdateManager!!.appUpdateInfo
+
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)) {
+
+                if(appUpdateInfo.updatePriority() > 3) {
+                    appUpdateManager!!.startUpdateFlowForResult(
+                        appUpdateInfo,
+                        AppUpdateType.IMMEDIATE,
+                        this,
+                        RC_UPDATE_IMMEDIATE
+                    )
+                }
+
+                appUpdateInfo.clientVersionStalenessDays()?.let {
+                    if(it >= 14) {
+                        appUpdateManager!!.startUpdateFlowForResult(
+                            appUpdateInfo,
+                            AppUpdateType.IMMEDIATE,
+                            this,
+                            RC_UPDATE_IMMEDIATE
+                        )
+                    }
+                }
             } else if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                 && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.FLEXIBLE)) {
 
@@ -242,7 +304,9 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             }
         }
     }
+    */
 
+    /*
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
 
@@ -261,9 +325,27 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
                 }
             }
+        } else if (requestCode == RC_UPDATE_FLEXIBLE) {
+            when (resultCode) {
+                RESULT_OK -> {
+                    //The user has accepted the update successfully.
+                }
+                RESULT_CANCELED -> {
+                    //The user has canceled the update.
+                }
+                ActivityResult.RESULT_IN_APP_UPDATE_FAILED -> {
+                    //Some other error occurred or the failure of the In-App update.
+                }
+                else -> {
+
+                }
+            }
         }
     }
 
+     */
+
+    /*
     private fun popupSnackbarForCompleteUpdate() {
         appUpdateManager?.let { appUpdateManager ->
             Snackbar.make(
@@ -280,4 +362,5 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
             }
         }
     }
+     */
 }
