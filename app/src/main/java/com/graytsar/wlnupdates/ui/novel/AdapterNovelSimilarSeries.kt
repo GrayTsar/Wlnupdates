@@ -44,11 +44,11 @@ class AdapterNovelSimilarSeries(private val activity: Fragment): ListAdapter<Sim
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<SimilarSeries>(){
             override fun areItemsTheSame(oldItem: SimilarSeries, newItem: SimilarSeries): Boolean {
-                return oldItem == newItem
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(oldItem: SimilarSeries, newItem: SimilarSeries): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.title == newItem.title
             }
         }
     }

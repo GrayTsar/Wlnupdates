@@ -17,7 +17,7 @@ import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.ItemAuthorBinding
 import com.graytsar.wlnupdates.rest.SeriesTitle
 
-class AdapterAuthor(private val activity: Fragment): ListAdapter<SeriesTitle, ViewHolderAuthor>(DiffCallbackAuthor()) {
+class AdapterAuthor(private val activity: Fragment): ListAdapter<SeriesTitle, ViewHolderAuthor>(DIFF_CALLBACK) {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolderAuthor {
         val binding = DataBindingUtil.inflate<ItemAuthorBinding>(
             LayoutInflater.from(activity.context), R.layout.item_author, parent, false)
@@ -34,6 +34,17 @@ class AdapterAuthor(private val activity: Fragment): ListAdapter<SeriesTitle, Vi
         }
     }
 
+    companion object {
+        val DIFF_CALLBACK = object: DiffUtil.ItemCallback<SeriesTitle>(){
+            override fun areItemsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
+                return old.id == aNew.id
+            }
+
+            override fun areContentsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
+                return (old.id == aNew.id && old.title == aNew.title)
+            }
+        }
+    }
 }
 
 class ViewHolderAuthor(view: View, val binding: ItemAuthorBinding): RecyclerView.ViewHolder(view){
@@ -50,15 +61,5 @@ class ViewHolderAuthor(view: View, val binding: ItemAuthorBinding): RecyclerView
 
             navController.navigate(R.id.fragmentNovel, bundle)
         }
-    }
-}
-
-class DiffCallbackAuthor: DiffUtil.ItemCallback<SeriesTitle>(){
-    override fun areItemsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
-        return old == aNew
-    }
-
-    override fun areContentsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
-        return (old.id == aNew.id && old.title == aNew.title)
     }
 }

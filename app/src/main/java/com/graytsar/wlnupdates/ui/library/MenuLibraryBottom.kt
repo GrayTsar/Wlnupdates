@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.graytsar.wlnupdates.ARG_PARCEL_LIBRARY_ITEM
@@ -56,5 +57,10 @@ class MenuLibraryBottom: BottomSheetDialogFragment() {
         }
 
         return binding.root
+    }
+
+    override fun onStart() {
+        super.onStart()
+        BottomSheetBehavior.from(binding.root.parent as View).state = BottomSheetBehavior.STATE_EXPANDED
     }
 }

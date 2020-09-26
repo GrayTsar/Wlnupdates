@@ -45,11 +45,11 @@ class AdapterNovelIllustrator(private val activity: Fragment): ListAdapter<Illus
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Illustrator>(){
             override fun areItemsTheSame(oldItem: Illustrator, newItem: Illustrator): Boolean {
-                return oldItem == newItem
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(oldItem: Illustrator, newItem: Illustrator): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.illustrator == newItem.illustrator
             }
         }
     }

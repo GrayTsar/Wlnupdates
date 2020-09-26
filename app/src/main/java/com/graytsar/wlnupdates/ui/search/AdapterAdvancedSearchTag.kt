@@ -68,11 +68,11 @@ class AdapterAdvancedSearchTag(private val activity: Fragment): PagingDataAdapte
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<ItemTag>(){
             override fun areItemsTheSame(old: ItemTag, aNew: ItemTag): Boolean {
-                return old == aNew
+                return old.id == aNew.id
             }
 
             override fun areContentsTheSame(old: ItemTag, aNew: ItemTag): Boolean {
-                return (old.id == aNew.id && old.name == aNew.name)
+                return (old.name == aNew.name)
             }
         }
 

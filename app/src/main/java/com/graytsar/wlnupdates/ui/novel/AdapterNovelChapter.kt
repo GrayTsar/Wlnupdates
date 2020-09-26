@@ -65,7 +65,7 @@ class AdapterNovelChapter(private val activity: Fragment): ListAdapter<Release, 
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Release>(){
             override fun areItemsTheSame(oldItem: Release, newItem: Release): Boolean {
-                return oldItem == newItem
+                return oldItem.srcurl == newItem.srcurl
             }
 
             override fun areContentsTheSame(oldItem: Release, newItem: Release): Boolean {

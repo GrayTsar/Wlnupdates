@@ -46,11 +46,11 @@ class AdapterNovelGroup(private val activity: Fragment): ListAdapter<Tlgroup, Vi
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Tlgroup>(){
             override fun areItemsTheSame(oldItem: Tlgroup, newItem: Tlgroup): Boolean {
-                return oldItem == newItem
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(oldItem: Tlgroup, newItem: Tlgroup): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.name == newItem.name
             }
         }
     }

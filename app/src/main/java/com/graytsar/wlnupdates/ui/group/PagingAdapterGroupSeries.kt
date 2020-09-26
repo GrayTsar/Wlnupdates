@@ -39,11 +39,11 @@ class PagingAdapterGroupSeries(private val activity: Fragment): PagingDataAdapte
     companion object {
         val DIFF_CALLBACK = object : DiffUtil.ItemCallback<ModelActiveSeries>(){
             override fun areItemsTheSame(old: ModelActiveSeries, aNew: ModelActiveSeries): Boolean {
-                return old == aNew
+                return old.id == aNew.id
             }
 
             override fun areContentsTheSame(old: ModelActiveSeries, aNew: ModelActiveSeries): Boolean {
-                return (old.id == aNew.id && old.title == aNew.title)
+                return old.title == aNew.title
             }
         }
     }

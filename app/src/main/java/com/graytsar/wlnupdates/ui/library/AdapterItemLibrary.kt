@@ -110,11 +110,11 @@ class AdapterItemLibrary(private val activity: Fragment): ListAdapter<ModelLibra
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<ModelLibrary>(){
             override fun areItemsTheSame(old: ModelLibrary, aNew: ModelLibrary): Boolean {
-                return old == aNew
+                return old.pk == aNew.pk
             }
 
             override fun areContentsTheSame(old: ModelLibrary, aNew: ModelLibrary): Boolean {
-                return old.pk == aNew.pk
+                return (old.title == aNew.title && old.idWlnupdates == aNew.idWlnupdates)
             }
         }
     }

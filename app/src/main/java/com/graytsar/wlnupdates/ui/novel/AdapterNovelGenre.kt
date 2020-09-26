@@ -27,11 +27,11 @@ class AdapterNovelGenre(private val activity: Fragment): ListAdapter<Genre, View
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Genre>(){
             override fun areItemsTheSame(oldItem: Genre, newItem: Genre): Boolean {
-                return oldItem == newItem
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(oldItem: Genre, newItem: Genre): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.genre == newItem.genre
             }
         }
     }

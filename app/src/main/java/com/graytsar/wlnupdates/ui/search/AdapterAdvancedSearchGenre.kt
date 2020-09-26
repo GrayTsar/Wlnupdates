@@ -64,11 +64,11 @@ class AdapterAdvancedSearchGenre(private val activity: Fragment): PagingDataAdap
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<ItemGenre>(){
             override fun areItemsTheSame(old: ItemGenre, aNew: ItemGenre): Boolean {
-                return old == aNew
+                return old.id == aNew.id
             }
 
             override fun areContentsTheSame(old: ItemGenre, aNew: ItemGenre): Boolean {
-                return (old.id == aNew.id && old.name == aNew.name)
+                return (old.name == aNew.name)
             }
         }
 

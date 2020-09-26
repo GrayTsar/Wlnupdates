@@ -61,11 +61,11 @@ class AdapterAdvancedSearchResult(private val activity: Fragment): ListAdapter<D
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<DataAdvancedSearch>(){
             override fun areItemsTheSame(old: DataAdvancedSearch, aNew: DataAdvancedSearch): Boolean {
-                return old == aNew
+                return old.id == aNew.id
             }
 
             override fun areContentsTheSame(old: DataAdvancedSearch, aNew: DataAdvancedSearch): Boolean {
-                return (old.id == aNew.id && old.title == aNew.title)
+                return (old.title == aNew.title)
             }
         }
     }

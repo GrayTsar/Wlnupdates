@@ -67,7 +67,9 @@ class PagingAdapterItem(private val activity: Fragment): PagingDataAdapter<Item,
 
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Item>(){
-            override fun areItemsTheSame(old: Item, aNew: Item) = old == aNew
+            override fun areItemsTheSame(old: Item, aNew: Item): Boolean {
+                return (old.srcurl == aNew.srcurl)
+            }
 
             override fun areContentsTheSame(old: Item, aNew: Item): Boolean {
                 return (old.chapter == aNew.chapter && old.volume == aNew.volume && old.series?.id == aNew.series?.id)

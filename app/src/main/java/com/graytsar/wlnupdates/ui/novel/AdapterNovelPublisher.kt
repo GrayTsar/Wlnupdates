@@ -45,11 +45,11 @@ class AdapterNovelPublisher(private val activity: Fragment): ListAdapter<Publish
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<Publisher>(){
             override fun areItemsTheSame(oldItem: Publisher, newItem: Publisher): Boolean {
-                return oldItem == newItem
+                return oldItem.id == newItem.id
             }
 
             override fun areContentsTheSame(oldItem: Publisher, newItem: Publisher): Boolean {
-                return oldItem.id == newItem.id
+                return oldItem.publisher == newItem.publisher
             }
         }
     }

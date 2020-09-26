@@ -38,7 +38,7 @@ class PagingAdapterGroupFeed(private val activity: Fragment): PagingDataAdapter<
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<FeedPaginated>(){
             override fun areItemsTheSame(old: FeedPaginated, aNew: FeedPaginated): Boolean {
-                return old == aNew
+                return old.linkurl == aNew.linkurl
             }
 
             override fun areContentsTheSame(old: FeedPaginated, aNew: FeedPaginated): Boolean {

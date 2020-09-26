@@ -44,11 +44,11 @@ class PagingAdapterSearch(private val activity: Fragment): PagingDataAdapter<Mat
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<MatchContent>(){
             override fun areItemsTheSame(old: MatchContent, aNew: MatchContent): Boolean {
-                return old == aNew
+                return old.sid == aNew.sid
             }
 
             override fun areContentsTheSame(old: MatchContent, aNew: MatchContent): Boolean {
-                return (old.name == aNew.name && old.sid == aNew.sid && old.percent == aNew.percent)
+                return (old.name == aNew.name && old.percent == aNew.percent)
             }
         }
     }

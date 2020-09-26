@@ -37,11 +37,11 @@ class PagingAdapterIllustrator(private val activity: Fragment): PagingDataAdapte
     companion object {
         val DIFF_CALLBACK = object: DiffUtil.ItemCallback<SeriesTitle>(){
             override fun areItemsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
-                return old == aNew
+                return old.id == aNew.id
             }
 
             override fun areContentsTheSame(old: SeriesTitle, aNew: SeriesTitle): Boolean {
-                return (old.id == aNew.id && old.title == aNew.title)
+                return old.title == aNew.title
             }
         }
     }
