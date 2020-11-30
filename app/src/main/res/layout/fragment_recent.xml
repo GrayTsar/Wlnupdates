@@ -18,9 +18,9 @@
 
         </androidx.recyclerview.widget.RecyclerView>
 
-        <com.google.android.material.progressindicator.ProgressIndicator
+        <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressBarRecent"
-            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
+            android:indeterminate="true"
             android:layout_width="0dp"
             android:layout_height="4dp"
             app:indicatorColor="@color/colorProgressBarTint"

@@ -8,6 +8,7 @@ import android.content.Intent
 import android.media.RingtoneManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -20,10 +21,8 @@ import androidx.navigation.ui.navigateUp
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import androidx.room.Room
-import androidx.work.Constraints
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.PeriodicWorkRequestBuilder
-import androidx.work.WorkManager
+import androidx.room.Update
+import androidx.work.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.play.core.appupdate.AppUpdateManager
@@ -129,14 +128,26 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
         ).allowMainThreadQueries().build()
 
         val constraints = Constraints.Builder().build()
-        val periodicWorkRequest = PeriodicWorkRequestBuilder<UpdateWorker>(7, TimeUnit.HOURS).setConstraints(
-            constraints
-        ).build()
+
+
+        //val www = OneTimeWorkRequestBuilder<UpdateWorker>().setConstraints(constraints).build()
+        //WorkManager.getInstance(this).enqueue(www)
+
+
+        val periodicWorkRequest = PeriodicWorkRequestBuilder<UpdateWorker>(2, TimeUnit.HOURS, 1, TimeUnit.HOURS)
+            .setConstraints(constraints)
+            .build()
         WorkManager.getInstance(this).enqueueUniquePeriodicWork(
             "UpdateLibraryWork",
             ExistingPeriodicWorkPolicy.KEEP,
             periodicWorkRequest
         )
+
+
+
+
+
+
 
         //requestInAppUpdate()
     }

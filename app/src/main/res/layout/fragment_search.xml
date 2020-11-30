@@ -39,9 +39,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/materialCardView" />
 
-        <com.google.android.material.progressindicator.ProgressIndicator
+        <com.google.android.material.progressindicator.LinearProgressIndicator
             android:id="@+id/progressBarSearch"
-            style="@style/Widget.MaterialComponents.ProgressIndicator.Linear.Indeterminate"
+            android:indeterminate="true"
             android:layout_width="0dp"
             android:layout_height="4dp"
             app:indicatorColor="@color/colorProgressBarTint"

@@ -51,7 +51,7 @@
                 android:textColor="@color/colorTextPrimary"
                 android:textSize="@dimen/titleMedium"
                 android:drawableLeft="@drawable/ic_baseline_delete_outline_24"
-                android:drawableTint="@color/colorTextPrimary"
+                app:drawableTint="@color/colorTextPrimary"
                 android:drawablePadding="15dp"
                 android:text="@string/menu_delete" />
         </LinearLayout>
