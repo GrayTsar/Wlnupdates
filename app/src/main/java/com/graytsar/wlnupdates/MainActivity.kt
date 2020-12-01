@@ -129,10 +129,8 @@ class MainActivity : AppCompatActivity(), NavController.OnDestinationChangedList
 
         val constraints = Constraints.Builder().build()
 
-
         //val www = OneTimeWorkRequestBuilder<UpdateWorker>().setConstraints(constraints).build()
         //WorkManager.getInstance(this).enqueue(www)
-
 
         val periodicWorkRequest = PeriodicWorkRequestBuilder<UpdateWorker>(2, TimeUnit.HOURS, 1, TimeUnit.HOURS)
             .setConstraints(constraints)

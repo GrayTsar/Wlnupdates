@@ -4,14 +4,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:id="@+id/cardItemSearch"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:clickable="true"
-        android:focusable="true"
-        style="@style/CardViewShape">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textItemSearch"
@@ -22,5 +20,10 @@
             android:textStyle="bold"
             android:textColor="@color/colorTextPrimary"
             tools:text="Warlock of the Magus World"/>
-    </com.google.android.material.card.MaterialCardView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+    </LinearLayout>
 </layout>

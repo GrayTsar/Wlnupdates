@@ -1,6 +1,7 @@
 package com.graytsar.wlnupdates.ui.recent
 
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.appcompat.widget.SearchView
 import androidx.appcompat.widget.Toolbar
@@ -13,15 +14,19 @@ import androidx.navigation.ui.NavigationUI
 import androidx.paging.LoadState
 import androidx.paging.filter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentRecentBinding
 import com.graytsar.wlnupdates.extensions.FunctionExtensions.getQueryTextChangeStateFlow
+import com.graytsar.wlnupdates.rest.response.ResponseRecent
+import com.graytsar.wlnupdates.utils.ErrorRecentListener
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class FragmentRecent : Fragment() {
     private lateinit var binding: FragmentRecentBinding
@@ -30,6 +35,7 @@ class FragmentRecent : Fragment() {
     private val adapter = PagingAdapterItem(this)
 
     private lateinit var recyclerRecent:RecyclerView
+    private lateinit var swipeRefresh: SwipeRefreshLayout
 
     private var searchView:SearchView? = null
     private val queryChangedData = MutableLiveData<String>("")
@@ -56,6 +62,12 @@ class FragmentRecent : Fragment() {
         NavigationUI.setupActionBarWithNavController(this.context as MainActivity, navController)
 
 
+        swipeRefresh = binding.swipeRefreshRecent
+        swipeRefresh.setOnRefreshListener {
+            viewModelRecent.refresh()
+            swipeRefresh.isRefreshing = false
+        }
+
         recyclerRecent = binding.recyclerRecent
         recyclerRecent.adapter = adapter
 
@@ -67,17 +79,18 @@ class FragmentRecent : Fragment() {
             }
         })
 
+        viewModelRecent.setErrorRecentListener(object: ErrorRecentListener {
+            override fun onSubmitErrorResponse(response: ResponseRecent) {
+                showErrorDialog(getString(R.string.alert_dialog_title_error), response.message)
+            }
 
-        viewModelRecent.errorResponseRecent.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
-        })
+            override fun onSubmitFailure(throwable: Throwable) {
+                showErrorDialog(getString(R.string.alert_dialog_title_failure), throwable.message)
+            }
 
-        viewModelRecent.failureResponse.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
-        })
-
-        viewModelRecent.errorServerRecent.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+            override fun onSubmitErrorServer(response: Response<ResponseRecent>?) {
+                showErrorDialog(getString(R.string.alert_dialog_title_error), response?.code().toString())
+            }
         })
 
         lifecycleScope.launch {

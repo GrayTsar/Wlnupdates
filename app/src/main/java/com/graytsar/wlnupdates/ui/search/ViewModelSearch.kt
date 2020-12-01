@@ -8,6 +8,7 @@ import com.graytsar.wlnupdates.rest.MatchContent
 import com.graytsar.wlnupdates.rest.interfaces.RestService
 import com.graytsar.wlnupdates.rest.request.RequestSearch
 import com.graytsar.wlnupdates.rest.response.ResponseSearch
+import com.graytsar.wlnupdates.utils.ErrorSearchListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -18,9 +19,10 @@ import java.util.stream.Collectors
 class ViewModelSearch: ViewModel() {
     var isLoading = MutableLiveData<Boolean>(false)
 
-    val errorResponseSearch = MutableLiveData<ResponseSearch>()
-    val failureResponse = MutableLiveData<Throwable>()
-    val errorServerSearch = MutableLiveData<Response<ResponseSearch>>()
+    var errorListener:ErrorSearchListener? = null
+    fun setErrorSearchListener(errorListener: ErrorSearchListener) {
+        this.errorListener = errorListener
+    }
 
     private var ps: PagingSourceSearch? = null
     private var query:String = ""
@@ -83,20 +85,24 @@ class ViewModelSearch: ViewModel() {
                             }
                         } else {
                             //had error
-                            viewModelSearch.errorResponseSearch.postValue(body)
+                            //viewModelSearch.errorResponseSearch.postValue(body)
+                            viewModelSearch.errorListener?.onSubmitErrorResponse(body)
                         }
                     }
                 } else {
                     //server did not respond
-                    viewModelSearch.errorServerSearch.postValue(response)
+                    //viewModelSearch.errorServerSearch.postValue(response)
+                    viewModelSearch.errorListener?.onSubmitErrorServer(response)
                 }
             } catch(e: IOException) {
                 // IOException for network failures.
-                viewModelSearch.failureResponse.postValue(e)
+                //viewModelSearch.failureResponse.postValue(e)
+                viewModelSearch.errorListener?.onSubmitFailure(e)
                 return LoadResult.Error(e)
             } catch(e: HttpException) {
                 // HttpException for any non-2xx HTTP status codes.
-                viewModelSearch.failureResponse.postValue(e)
+                //viewModelSearch.failureResponse.postValue(e)
+                viewModelSearch.errorListener?.onSubmitFailure(e)
                 return LoadResult.Error(e)
             }
             return LoadResult.Error(Exception())

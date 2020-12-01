@@ -8,6 +8,8 @@ import com.graytsar.wlnupdates.rest.Item
 import com.graytsar.wlnupdates.rest.interfaces.RestService
 import com.graytsar.wlnupdates.rest.request.RequestTranslated
 import com.graytsar.wlnupdates.rest.response.ResponseTranslated
+import com.graytsar.wlnupdates.utils.ErrorSearchListener
+import com.graytsar.wlnupdates.utils.ErrorTranslatedListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.withContext
@@ -18,9 +20,10 @@ import java.io.IOException
 class ViewModelTranslated: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
 
-    val errorResponseTranslated = MutableLiveData<ResponseTranslated>()
-    val failureResponse = MutableLiveData<Throwable>()
-    val errorServerTranslated = MutableLiveData<Response<ResponseTranslated>>()
+    var errorListener: ErrorTranslatedListener? = null
+    fun setErrorTranslatedListener(errorListener: ErrorTranslatedListener) {
+        this.errorListener = errorListener
+    }
 
     fun search(query: String) {
         pager.map { pagingData ->
@@ -30,11 +33,18 @@ class ViewModelTranslated: ViewModel() {
         }
     }
 
+    private var ps: PagingSourceTranslated? = null
     val pager = Pager(PagingConfig(pageSize = 50)) {
-        pagingSourceTranslated
+        PagingSourceTranslated(this).also {
+            ps = it
+        }
     }.flow.cachedIn(viewModelScope)
 
-    private val pagingSourceTranslated = object: PagingSource<Int, Item>() {
+    fun refresh() {
+        ps?.invalidate()
+    }
+
+    private class PagingSourceTranslated(private val viewModelTranslated: ViewModelTranslated): PagingSource<Int, Item>() {
 
         override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Item> {
             // Load page 1 if undefined.
@@ -58,20 +68,20 @@ class ViewModelTranslated: ViewModel() {
                             }
                         } else {
                             //had error
-                            errorResponseTranslated.postValue(body)
+                            viewModelTranslated.errorListener?.onSubmitErrorResponse(body)
                         }
                     }
                 } else {
                     //server did not respond
-                    errorServerTranslated.postValue(response)
+                    viewModelTranslated.errorListener?.onSubmitErrorServer(response)
                 }
             } catch(e: IOException) {
                 // IOException for network failures.
-                failureResponse.postValue(e)
+                viewModelTranslated.errorListener?.onSubmitFailure(e)
                 return LoadResult.Error(e)
             } catch(e: HttpException) {
                 // HttpException for any non-2xx HTTP status codes.
-                failureResponse.postValue(e)
+                viewModelTranslated.errorListener?.onSubmitFailure(e)
                 return LoadResult.Error(e)
             }
             return LoadResult.Error(Exception())

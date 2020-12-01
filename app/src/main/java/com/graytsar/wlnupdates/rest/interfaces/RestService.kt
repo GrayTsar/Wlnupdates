@@ -60,12 +60,12 @@ object RestService {
 
         }
 
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+        //val loggingInterceptor = HttpLoggingInterceptor()
+        //loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
 
         val clientBuilder = OkHttpClient.Builder()
         clientBuilder.cookieJar(cookieJar)
-        clientBuilder.addInterceptor(loggingInterceptor)
+        //clientBuilder.addInterceptor(loggingInterceptor)
 
 
         val retrofit = Retrofit.Builder()

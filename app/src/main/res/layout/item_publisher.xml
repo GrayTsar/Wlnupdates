@@ -3,15 +3,13 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:id="@+id/cardItemPublisher"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:layout_marginHorizontal="4dp"
-        android:clickable="true"
-        android:focusable="true"
-        style="@style/CardViewShape">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textPublisherSeriesName"
@@ -21,5 +19,10 @@
             android:textColor="@color/colorTextPrimary"
             android:textSize="18sp"
             tools:text="Spirit Cultivation" />
-    </com.google.android.material.card.MaterialCardView>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+    </LinearLayout>
 </layout>

@@ -3,14 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:id="@+id/cardItemGroupSeries"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="4dp"
-        android:clickable="true"
-        android:focusable="true"
-        style="@style/CardViewShape">
+        android:orientation="vertical">
 
         <TextView
             android:id="@+id/textGroupSeries"
@@ -23,5 +21,9 @@
             android:ellipsize="marquee"
             tools:text="I Shall Seals the Heavens" />
 
-    </com.google.android.material.card.MaterialCardView>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="?android:attr/listDivider" />
+    </LinearLayout>
 </layout>

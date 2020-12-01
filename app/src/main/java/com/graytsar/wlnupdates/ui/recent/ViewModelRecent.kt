@@ -11,6 +11,8 @@ import com.graytsar.wlnupdates.rest.Item
 import com.graytsar.wlnupdates.rest.interfaces.RestService.restService
 import com.graytsar.wlnupdates.rest.request.RequestRecent
 import com.graytsar.wlnupdates.rest.response.ResponseRecent
+import com.graytsar.wlnupdates.utils.ErrorRecentListener
+import com.graytsar.wlnupdates.utils.ErrorSearchListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.HttpException
@@ -20,15 +22,23 @@ import java.io.IOException
 class ViewModelRecent: ViewModel() {
     val isLoading = MutableLiveData<Boolean>(false)
 
-    val errorResponseRecent = MutableLiveData<ResponseRecent>()
-    val failureResponse = MutableLiveData<Throwable>()
-    val errorServerRecent = MutableLiveData<Response<ResponseRecent>>()
+    var errorListener: ErrorRecentListener? = null
+    fun setErrorRecentListener(errorListener: ErrorRecentListener) {
+        this.errorListener = errorListener
+    }
 
+    private var ps:PagingSourceRecent? = null
     val pager = Pager(PagingConfig(pageSize = 50)) {
-        pagingSourceRecent
+        PagingSourceRecent(this).also {
+            ps = it
+        }
     }.flow.cachedIn(viewModelScope)
 
-    private val pagingSourceRecent = object: PagingSource<Int, Item>() {
+    fun refresh(){
+        ps?.invalidate()
+    }
+
+    private class PagingSourceRecent(private val viewModelRecent: ViewModelRecent): PagingSource<Int, Item>() {
         override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Item> {
             // Load page 1 if undefined.
             val nextPageNumber = params.key ?: 1
@@ -51,20 +61,20 @@ class ViewModelRecent: ViewModel() {
                             }
                         } else {
                             //had error
-                            errorResponseRecent.postValue(body)
+                            viewModelRecent.errorListener?.onSubmitErrorResponse(body)
                         }
                     }
                 } else {
                     //server did not respond
-                    errorServerRecent.postValue(response)
+                    viewModelRecent.errorListener?.onSubmitErrorServer(response)
                 }
             } catch(e: IOException) {
                 // IOException for network failures.
-                failureResponse.postValue(e)
+                viewModelRecent.errorListener?.onSubmitFailure(e)
                 return LoadResult.Error(e)
             } catch(e: HttpException) {
                 // HttpException for any non-2xx HTTP status codes.
-                failureResponse.postValue(e)
+                viewModelRecent.errorListener?.onSubmitFailure(e)
                 return LoadResult.Error(e)
             }
             return LoadResult.Error(Exception())

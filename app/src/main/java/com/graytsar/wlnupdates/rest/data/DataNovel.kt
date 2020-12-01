@@ -141,95 +141,9 @@ class DataNovel(
 
     @SerializedName("watchlists")
     @Expose
-    var watchlists: List<String>? = null,
+    var watchlists: Any? = null,
 
     @SerializedName("website")
     @Expose
     var website: String? = null
-) : Parcelable {
-    constructor(source: Parcel) : this(
-        source.createStringArrayList(),
-        source.createTypedArrayList(Author.CREATOR),
-        source.createTypedArrayList(Cover.CREATOR),
-        source.readString(),
-        source.readString(),
-        source.createTypedArrayList(Genre.CREATOR),
-        source.readValue(Int::class.java.classLoader) as Int?,
-        source.createTypedArrayList(Illustrator.CREATOR),
-        source.readParcelable<Latest>(Latest::class.java.classLoader),
-        source.readValue(Double::class.java.classLoader) as Double?,
-        source.readValue(Double::class.java.classLoader) as Double?,
-        source.readString(),
-        source.readString(),
-        source.readValue(Double::class.java.classLoader) as Double?,
-        source.readValue(Boolean::class.java.classLoader) as Boolean?,
-        source.readString(),
-        source.readString(),
-        source.readString(),
-        source.readString(),
-        source.readParcelable<Progress>(Progress::class.java.classLoader),
-        source.readString(),
-        source.createTypedArrayList(Publisher.CREATOR),
-        source.readParcelable<Rating>(Rating::class.java.classLoader),
-        source.readValue(Int::class.java.classLoader) as Int?,
-        source.readString(),
-        source.createTypedArrayList(Release.CREATOR),
-        source.createTypedArrayList(SimilarSeries.CREATOR),
-        source.createTypedArrayList(Tag.CREATOR),
-        source.readString(),
-        source.readString(),
-        source.readValue(Int::class.java.classLoader) as Int?,
-        source.readString(),
-        source.readValue(Boolean::class.java.classLoader) as Boolean?,
-        source.createStringArrayList(),
-        source.readString()
-    )
-
-    override fun describeContents() = 0
-
-    override fun writeToParcel(dest: Parcel, flags: Int) = with(dest) {
-        writeStringList(alternatenames)
-        writeTypedList(authors)
-        writeTypedList(covers)
-        writeString(demographic)
-        writeString(description)
-        writeTypedList(genres)
-        writeValue(id)
-        writeTypedList(illustrators)
-        writeParcelable(latest, 0)
-        writeValue(latestChapter)
-        writeValue(latestFragment)
-        writeString(latestPublished)
-        writeString(latestStr)
-        writeValue(latestVolume)
-        writeValue(licenseEn)
-        writeString(mostRecent)
-        writeString(origLang)
-        writeString(origStatus)
-        writeString(originLoc)
-        writeParcelable(progress, 0)
-        writeString(pubDate)
-        writeTypedList(publishers)
-        writeParcelable(rating, 0)
-        writeValue(ratingCount)
-        writeString(region)
-        writeTypedList(releases)
-        writeTypedList(similarSeries)
-        writeTypedList(tags)
-        writeString(title)
-        writeString(tlType)
-        writeValue(totalWatches)
-        writeString(type)
-        writeValue(watch)
-        writeStringList(watchlists)
-        writeString(website)
-    }
-
-    companion object {
-        @JvmField
-        val CREATOR: Parcelable.Creator<DataNovel> = object : Parcelable.Creator<DataNovel> {
-            override fun createFromParcel(source: Parcel): DataNovel = DataNovel(source)
-            override fun newArray(size: Int): Array<DataNovel?> = arrayOfNulls(size)
-        }
-    }
-}
+)

@@ -16,11 +16,14 @@ import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentSearchBinding
 import com.graytsar.wlnupdates.extensions.FunctionExtensions.getQueryTextChangeStateFlow
+import com.graytsar.wlnupdates.rest.response.ResponseSearch
+import com.graytsar.wlnupdates.utils.ErrorSearchListener
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 
 class FragmentSearch : Fragment() {
@@ -73,22 +76,27 @@ class FragmentSearch : Fragment() {
             }
         })
 
-        viewModelSearch.errorResponseSearch.observe(viewLifecycleOwner, {
-            it.message?.let { message ->
-                if(message.contains("rate limited")) {
 
-                } else {
-                    showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+
+        viewModelSearch.setErrorSearchListener(object: ErrorSearchListener {
+            override fun onSubmitErrorResponse(response: ResponseSearch) {
+                response.message?.let { message ->
+                    if(message.contains("rate limited")) {
+
+                    } else {
+                        showErrorDialog(getString(R.string.alert_dialog_title_error), response.message)
+                    }
                 }
             }
-        })
 
-        viewModelSearch.failureResponse.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
-        })
+            override fun onSubmitFailure(throwable: Throwable) {
+                showErrorDialog(getString(R.string.alert_dialog_title_failure), throwable.message)
+            }
 
-        viewModelSearch.errorServerSearch.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
+            override fun onSubmitErrorServer(response: Response<ResponseSearch>?) {
+                showErrorDialog(getString(R.string.alert_dialog_title_error), response?.code().toString())
+            }
+
         })
 
         lifecycleScope.launch {
@@ -118,6 +126,12 @@ class FragmentSearch : Fragment() {
 
 
         return binding.root
+    }
+
+    override fun onDestroyView() {
+        viewModelSearch.errorListener = null
+
+        super.onDestroyView()
     }
 
     private fun showErrorDialog(title:String, message:String?){

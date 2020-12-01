@@ -13,13 +13,17 @@ import androidx.navigation.ui.NavigationUI
 import androidx.paging.LoadState
 import androidx.paging.filter
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.graytsar.wlnupdates.MainActivity
 import com.graytsar.wlnupdates.R
 import com.graytsar.wlnupdates.databinding.FragmentTranslatedBinding
 import com.graytsar.wlnupdates.extensions.FunctionExtensions.getQueryTextChangeStateFlow
+import com.graytsar.wlnupdates.rest.response.ResponseTranslated
+import com.graytsar.wlnupdates.utils.ErrorTranslatedListener
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import retrofit2.Response
 
 class FragmentTranslated : Fragment() {
     private lateinit var binding: FragmentTranslatedBinding
@@ -28,6 +32,7 @@ class FragmentTranslated : Fragment() {
     private val adapter = PagingAdapterItem(this)
 
     private lateinit var recyclerTranslated: RecyclerView
+    private lateinit var swipeRefresh: SwipeRefreshLayout
 
     private var searchView:SearchView? = null
     private val queryChangedData = MutableLiveData<String>("")
@@ -54,6 +59,12 @@ class FragmentTranslated : Fragment() {
         NavigationUI.setupActionBarWithNavController(this.context as MainActivity, navController)
 
 
+        swipeRefresh = binding.swipeRefreshTranslated
+        swipeRefresh.setOnRefreshListener {
+            viewModelTranslated.refresh()
+            swipeRefresh.isRefreshing = false
+        }
+
         recyclerTranslated = binding.recyclerTranslated
         recyclerTranslated.adapter = adapter
 
@@ -65,17 +76,22 @@ class FragmentTranslated : Fragment() {
             }
         })
 
-        viewModelTranslated.errorResponseTranslated.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_error), it.message)
+
+        viewModelTranslated.setErrorTranslatedListener(object: ErrorTranslatedListener{
+            override fun onSubmitErrorResponse(response: ResponseTranslated) {
+                showErrorDialog(getString(R.string.alert_dialog_title_error), response.message)
+            }
+
+            override fun onSubmitFailure(throwable: Throwable) {
+                showErrorDialog(getString(R.string.alert_dialog_title_failure), throwable.message)
+            }
+
+            override fun onSubmitErrorServer(response: Response<ResponseTranslated>?) {
+                showErrorDialog(getString(R.string.alert_dialog_title_error), response?.code().toString())
+            }
+
         })
 
-        viewModelTranslated.failureResponse.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_failure), it.message)
-        })
-
-        viewModelTranslated.errorServerTranslated.observe(viewLifecycleOwner, {
-            showErrorDialog(getString(R.string.alert_dialog_title_error), it.code().toString())
-        })
 
         lifecycleScope.launch {
             viewModelTranslated.pager.collectLatest { pagingData ->
