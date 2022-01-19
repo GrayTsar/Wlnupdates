@@ -95,6 +95,10 @@ class ViewModelIllustrator: ViewModel() {
             return LoadResult.Error(Exception())
         }
 
+        override fun getRefreshKey(state: PagingState<Long, SeriesTitle>): Long? {
+            return 0
+        }
+
     }
 
 

@@ -86,6 +86,10 @@ class ViewModelTranslated: ViewModel() {
             }
             return LoadResult.Error(Exception())
         }
+
+        override fun getRefreshKey(state: PagingState<Int, Item>): Int? {
+            return 0
+        }
     }
 
     fun setLoadingIndicator(isVisible: Boolean){

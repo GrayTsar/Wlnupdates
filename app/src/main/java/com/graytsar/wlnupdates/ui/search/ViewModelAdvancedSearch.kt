@@ -4,10 +4,7 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingSource
-import androidx.paging.cachedIn
+import androidx.paging.*
 import com.graytsar.wlnupdates.rest.ItemGenre
 import com.graytsar.wlnupdates.rest.ItemTag
 import com.graytsar.wlnupdates.rest.data.DataAdvancedSearch
@@ -188,6 +185,10 @@ class ViewModelAdvancedSearch: ViewModel() {
             return LoadResult.Error(Exception())
         }
 
+        override fun getRefreshKey(state: PagingState<Long, ItemGenre>): Long? {
+            return 0
+        }
+
     }
 
     private val pagingSourceTag = object: PagingSource<Long, ItemTag>() {
@@ -261,6 +262,10 @@ class ViewModelAdvancedSearch: ViewModel() {
                 return LoadResult.Error(e)
             }
             return LoadResult.Error(Exception())
+        }
+
+        override fun getRefreshKey(state: PagingState<Long, ItemTag>): Long? {
+            return 0
         }
 
     }

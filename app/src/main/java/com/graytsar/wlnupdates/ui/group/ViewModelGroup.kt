@@ -45,6 +45,10 @@ class ViewModelGroup: ViewModel() {
     class PagingSourceGroupFeed(private val viewModelGroup: ViewModelGroup, private val listFeed:List<FeedPaginated>): PagingSource<Long, FeedPaginated>() {
         private val pageSize:Long = 50
 
+        override fun getRefreshKey(state: PagingState<Long, FeedPaginated>): Long? {
+            return 0
+        }
+
         override suspend fun load(params: LoadParams<Long>): LoadResult<Long, FeedPaginated> {
             // Load page 1 if undefined.
             val nextPageNumber = params.key ?: pageSize
@@ -77,6 +81,8 @@ class ViewModelGroup: ViewModel() {
         private val pageSize:Long = 50
         private var response:Response<ResponseGroup>? = null
         private var listActiveSeries = ArrayList<ModelActiveSeries>()
+
+
 
         override suspend fun load(params: LoadParams<Long>): LoadResult<Long, ModelActiveSeries> {
             // Load page 1 if undefined.
@@ -151,6 +157,10 @@ class ViewModelGroup: ViewModel() {
             viewModelGroup.pagerGroupFeed.postValue(Pager(PagingConfig(pageSize = 50)){
                 PagingSourceGroupFeed(viewModelGroup, listFeed)
             }.flow.cachedIn(viewModelGroup.viewModelScope))
+        }
+
+        override fun getRefreshKey(state: PagingState<Long, ModelActiveSeries>): Long? {
+            return 0
         }
     }
 

@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.NavigationUI
 import androidx.paging.LoadState
+import androidx.paging.insertHeaderItem
 import androidx.recyclerview.widget.ConcatAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.flexbox.FlexDirection
@@ -319,13 +320,13 @@ class FragmentAdvancedSearch : Fragment() {
 
         lifecycleScope.launch {
             viewModelAdvancedSearch.pagerGenre.collectLatest { pagingData ->
-                adapterGenre.submitData(pagingData.insertHeaderItem(ItemGenre(0, "GenreHeader", 0)))
+                //adapterGenre.submitData(pagingData.insertHeaderItem(ItemGenre(0, "GenreHeader", 0)))
             }
         }
 
         lifecycleScope.launch {
             viewModelAdvancedSearch.pagerTag.collectLatest { pagingData ->
-                adapterTag.submitData(pagingData.insertHeaderItem(ItemTag(0, "TagHeader", 0)))
+                //adapterTag.submitData(pagingData.insertHeaderItem(ItemTag(0, "TagHeader", 0)))
             }
         }
 

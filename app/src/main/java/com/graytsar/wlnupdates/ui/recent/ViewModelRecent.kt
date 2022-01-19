@@ -3,10 +3,7 @@ package com.graytsar.wlnupdates.ui.recent
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingSource
-import androidx.paging.cachedIn
+import androidx.paging.*
 import com.graytsar.wlnupdates.rest.Item
 import com.graytsar.wlnupdates.rest.interfaces.RestService.restService
 import com.graytsar.wlnupdates.rest.request.RequestRecent
@@ -78,6 +75,10 @@ class ViewModelRecent: ViewModel() {
                 return LoadResult.Error(e)
             }
             return LoadResult.Error(Exception())
+        }
+
+        override fun getRefreshKey(state: PagingState<Int, Item>): Int? {
+            return 0
         }
     }
 

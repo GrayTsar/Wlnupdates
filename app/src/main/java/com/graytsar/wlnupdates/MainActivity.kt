@@ -39,7 +39,6 @@ import com.graytsar.wlnupdates.database.DatabaseService
 import com.graytsar.wlnupdates.database.LibraryDatabase
 import com.graytsar.wlnupdates.databinding.ActivityMainBinding
 import com.graytsar.wlnupdates.rest.interfaces.RestService
-import kotlinx.android.synthetic.main.toolbar.view.*
 import java.util.concurrent.TimeUnit
 
 const val ARG_ID_NOVEL:String = "argIdNovel"

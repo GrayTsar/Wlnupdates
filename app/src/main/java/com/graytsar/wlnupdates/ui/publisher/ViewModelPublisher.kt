@@ -90,6 +90,10 @@ class ViewModelPublisher: ViewModel() {
             return LoadResult.Error(Exception())
         }
 
+        override fun getRefreshKey(state: PagingState<Long, SeriesTitle>): Long? {
+            return 0
+        }
+
     }
 
     fun setLoadingIndicator(isVisible: Boolean){
